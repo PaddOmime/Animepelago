@@ -125,9 +125,9 @@
     "english": "A",
     "romaji": "S",
     "german": "A",
-    "spanish": "A",
-    "french": "S",
-    "italian": "P"
+    "spanish": "S",
+    "french": "L",
+    "italian": "L"
    }
   },
   {
@@ -155,9 +155,9 @@
     "english": "D",
     "romaji": "K",
     "german": "D",
-    "spanish": "A",
+    "spanish": "D",
     "french": "D",
-    "italian": "P"
+    "italian": "D"
    }
   },
   {
@@ -182,9 +182,9 @@
     "english": "J",
     "romaji": "J",
     "german": "J",
-    "spanish": "P",
-    "french": "S",
-    "italian": "P"
+    "spanish": "J",
+    "french": "J",
+    "italian": "J"
    }
   },
   {
@@ -240,9 +240,9 @@
     "english": "M",
     "romaji": "B",
     "german": "M",
-    "spanish": "P",
+    "spanish": "M",
     "french": "M",
-    "italian": "P"
+    "italian": "M"
    }
   },
   {
@@ -295,7 +295,7 @@
     "english": "O",
     "romaji": "O",
     "german": "O",
-    "spanish": "P",
+    "spanish": "O",
     "french": "O",
     "italian": "O"
    }
@@ -465,7 +465,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -550,9 +550,9 @@
     "english": "T",
     "romaji": "Y",
     "german": "T",
-    "spanish": "A",
+    "spanish": "T",
     "french": "T",
-    "italian": "P"
+    "italian": "T"
    }
   },
   {
@@ -608,9 +608,9 @@
     "english": "M",
     "romaji": "M",
     "german": "M",
-    "spanish": "P",
+    "spanish": "M",
     "french": "M",
-    "italian": "S"
+    "italian": "M"
    }
   },
   {
@@ -639,9 +639,9 @@
     "english": "R",
     "romaji": "R",
     "german": "R",
-    "spanish": "P",
+    "spanish": "R",
     "french": "R",
-    "italian": "P"
+    "italian": "R"
    }
   },
   {
@@ -780,9 +780,9 @@
     "english": "B",
     "romaji": "B",
     "german": "B",
-    "spanish": "A",
+    "spanish": "B",
     "french": "B",
-    "italian": "P"
+    "italian": "B"
    }
   },
   {
@@ -807,9 +807,9 @@
     "english": "H",
     "romaji": "H",
     "german": "H",
-    "spanish": "A",
+    "spanish": "H",
     "french": "H",
-    "italian": "P"
+    "italian": "H"
    }
   },
   {
@@ -863,7 +863,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -891,9 +891,9 @@
     "english": "K",
     "romaji": "K",
     "german": "K",
-    "spanish": "P",
+    "spanish": "K",
     "french": "K",
-    "italian": "P"
+    "italian": "K"
    }
   },
   {
@@ -919,9 +919,9 @@
     "english": "D",
     "romaji": "D",
     "german": "D",
-    "spanish": "P",
+    "spanish": "D",
     "french": "D",
-    "italian": "P"
+    "italian": "D"
    }
   },
   {
@@ -946,9 +946,9 @@
     "english": "V",
     "romaji": "V",
     "german": "V",
-    "spanish": "P",
+    "spanish": "V",
     "french": "V",
-    "italian": "S"
+    "italian": "V"
    }
   },
   {
@@ -1195,9 +1195,9 @@
     "english": "K",
     "romaji": "K",
     "german": "K",
-    "spanish": "A",
+    "spanish": "K",
     "french": "K",
-    "italian": "P"
+    "italian": "K"
    }
   },
   {
@@ -1334,7 +1334,7 @@
     "english": "F",
     "romaji": "S",
     "german": "F",
-    "spanish": "P",
+    "spanish": "S",
     "french": "F",
     "italian": "F"
    }
@@ -1362,9 +1362,9 @@
     "english": "F",
     "romaji": "E",
     "german": "F",
-    "spanish": "P",
+    "spanish": "F",
     "french": "F",
-    "italian": "P"
+    "italian": "F"
    }
   },
   {
@@ -1474,9 +1474,9 @@
     "english": "T",
     "romaji": "T",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
-    "italian": "P"
+    "italian": "T"
    }
   },
   {
@@ -1527,9 +1527,9 @@
     "english": "M",
     "romaji": "M",
     "german": "M",
-    "spanish": "P",
+    "spanish": "M",
     "french": "M",
-    "italian": "P"
+    "italian": "M"
    }
   },
   {
@@ -1552,9 +1552,9 @@
     "english": "T",
     "romaji": "T",
     "german": "T",
-    "spanish": "P",
-    "french": "S",
-    "italian": "P"
+    "spanish": "T",
+    "french": "T",
+    "italian": "T"
    }
   },
   {
@@ -1579,8 +1579,8 @@
     "english": "B",
     "romaji": "A",
     "german": "B",
-    "spanish": "P",
-    "french": "S",
+    "spanish": "A",
+    "french": "B",
     "italian": "B"
    }
   },
@@ -1606,7 +1606,7 @@
     "english": "S",
     "romaji": "O",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -1633,9 +1633,9 @@
     "english": "K",
     "romaji": "K",
     "german": "K",
-    "spanish": "P",
-    "french": "S",
-    "italian": "S"
+    "spanish": "K",
+    "french": "G",
+    "italian": "K"
    }
   },
   {
@@ -1660,9 +1660,9 @@
     "english": "C",
     "romaji": "Y",
     "german": "C",
-    "spanish": "P",
+    "spanish": "Y",
     "french": "C",
-    "italian": "S"
+    "italian": "C"
    }
   },
   {
@@ -1688,9 +1688,9 @@
     "english": "T",
     "romaji": "T",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
-    "italian": "S"
+    "italian": "T"
    }
   },
   {
@@ -1742,7 +1742,7 @@
     "english": "M",
     "romaji": "S",
     "german": "M",
-    "spanish": "P",
+    "spanish": "S",
     "french": "M",
     "italian": "M"
    }
@@ -1827,7 +1827,7 @@
     "english": "B",
     "romaji": "B",
     "german": "B",
-    "spanish": "T",
+    "spanish": "B",
     "french": "B",
     "italian": "B"
    }
@@ -1877,9 +1877,9 @@
     "english": "O",
     "romaji": "O",
     "german": "O",
-    "spanish": "P",
+    "spanish": "O",
     "french": "O",
-    "italian": "S"
+    "italian": "O"
    }
   },
   {
@@ -1960,9 +1960,9 @@
     "english": "F",
     "romaji": "S",
     "german": "F",
-    "spanish": "A",
+    "spanish": "S",
     "french": "F",
-    "italian": "P"
+    "italian": "F"
    }
   },
   {
@@ -1987,9 +1987,9 @@
     "english": "I",
     "romaji": "D",
     "german": "D",
-    "spanish": "P",
+    "spanish": "D",
     "french": "I",
-    "italian": "P"
+    "italian": "D"
    }
   },
   {
@@ -2043,9 +2043,9 @@
     "english": "T",
     "romaji": "H",
     "german": "T",
-    "spanish": "P",
+    "spanish": "H",
     "french": "T",
-    "italian": "P"
+    "italian": "T"
    }
   },
   {
@@ -2099,7 +2099,7 @@
     "english": "D",
     "romaji": "D",
     "german": "D",
-    "spanish": "P",
+    "spanish": "D",
     "french": "D",
     "italian": "D"
    }
@@ -2154,9 +2154,9 @@
     "english": "M",
     "romaji": "Y",
     "german": "Y",
-    "spanish": "A",
+    "spanish": "Y",
     "french": "M",
-    "italian": "P"
+    "italian": "Y"
    }
   },
   {
@@ -2291,7 +2291,7 @@
     "english": "H",
     "romaji": "J",
     "german": "H",
-    "spanish": "P",
+    "spanish": "J",
     "french": "H",
     "italian": "H"
    }
@@ -2590,7 +2590,7 @@
     "english": "T",
     "romaji": "K",
     "german": "D",
-    "spanish": "A",
+    "spanish": "L",
     "french": "L",
     "italian": "T"
    }
@@ -2619,9 +2619,9 @@
     "english": "T",
     "romaji": "K",
     "german": "T",
-    "spanish": "P",
-    "french": "S",
-    "italian": "P"
+    "spanish": "T",
+    "french": "T",
+    "italian": "T"
    }
   },
   {
@@ -2703,7 +2703,7 @@
     "english": "B",
     "romaji": "B",
     "german": "B",
-    "spanish": "P",
+    "spanish": "B",
     "french": "B",
     "italian": "B"
    }
@@ -2760,7 +2760,7 @@
     "german": "M",
     "spanish": "M",
     "french": "M",
-    "italian": "P"
+    "italian": "M"
    }
   },
   {
@@ -2841,9 +2841,9 @@
     "english": "T",
     "romaji": "G",
     "german": "T",
-    "spanish": "A",
+    "spanish": "G",
     "french": "T",
-    "italian": "P"
+    "italian": "T"
    }
   },
   {
@@ -2868,7 +2868,7 @@
     "english": "K",
     "romaji": "K",
     "german": "K",
-    "spanish": "P",
+    "spanish": "K",
     "french": "K",
     "italian": "K"
    }
@@ -2895,7 +2895,7 @@
     "english": "T",
     "romaji": "K",
     "german": "T",
-    "spanish": "P",
+    "spanish": "K",
     "french": "T",
     "italian": "T"
    }
@@ -2924,9 +2924,9 @@
     "english": "T",
     "romaji": "F",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
-    "italian": "S"
+    "italian": "T"
    }
   },
   {
@@ -2953,7 +2953,7 @@
     "english": "H",
     "romaji": "H",
     "german": "H",
-    "spanish": "P",
+    "spanish": "H",
     "french": "H",
     "italian": "H"
    }
@@ -3038,9 +3038,9 @@
     "english": "R",
     "romaji": "K",
     "german": "R",
-    "spanish": "P",
+    "spanish": "R",
     "french": "R",
-    "italian": "S"
+    "italian": "R"
    }
   },
   {
@@ -3063,9 +3063,9 @@
     "english": "G",
     "romaji": "G",
     "german": "G",
-    "spanish": "P",
+    "spanish": "G",
     "french": "G",
-    "italian": "P"
+    "italian": "G"
    }
   },
   {
@@ -3197,7 +3197,7 @@
     "english": "M",
     "romaji": "M",
     "german": "M",
-    "spanish": "P",
+    "spanish": "M",
     "french": "M",
     "italian": "M"
    }
@@ -3303,7 +3303,7 @@
     "english": "K",
     "romaji": "K",
     "german": "K",
-    "spanish": "P",
+    "spanish": "K",
     "french": "K",
     "italian": "K"
    }
@@ -3388,7 +3388,7 @@
     "english": "C",
     "romaji": "Y",
     "german": "C",
-    "spanish": "P",
+    "spanish": "Y",
     "french": "C",
     "italian": "C"
    }
@@ -3441,7 +3441,7 @@
     "english": "S",
     "romaji": "Y",
     "german": "S",
-    "spanish": "P",
+    "spanish": "Y",
     "french": "S",
     "italian": "S"
    }
@@ -3525,7 +3525,7 @@
     "german": "K",
     "spanish": "K",
     "french": "K",
-    "italian": "P"
+    "italian": "K"
    }
   },
   {
@@ -3659,9 +3659,9 @@
     "english": "T",
     "romaji": "M",
     "german": "T",
-    "spanish": "P",
+    "spanish": "M",
     "french": "T",
-    "italian": "S"
+    "italian": "T"
    }
   },
   {
@@ -3713,9 +3713,9 @@
     "english": "D",
     "romaji": "I",
     "german": "H",
-    "spanish": "P",
-    "french": "S",
-    "italian": "S"
+    "spanish": "I",
+    "french": "A",
+    "italian": "N"
    }
   },
   {
@@ -3874,7 +3874,7 @@
     "english": "B",
     "romaji": "K",
     "german": "B",
-    "spanish": "A",
+    "spanish": "K",
     "french": "B",
     "italian": "E"
    }
@@ -3958,7 +3958,7 @@
     "english": "T",
     "romaji": "M",
     "german": "T",
-    "spanish": "P",
+    "spanish": "M",
     "french": "T",
     "italian": "T"
    }
@@ -4041,8 +4041,8 @@
     "english": "B",
     "romaji": "B",
     "german": "B",
-    "spanish": "P",
-    "french": "S",
+    "spanish": "B",
+    "french": "B",
     "italian": "B"
    }
   },
@@ -4124,7 +4124,7 @@
     "english": "K",
     "romaji": "K",
     "german": "K",
-    "spanish": "P",
+    "spanish": "K",
     "french": "K",
     "italian": "K"
    }
@@ -4232,9 +4232,9 @@
     "english": "D",
     "romaji": "D",
     "german": "D",
-    "spanish": "P",
+    "spanish": "D",
     "french": "D",
-    "italian": "P"
+    "italian": "D"
    }
   },
   {
@@ -4259,9 +4259,9 @@
     "english": "T",
     "romaji": "T",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
-    "italian": "S"
+    "italian": "C"
    }
   },
   {
@@ -4366,7 +4366,7 @@
     "english": "T",
     "romaji": "M",
     "german": "T",
-    "spanish": "A",
+    "spanish": "M",
     "french": "T",
     "italian": "T"
    }
@@ -4422,7 +4422,7 @@
     "german": "M",
     "spanish": "M",
     "french": "M",
-    "italian": "P"
+    "italian": "L"
    }
   },
   {
@@ -4532,7 +4532,7 @@
     "english": "T",
     "romaji": "J",
     "german": "T",
-    "spanish": "A",
+    "spanish": "J",
     "french": "T",
     "italian": "T"
    }
@@ -4585,7 +4585,7 @@
     "english": "G",
     "romaji": "G",
     "german": "G",
-    "spanish": "P",
+    "spanish": "G",
     "french": "G",
     "italian": "G"
    }
@@ -4776,9 +4776,9 @@
     "english": "A",
     "romaji": "A",
     "german": "A",
-    "spanish": "P",
+    "spanish": "A",
     "french": "A",
-    "italian": "S"
+    "italian": "A"
    }
   },
   {
@@ -4879,7 +4879,7 @@
     "english": "D",
     "romaji": "D",
     "german": "D",
-    "spanish": "P",
+    "spanish": "D",
     "french": "D",
     "italian": "D"
    }
@@ -4934,7 +4934,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -5444,9 +5444,9 @@
     "english": "H",
     "romaji": "I",
     "german": "I",
-    "spanish": "P",
+    "spanish": "I",
     "french": "H",
-    "italian": "P"
+    "italian": "H"
    }
   },
   {
@@ -5875,7 +5875,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -5930,7 +5930,7 @@
     "english": "W",
     "romaji": "W",
     "german": "W",
-    "spanish": "P",
+    "spanish": "W",
     "french": "W",
     "italian": "W"
    }
@@ -6037,7 +6037,7 @@
     "english": "D",
     "romaji": "D",
     "german": "D",
-    "spanish": "P",
+    "spanish": "D",
     "french": "D",
     "italian": "D"
    }
@@ -6064,7 +6064,7 @@
     "german": "A",
     "spanish": "A",
     "french": "A",
-    "italian": "P"
+    "italian": "A"
    }
   },
   {
@@ -6438,9 +6438,9 @@
     "english": "B",
     "romaji": "I",
     "german": "B",
-    "spanish": "A",
+    "spanish": "I",
     "french": "B",
-    "italian": "P"
+    "italian": "B"
    }
   },
   {
@@ -6465,7 +6465,7 @@
     "romaji": "F",
     "german": "F",
     "spanish": "F",
-    "french": "S",
+    "french": "F",
     "italian": "F"
    }
   },
@@ -6574,7 +6574,7 @@
     "english": "W",
     "romaji": "T",
     "german": "W",
-    "spanish": "P",
+    "spanish": "T",
     "french": "W",
     "italian": "W"
    }
@@ -6784,7 +6784,7 @@
     "english": "T",
     "romaji": "O",
     "german": "T",
-    "spanish": "P",
+    "spanish": "O",
     "french": "T",
     "italian": "T"
    }
@@ -6892,7 +6892,7 @@
     "english": "T",
     "romaji": "T",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
     "italian": "T"
    }
@@ -7219,9 +7219,9 @@
     "english": "W",
     "romaji": "M",
     "german": "W",
-    "spanish": "P",
-    "french": "S",
-    "italian": "S"
+    "spanish": "M",
+    "french": "I",
+    "italian": "W"
    }
   },
   {
@@ -7248,7 +7248,7 @@
     "german": "K",
     "spanish": "T",
     "french": "T",
-    "italian": "P"
+    "italian": "K"
    }
   },
   {
@@ -7427,7 +7427,7 @@
     "german": "H",
     "spanish": "H",
     "french": "H",
-    "italian": "P"
+    "italian": "H"
    }
   },
   {
@@ -7451,9 +7451,9 @@
     "english": "L",
     "romaji": "Y",
     "german": "L",
-    "spanish": "A",
+    "spanish": "Y",
     "french": "L",
-    "italian": "P"
+    "italian": "L"
    }
   },
   {
@@ -7528,7 +7528,7 @@
     "english": "T",
     "romaji": "B",
     "german": "T",
-    "spanish": "A",
+    "spanish": "B",
     "french": "T",
     "italian": "T"
    }
@@ -7661,7 +7661,7 @@
     "english": "I",
     "romaji": "K",
     "german": "I",
-    "spanish": "P",
+    "spanish": "K",
     "french": "I",
     "italian": "I"
    }
@@ -7985,7 +7985,7 @@
     "english": "B",
     "romaji": "A",
     "german": "B",
-    "spanish": "P",
+    "spanish": "A",
     "french": "B",
     "italian": "B"
    }
@@ -8142,9 +8142,9 @@
     "english": "Z",
     "romaji": "Z",
     "german": "Z",
-    "spanish": "P",
-    "french": "S",
-    "italian": "S"
+    "spanish": "Z",
+    "french": "Z",
+    "italian": "Z"
    }
   },
   {
@@ -8325,7 +8325,7 @@
     "english": "U",
     "romaji": "U",
     "german": "U",
-    "spanish": "P",
+    "spanish": "U",
     "french": "U",
     "italian": "U"
    }
@@ -8490,7 +8490,7 @@
     "german": "M",
     "spanish": "M",
     "french": "M",
-    "italian": "P"
+    "italian": "M"
    }
   },
   {
@@ -8782,7 +8782,7 @@
     "english": "M",
     "romaji": "W",
     "german": "M",
-    "spanish": "A",
+    "spanish": "W",
     "french": "M",
     "italian": "M"
    }
@@ -8944,7 +8944,7 @@
     "english": "B",
     "romaji": "J",
     "german": "B",
-    "spanish": "P",
+    "spanish": "J",
     "french": "B",
     "italian": "B"
    }
@@ -9027,7 +9027,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -9133,7 +9133,7 @@
     "english": "I",
     "romaji": "S",
     "german": "I",
-    "spanish": "A",
+    "spanish": "S",
     "french": "I",
     "italian": "I"
    }
@@ -9187,9 +9187,9 @@
     "english": "G",
     "romaji": "G",
     "german": "G",
-    "spanish": "P",
-    "french": "S",
-    "italian": "S"
+    "spanish": "G",
+    "french": "G",
+    "italian": "G"
    }
   },
   {
@@ -9270,8 +9270,8 @@
     "romaji": "M",
     "german": "M",
     "spanish": "M",
-    "french": "S",
-    "italian": "P"
+    "french": "M",
+    "italian": "M"
    }
   },
   {
@@ -9509,7 +9509,7 @@
     "english": "T",
     "romaji": "K",
     "german": "T",
-    "spanish": "P",
+    "spanish": "K",
     "french": "T",
     "italian": "T"
    }
@@ -9887,7 +9887,7 @@
     "english": "T",
     "romaji": "O",
     "german": "T",
-    "spanish": "P",
+    "spanish": "O",
     "french": "T",
     "italian": "T"
    }
@@ -9940,7 +9940,7 @@
     "english": "Y",
     "romaji": "S",
     "german": "Y",
-    "spanish": "A",
+    "spanish": "S",
     "french": "Y",
     "italian": "Y"
    }
@@ -10024,9 +10024,9 @@
     "english": "G",
     "romaji": "K",
     "german": "G",
-    "spanish": "P",
+    "spanish": "K",
     "french": "G",
-    "italian": "S"
+    "italian": "G"
    }
   },
   {
@@ -10051,7 +10051,7 @@
     "english": "T",
     "romaji": "T",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
     "italian": "T"
    }
@@ -10393,7 +10393,7 @@
     "english": "A",
     "romaji": "A",
     "german": "A",
-    "spanish": "P",
+    "spanish": "A",
     "french": "A",
     "italian": "A"
    }
@@ -10522,7 +10522,7 @@
     "english": "B",
     "romaji": "S",
     "german": "B",
-    "spanish": "P",
+    "spanish": "S",
     "french": "B",
     "italian": "B"
    }
@@ -10904,7 +10904,7 @@
     "english": "S",
     "romaji": "G",
     "german": "S",
-    "spanish": "P",
+    "spanish": "G",
     "french": "S",
     "italian": "S"
    }
@@ -10983,7 +10983,7 @@
     "english": "S",
     "romaji": "R",
     "german": "S",
-    "spanish": "P",
+    "spanish": "R",
     "french": "S",
     "italian": "S"
    }
@@ -11117,7 +11117,7 @@
     "english": "R",
     "romaji": "T",
     "german": "R",
-    "spanish": "A",
+    "spanish": "T",
     "french": "R",
     "italian": "R"
    }
@@ -11554,7 +11554,7 @@
     "english": "C",
     "romaji": "M",
     "german": "C",
-    "spanish": "P",
+    "spanish": "M",
     "french": "C",
     "italian": "C"
    }
@@ -11813,7 +11813,7 @@
     "english": "F",
     "romaji": "I",
     "german": "F",
-    "spanish": "P",
+    "spanish": "I",
     "french": "F",
     "italian": "F"
    }
@@ -11967,9 +11967,9 @@
     "english": "O",
     "romaji": "K",
     "german": "O",
-    "spanish": "P",
+    "spanish": "K",
     "french": "O",
-    "italian": "S"
+    "italian": "K"
    }
   },
   {
@@ -12046,7 +12046,7 @@
     "german": "L",
     "spanish": "L",
     "french": "L",
-    "italian": "P"
+    "italian": "L"
    }
   },
   {
@@ -12572,7 +12572,7 @@
     "english": "T",
     "romaji": "S",
     "german": "T",
-    "spanish": "P",
+    "spanish": "S",
     "french": "T",
     "italian": "T"
    }
@@ -13457,7 +13457,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "A",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -13643,9 +13643,9 @@
     "english": "I",
     "romaji": "#",
     "german": "I",
-    "spanish": "P",
+    "spanish": "#",
     "french": "I",
-    "italian": "S"
+    "italian": "I"
    }
   },
   {
@@ -14257,7 +14257,7 @@
     "english": "T",
     "romaji": "S",
     "german": "T",
-    "spanish": "P",
+    "spanish": "T",
     "french": "T",
     "italian": "T"
    }
@@ -14467,7 +14467,7 @@
     "english": "P",
     "romaji": "P",
     "german": "P",
-    "spanish": "A",
+    "spanish": "P",
     "french": "P",
     "italian": "P"
    }
@@ -15092,7 +15092,7 @@
     "english": "C",
     "romaji": "C",
     "german": "C",
-    "spanish": "P",
+    "spanish": "C",
     "french": "C",
     "italian": "C"
    }
@@ -15145,7 +15145,7 @@
     "english": "T",
     "romaji": "N",
     "german": "T",
-    "spanish": "P",
+    "spanish": "N",
     "french": "T",
     "italian": "T"
    }
@@ -15697,7 +15697,7 @@
     "english": "T",
     "romaji": "K",
     "german": "T",
-    "spanish": "A",
+    "spanish": "K",
     "french": "T",
     "italian": "T"
    }
@@ -15775,7 +15775,7 @@
     "english": "F",
     "romaji": "K",
     "german": "F",
-    "spanish": "A",
+    "spanish": "K",
     "french": "F",
     "italian": "F"
    }
@@ -16505,9 +16505,9 @@
     "english": "T",
     "romaji": "S",
     "german": "T",
-    "spanish": "P",
+    "spanish": "S",
     "french": "T",
-    "italian": "S"
+    "italian": "I"
    }
   },
   {
@@ -17525,7 +17525,7 @@
     "english": "B",
     "romaji": "K",
     "german": "B",
-    "spanish": "P",
+    "spanish": "K",
     "french": "B",
     "italian": "B"
    }
@@ -17607,7 +17607,7 @@
     "english": "T",
     "romaji": "S",
     "german": "T",
-    "spanish": "A",
+    "spanish": "S",
     "french": "T",
     "italian": "T"
    }
@@ -17765,7 +17765,7 @@
     "english": "G",
     "romaji": "S",
     "german": "G",
-    "spanish": "P",
+    "spanish": "S",
     "french": "G",
     "italian": "G"
    }
@@ -17791,7 +17791,7 @@
     "german": "R",
     "spanish": "R",
     "french": "R",
-    "italian": "P"
+    "italian": "R"
    }
   },
   {
@@ -18128,7 +18128,7 @@
     "english": "M",
     "romaji": "Y",
     "german": "M",
-    "spanish": "P",
+    "spanish": "Y",
     "french": "M",
     "italian": "M"
    }
@@ -18318,8 +18318,8 @@
     "romaji": "J",
     "german": "J",
     "spanish": "H",
-    "french": "S",
-    "italian": "P"
+    "french": "L",
+    "italian": "H"
    }
   },
   {
@@ -19032,7 +19032,7 @@
     "english": "T",
     "romaji": "S",
     "german": "T",
-    "spanish": "P",
+    "spanish": "S",
     "french": "T",
     "italian": "T"
    }
@@ -19851,7 +19851,7 @@
     "english": "R",
     "romaji": "J",
     "german": "R",
-    "spanish": "A",
+    "spanish": "J",
     "french": "R",
     "italian": "R"
    }
@@ -20663,7 +20663,7 @@
     "english": "R",
     "romaji": "R",
     "german": "R",
-    "spanish": "P",
+    "spanish": "R",
     "french": "R",
     "italian": "R"
    }
@@ -21318,7 +21318,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "P",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -22190,7 +22190,7 @@
     "english": "S",
     "romaji": "S",
     "german": "S",
-    "spanish": "A",
+    "spanish": "S",
     "french": "S",
     "italian": "S"
    }
@@ -22659,7 +22659,7 @@
     "english": "R",
     "romaji": "R",
     "german": "R",
-    "spanish": "P",
+    "spanish": "R",
     "french": "R",
     "italian": "R"
    }
@@ -22947,7 +22947,7 @@
     "german": "K",
     "spanish": "K",
     "french": "K",
-    "italian": "P"
+    "italian": "K"
    }
   },
   {
@@ -23126,7 +23126,7 @@
     "english": "U",
     "romaji": "U",
     "german": "U",
-    "spanish": "P",
+    "spanish": "U",
     "french": "U",
     "italian": "U"
    }
@@ -23317,7 +23317,7 @@
     "english": "T",
     "romaji": "M",
     "german": "T",
-    "spanish": "P",
+    "spanish": "M",
     "french": "T",
     "italian": "T"
    }
@@ -23788,7 +23788,7 @@
     "english": "R",
     "romaji": "K",
     "german": "R",
-    "spanish": "P",
+    "spanish": "K",
     "french": "R",
     "italian": "R"
    }
@@ -25621,7 +25621,7 @@
     "english": "A",
     "romaji": "Y",
     "german": "A",
-    "spanish": "A",
+    "spanish": "Y",
     "french": "A",
     "italian": "A"
    }
@@ -25851,7 +25851,7 @@
     "english": "I",
     "romaji": "I",
     "german": "I",
-    "spanish": "P",
+    "spanish": "I",
     "french": "I",
     "italian": "I"
    }
