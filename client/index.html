@@ -72,6 +72,8 @@ button:disabled{opacity:.5;cursor:default}
 #bgGrid th{font-size:12px;font-weight:600;padding:4px;text-align:center;vertical-align:middle;word-break:normal;overflow-wrap:break-word;hyphens:auto}
 #bgGrid.big th{font-size:10px;padding:2px}
 #bgGrid.big td{font-size:10px;height:58px}
+#bgGrid.huge th{font-size:9px;padding:1px}
+#bgGrid.huge td{font-size:9px;height:50px}
 #bgGrid td{border:2px solid var(--line);border-radius:8px;height:64px;text-align:center;vertical-align:middle;font-size:12px;
   cursor:pointer;padding:3px;word-break:break-word;background:var(--card)}
 #bgGrid .blogo{max-width:100%;max-height:40px;object-fit:contain;display:block;margin:2px auto 0}
@@ -91,6 +93,10 @@ button:disabled{opacity:.5;cursor:default}
   #bgGrid.big th{font-size:13px;padding:4px}
   #bgGrid.big td{height:96px;font-size:13px}
   #bgGrid.big .blogo{max-height:56px}
+  #bgGrid.huge{max-width:900px}
+  #bgGrid.huge th{font-size:12px}
+  #bgGrid.huge td{height:84px;font-size:12px}
+  #bgGrid.huge .blogo{max-height:48px}
 }
 #bgGrid td.p1 .pmark,.p1t{color:var(--p1)} #bgGrid td.p2 .pmark,.p2t{color:var(--p2)}
 #bgGrid td.missed{border-color:var(--bad);background:var(--grey);color:var(--mute)}
@@ -182,7 +188,7 @@ footer{color:var(--mute);font-size:12px;margin-top:20px}
   </div>
   <div class="game-row">
     <button type="button" id="bgStart" class="main" data-t="bgStart"></button>
-    <label style="flex:0 0 auto;margin:0"><span data-t="bgSizeLbl"></span><select id="bgSize"><option value="3" data-t="bgSize3"></option><option value="4" data-t="bgSize4"></option><option value="5" data-t="bgSize5"></option></select></label>
+    <label style="flex:0 0 auto;margin:0"><span data-t="bgSizeLbl"></span><select id="bgSize"><option value="3" data-t="bgSize3"></option><option value="4" data-t="bgSize4"></option><option value="5" data-t="bgSize5"></option><option value="6x7" data-t="bgSize67"></option></select></label>
     <span class="mute" data-t="bgDesc"></span>
   </div>
   <!-- Bingo: welche Themen-Arten an Zeilen und Spalten vorkommen duerfen (der Spieler waehlt selbst) -->
@@ -302,10 +308,10 @@ const TXT = {
     noScores:"No finished offline games yet.", hApm:"Anime/min", hTime:"Time", hGuessed:"Guessed", hGoal:"Goal", hPool:"Pool", hHelps:"Helps", hMode:"Mode", hDate:"Date",
     oExtras:"Also needed:", oOnlyStart:"Start anime (2-8)", oOnly:"Only one genre", oOnlyAll:"All genres", onlyStats:" · only {0}", noYaml:"No player YAML yet?", yamlBtn:"📄 Download Animepelago.yaml", isOpen:"You can guess this anime.", isLocked:"Still locked.", yourItems:"Your unlocked items for this anime:", noneYet:"None yet.", needOne:"one of them is enough", needAll:"all of them needed",
     noGenreNeeded:"no genre needed", oArrows:"Stand Arrows", nOf:"{0} more of {1}", needsN:"(needs {0})", modeMore:"🎮 More", moreTitle:"🎮 Mini games", moreInfo:"Small games on their own. These settings apply to all of them.",
-    hmDesc:"Guess the title letter by letter. Every mistake reveals a clue.", bgSizeLbl:"Size", bgSize3:"3×3 (line)", bgSize4:"4×4 (line)", bgSize5:"5×5 (most fields)", bgEnd:"End round",
-    bgFields:"{0} fields", bgMostRule:"5×5: whoever has more fields at the end wins.",
+    hmDesc:"Guess the title letter by letter. Every mistake reveals a clue.", bgSizeLbl:"Size", bgSize3:"3×3 (line)", bgSize4:"4×4 (line)", bgSize5:"5×5 (most fields)", bgSize67:"6×7 (most fields)", bgEnd:"End round",
+    bgFields:"{0} fields", bgMostRule:"Whoever has more fields at the end wins.",
     bgHelpMost:"2 players, taking turns on this device. Pick a free field and name an anime that fits its row and column. A wrong answer (or an anime already in the grid) ends your turn. Whoever has more fields when the grid is full (or the round is ended) wins!",
-    bgDesc:"2 players: name anime that fit row and column. 3×3/4×4: first full line wins. 5×5: most fields wins.", hmStart:"🪢 Hangman", bgStart:"🎯 Anime Bingo", bgTitle:"🎯 Anime Bingo", bgEnter:"Enter", bgNew:"New round",
+    bgDesc:"2 players: name anime that fit row and column. 3×3/4×4: first full line wins. 5×5 and 6×7: most fields wins.", hmStart:"🪢 Hangman", bgStart:"🎯 Anime Bingo", bgTitle:"🎯 Anime Bingo", bgEnter:"Enter", bgNew:"New round",
     bgHelp:"2 players, taking turns on this device. Pick a free field and name an anime that fits its row and column. A wrong answer (or an anime that is already in the grid) ends your turn. First to get a full row, column or diagonal wins!",
     bgThemes:"Bingo themes:", th_g:"Genre", th_d:"Demographic", th_s:"Studio", th_src:"Source", th_dec:"Decade", th_sea:"Season", th_l:"Letter",
     bgNoThemes:"Pick at least one theme type for Bingo.",
@@ -351,10 +357,10 @@ const TXT = {
     noScores:"Noch keine beendeten Offline-Spiele.", hApm:"Anime/Min.", hTime:"Zeit", hGuessed:"Erraten", hGoal:"Ziel", hPool:"Auswahl", hHelps:"Hilfen", hMode:"Modus", hDate:"Datum",
     oExtras:"Zusätzlich nötig:", oOnlyStart:"Start-Anime (2–8)", oOnly:"Nur ein Genre", oOnlyAll:"Alle Genres", onlyStats:" · nur {0}", noYaml:"Noch keine Spieler-YAML?", yamlBtn:"📄 Animepelago.yaml herunterladen", isOpen:"Diesen Anime kannst du raten.", isLocked:"Noch gesperrt.", yourItems:"Deine freigeschalteten Items für diesen Anime:", noneYet:"Noch keine.", needOne:"eins davon reicht", needAll:"alle nötig",
     noGenreNeeded:"kein Genre nötig", oArrows:"Stand Arrows", nOf:"noch {0} von {1}", needsN:"(braucht {0})", modeMore:"🎮 Weitere", moreTitle:"🎮 Minispiele", moreInfo:"Kleine Spiele für zwischendurch. Diese Einstellungen gelten für alle.",
-    hmDesc:"Errate den Titel Buchstabe für Buchstabe. Jeder Fehler deckt einen Hinweis auf.", bgSizeLbl:"Größe", bgSize3:"3×3 (Reihe)", bgSize4:"4×4 (Reihe)", bgSize5:"5×5 (meiste Felder)", bgEnd:"Runde beenden",
-    bgFields:"{0} Felder", bgMostRule:"5×5: Wer am Ende mehr Felder hat, gewinnt.",
+    hmDesc:"Errate den Titel Buchstabe für Buchstabe. Jeder Fehler deckt einen Hinweis auf.", bgSizeLbl:"Größe", bgSize3:"3×3 (Reihe)", bgSize4:"4×4 (Reihe)", bgSize5:"5×5 (meiste Felder)", bgSize67:"6×7 (meiste Felder)", bgEnd:"Runde beenden",
+    bgFields:"{0} Felder", bgMostRule:"Wer am Ende mehr Felder hat, gewinnt.",
     bgHelpMost:"2 Spieler, abwechselnd an diesem Gerät. Wähle ein freies Feld und nenne einen Anime, der zu Zeile und Spalte passt. Falsche Antwort oder ein Anime, der schon im Raster steht = Zug vorbei. Wer am Ende mehr Felder hat (Raster voll oder Runde beendet), gewinnt!",
-    bgDesc:"2 Spieler: Nennt Anime, die zu Zeile und Spalte passen. 3×3/4×4: Wer zuerst eine Reihe hat, gewinnt. 5×5: Wer mehr Felder hat, gewinnt.", hmStart:"🪢 Galgenmännchen", bgStart:"🎯 Anime-Bingo", bgTitle:"🎯 Anime-Bingo", bgEnter:"Eintragen", bgNew:"Neue Runde",
+    bgDesc:"2 Spieler: Nennt Anime, die zu Zeile und Spalte passen. 3×3/4×4: Wer zuerst eine Reihe hat, gewinnt. 5×5 und 6×7: Wer mehr Felder hat, gewinnt.", hmStart:"🪢 Galgenmännchen", bgStart:"🎯 Anime-Bingo", bgTitle:"🎯 Anime-Bingo", bgEnter:"Eintragen", bgNew:"Neue Runde",
     bgHelp:"2 Spieler, abwechselnd an diesem Gerät. Wähle ein freies Feld und nenne einen Anime, der zu Zeile und Spalte passt. Falsche Antwort oder ein Anime, der schon im Raster steht = Zug vorbei. Wer zuerst eine ganze Zeile, Spalte oder Diagonale hat, gewinnt!",
     bgThemes:"Bingo-Themen:", th_g:"Genre", th_d:"Zielgruppe", th_s:"Studio", th_src:"Vorlage", th_dec:"Jahrzehnt", th_sea:"Jahreszeit", th_l:"Buchstabe",
     bgNoThemes:"Wähle für das Bingo mindestens eine Themen-Art.",
@@ -1702,15 +1708,33 @@ const BG = (() => {
   } catch(e) {}
   document.querySelectorAll("#bgThemes input[data-th]").forEach(x => x.addEventListener("change", () => {
     try { localStorage.setItem(THEME_KEY, JSON.stringify(chosenTypes())); } catch(e) {} }));
-  function generate(n, pool, lang, types){
+  // R Zeilen und C Spalten (z. B. 3x3 oder 6x7)
+  function generate(R, C, pool, lang, types){
+    const n = Math.max(R, C);
     const typeOf = th => th.key.split(":")[0];
     const count = (x, y) => pool.filter(a => x.test(a) && y.test(a)).length;
-    // Nie festfahren: Jedes Feld braucht mehr passende Anime, als andere Felder ihm "wegnehmen" koennen.
-    // Ein anderes Feld kann nur stoeren, wenn ein Anime in beide passt, und es nimmt hoechstens einen weg.
-    // (Bei Buchstabe x Jahreszeit passt ein Anime meist nur in EIN Feld, dann reichen 2 Kandidaten.)
+    // Nie festfahren: Fuer jedes Feld wird geprueft, ob die anderen Felder ihm im schlimmsten Fall ALLE passenden
+    // Anime wegnehmen koennten. Jedes andere Feld nimmt hoechstens einen Anime, und nur einen, der auch zu ihm passt.
+    // Das ist ein "Zuordnungsproblem": Wie viele der Kandidaten koennen die anderen Felder gleichzeitig belegen?
+    // Bleibt immer mindestens einer uebrig, kann man sich nie verspielen.
     const safe = cand => {
       const sets = cand.flat().map(l => new Set(l.map(a => a.id)));
-      return sets.every((s, i) => s.size >= 1 + Math.max(1, sets.filter((o, j) => j !== i && [...o].some(id => s.has(id))).length));
+      return sets.every((mine, i) => {
+        if (mine.size < 2) return false;
+        const others = sets.map((o, j) => j === i ? [] : [...o].filter(id => mine.has(id))).filter(l => l.length);
+        if (others.length < mine.size) return true;  // zu wenige andere Felder, um alles wegzunehmen
+        const takenBy = new Map();  // Anime -> welches andere Feld ihn belegt
+        const grab = (k, seen) => {
+          for (const id of others[k]) {
+            if (seen.has(id)) continue; seen.add(id);
+            if (!takenBy.has(id) || grab(takenBy.get(id), seen)) { takenBy.set(id, k); return true; }
+          }
+          return false;
+        };
+        let taken = 0;
+        for (let k = 0; k < others.length && taken < mine.size; k++) if (grab(k, new Set())) taken++;
+        return taken < mine.size;
+      });
     };
     // Bei nur einer Themen-Art duerfen alle Zeilen und Spalten von dieser Art sein
     const maxPerType = types.length >= 2 ? Math.max(3, n) : 2 * n;
@@ -1719,16 +1743,19 @@ const BG = (() => {
     const themesAll = themes(pool, lang).filter(th => types.includes(typeOf(th)));
     // Zwei Durchgaenge: erst streng (jedes Feld mind. n*n Anime, wie bisher: sicher und schnell gefunden),
     // dann locker (nur so viele, wie die "nie festfahren"-Regel wirklich braucht, z. B. bei Buchstabe x Jahreszeit)
-    for (const minPair of [n * n, 2]) {
+    for (const minPair of [R * C, 2]) {
       const all = themesAll.filter(th => pool.filter(th.test).length >= Math.max(n, minPair));
+      // Grosse Themen (viele Anime) etwas oefter ziehen: dann passen leichter genug Spalten zu allen Zeilen
+      const size = new Map(all.map(th => [th, pool.filter(th.test).length]));
+      const weighted = l => l.map(x => [x, Math.random() ** (1 / Math.sqrt(size.get(x)))]).sort((a, b) => b[1] - a[1]).map(x => x[0]);
       for (let attempt = 0; attempt < 300; attempt++) {
         // Zeilen zufaellig, dann nur Spalten, die mit ALLEN Zeilen genug Anime haben
-        const rows = shuffled(all).slice(0, n);
-        if (rows.length < n || !typesOk(rows)) continue;
+        const rows = (R * C > 25 ? weighted(all) : shuffled(all)).slice(0, R);
+        if (rows.length < R || !typesOk(rows)) continue;
         const okCols = shuffled(all.filter(c => !rows.includes(c) && rows.every(r => count(r, c) >= minPair)));
         const cols = [];
-        for (const c of okCols) { if (cols.length === n) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
-        if (cols.length < n) continue;
+        for (const c of okCols) { if (cols.length === C) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
+        if (cols.length < C) continue;
         const cand = rows.map(r => cols.map(c => pool.filter(a => r.test(a) && c.test(a))));
         if (!safe(cand)) continue;
         return {rows, cols, cand};
@@ -1741,11 +1768,13 @@ const BG = (() => {
   const wins = [0, 0];
   const pname = i => ($("bgP" + (i + 1)).value.trim() || t("bgPlayer", i + 1)).slice(0, 20);
   function start(){
-    const lang = $("mLang").value, only = $("mOnly").value, n = +$("bgSize").value || 3;
-    let pool = DB.anime.slice(0, Math.max(50, +$("mPool").value || 500));
+    // Groesse: "3" = 3x3 ... "6x7" = 6 Zeilen, 7 Spalten
+    const lang = $("mLang").value, only = $("mOnly").value, [R, C] = (($("bgSize").value || "3") + "x").split("x").map(Number).map((v, i, l) => v || l[0] || 3);
+    // 6x7 braucht sehr viele passende Anime: dort werden immer alle Anime der Datenbank verwendet
+    let pool = DB.anime.slice(0, R * C > 25 ? DB.anime.length : Math.max(50, +$("mPool").value || 500));
     if (only) pool = pool.filter(a => a.genres.includes(only) || a.demographics.includes(only));
     const types = chosenTypes();
-    const g = types.length ? generate(n, pool, lang, types) : null;
+    const g = types.length ? generate(R, C, pool, lang, types) : null;
     ["offline", "modes", "connect", "more"].forEach(id => $(id).classList.add("hide"));
     $("bingo").classList.remove("hide");
     if (!g) { st = null; $("bgGrid").innerHTML = "";
@@ -1754,19 +1783,20 @@ const BG = (() => {
       say2(!types.length ? t("bgNoThemes") : single ? t("bgNoGridOne", t("th_" + types[0])) : t("bgNoGrid"), "bad"); return; }
     // Wer anfaengt, wechselt jede Runde
     const first = st ? 1 - st.first : 0;
-    st = {n, lang, mode: n >= 5 ? "most" : "line", ...g, cells: Array.from({length: n}, () => Array(n).fill(null)),
-          owner: Array.from({length: n}, () => Array(n).fill(-1)), sel: null, turn: first, first, over: false, line: null};
+    st = {R, C, n: R, lang, mode: R * C >= 25 ? "most" : "line", ...g, cells: Array.from({length: R}, () => Array(C).fill(null)),
+          owner: Array.from({length: R}, () => Array(C).fill(-1)), sel: null, turn: first, first, over: false, line: null};
     $("bgHelpP").dataset.t = st.mode === "most" ? "bgHelpMost" : "bgHelp"; $("bgHelpP").textContent = t($("bgHelpP").dataset.t);
-    $("bgGrid").classList.toggle("big", n >= 5);
+    $("bgGrid").classList.toggle("big", R * C >= 25);
+    $("bgGrid").classList.toggle("huge", R * C > 25);
     say2((st.mode === "most" ? t("bgMostRule") + " " : "") + t("bgTurn", pname(st.turn)), ""); $("bgGuess").value = ""; draw();
   }
   function draw(){
-    const {n, rows, cols, cells, owner, sel, over, line} = st;
+    const {R, C, rows, cols, cells, owner, sel, over, line} = st;
     const inLine = (r, c) => line && line.some(([x, y]) => x === r && y === c);
     let h = `<tr><th></th>${cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
-    for (let r = 0; r < n; r++) {
+    for (let r = 0; r < R; r++) {
       h += `<tr><th>${esc(rows[r].label)}</th>`;
-      for (let c = 0; c < n; c++) {
+      for (let c = 0; c < C; c++) {
         const a = cells[r][c], o = owner[r][c], isSel = !over && sel && sel[0] === r && sel[1] === c;
         const cls = [o === 0 ? "p1" : o === 1 ? "p2" : "", isSel ? "sel" : "", inLine(r, c) ? "win" : "", over && !a ? "missed" : ""].join(" ");
         // Richtig belegt: Logo zeigen, wenn es eins gibt (spaeter von TMDB), sonst den Namen
