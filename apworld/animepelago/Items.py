@@ -84,6 +84,20 @@ FLAVOR_FILLERS = [
     "Hollow Purple",
     "Philosopher's Stone",
     "Husbando",
+    "Straw Hat",
+    "Sogeking's Mask",
+    "Naruto's Headband",
+    "Gojo's Blindfold",
+    "Tanjiro's Hanafuda Earrings",
+    "Inosuke's Boar Mask",
+    "Saitama's Gloves",
+    "Survey Corps Cloak",
+    "3D Maneuver Gear",
+    "Den Den Mushi",
+    "Going Merry",
+    "Thousand Sunny",
+    "NerveGear",
+    "My name is Sogeking! Born on Sniper Island, 100 shots, 100 hits!",
 ]
 for _i, _name in enumerate(FLAVOR_FILLERS):
     ITEMS[_name] = (ITEM_ID_OFFSET + 301 + _i, ItemClassification.filler, 0)

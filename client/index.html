@@ -1543,7 +1543,7 @@ function renderScores(){
       + `<td>${num(e.helps, 0, 1e6)}</td><td>${esc(e.mode)}</td><td>${esc(e.date)}</td></tr>`).join("") + `</table>`;
 }
 // Spass-Fueller ohne Wirkung (gleiche Reihenfolge wie FLAVOR_FILLERS in Items.py, Nummern 301 ff.)
-const FLAVOR = ["AYAYA!", "Ara Ara", "Nya!", "Gum-Gum Fruit", "Flame-Flame Fruit", "Usopp's Slingshot", "Nami's Clima-Tact", "Waifu", "Zangetsu", "Hogyoku", "Cursed Technique Lapse: Blue", "Cursed Technique Reversal: Red", "Hollow Purple", "Philosopher's Stone", "Husbando"];
+const FLAVOR = ["AYAYA!", "Ara Ara", "Nya!", "Gum-Gum Fruit", "Flame-Flame Fruit", "Usopp's Slingshot", "Nami's Clima-Tact", "Waifu", "Zangetsu", "Hogyoku", "Cursed Technique Lapse: Blue", "Cursed Technique Reversal: Red", "Hollow Purple", "Philosopher's Stone", "Husbando", "Straw Hat", "Sogeking's Mask", "Naruto's Headband", "Gojo's Blindfold", "Tanjiro's Hanafuda Earrings", "Inosuke's Boar Mask", "Saitama's Gloves", "Survey Corps Cloak", "3D Maneuver Gear", "Den Den Mushi", "Going Merry", "Thousand Sunny", "NerveGear", "My name is Sogeking! Born on Sniper Island, 100 shots, 100 hits!"];
 function itemName(id){
   const o = id - ITEM;
   if (o >= 301 && o < 301 + FLAVOR.length) return FLAVOR[o - 301];
