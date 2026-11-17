@@ -1,0 +1,362 @@
+﻿# Q. What is this file?
+# A. This file contains options which allow you to configure your multiworld experience while allowing
+#    others to play how they want as well.
+#
+# Q. How do I use it?
+# A. The options in this file are weighted. This means the higher number you assign to a value, the
+#    more chances you have for that option to be chosen. For example, an option like this:
+#
+#    map_shuffle:
+#      on: 5
+#      off: 15
+#
+#    Means you have 5 chances for map shuffle to occur, and 15 chances for map shuffle to be turned
+#    off.
+#
+# Q. I've never seen a file like this before. What characters am I allowed to use?
+# A. This is a .yaml file. You are allowed to use most characters.
+#    To test if your yaml is valid or not, you can use this website:
+#        http://www.yamllint.com/
+#    You can also verify that your Archipelago options are valid at this site:
+#        https://archipelago.gg/check
+
+# Your name in-game, limited to 16 characters.
+#     {player} will be replaced with the player's slot number.
+#     {PLAYER} will be replaced with the player's slot number, if that slot number is greater than 1.
+#     {number} will be replaced with the counter value of the name.
+#     {NUMBER} will be replaced with the counter value of the name, if the counter value is greater than 1.
+name: Player{number}
+
+# Used to describe your yaml. Useful if you have multiple files.
+description: Default Animepelago Template
+
+game: Animepelago
+requires:
+  version: 0.6.8 # Version of Archipelago required for this yaml to work as expected.
+  game:
+    Animepelago: 0.1.0 # Version of the world required for this yaml to work as expected.
+
+Animepelago:
+  ################
+  # Game Options #
+  ################
+  progression_balancing:
+    # A system that can move progression earlier, to try and prevent the player from getting stuck and bored early.
+    # 
+    # A lower setting means more getting stuck. A higher setting means less getting stuck.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 99
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-99: 0 # random value between 0 and 99
+    disabled: 0 # equivalent to 0
+    normal: 50 # equivalent to 50
+    extreme: 0 # equivalent to 99
+
+  accessibility:
+    # Set rules for reachability of your items/locations.
+    # 
+    # **Full:** ensure everything can be reached and acquired.
+    # 
+    # **Minimal:** ensure what is needed to reach your goal can be acquired.
+    full: 50
+    minimal: 0
+
+  death_link:
+    # When you die, everyone who enabled death link dies. Of course, the reverse is true too.
+    'false': 50
+    'true': 0
+
+  ########
+  # Game #
+  ########
+  goal:
+    # What you need to win.
+    # anime: guess the number of anime set in Anime Goal.
+    # exodia: collect all 5 pieces of Exodia. The pieces become progression items spread across the multiworld.
+    # genre_master: guess enough anime in enough genres (see Genre Master Genres and Genre Master Anime).
+    anime: 50
+    exodia: 0
+    genre_master: 0
+
+  genre_master_genres:
+    # Only with Goal: genre_master. In how many different genres you must master anime.
+    # Lowered automatically if your anime do not have enough genres.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 1
+    # Maximum value is 18
+    8: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-1-18: 0 # random value between 1 and 18
+
+  genre_master_anime:
+    # Only with Goal: genre_master. How many guessed anime a genre needs to count as mastered.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 1
+    # Maximum value is 30
+    5: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-1-30: 0 # random value between 1 and 30
+
+  anime_count:
+    # How many anime are in your game as checks. They are picked at random, preferring well-known anime
+    # (from the 500 most popular, or from the top "2 x Anime Count" for bigger games).
+    # With two or more unlock categories (e.g. Unlock Mode "both", or genres plus Unlock by Year) at least 50 anime
+    # are used (lower values are raised to 50).
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 10
+    # Maximum value is 978
+    50: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-10-978: 0 # random value between 10 and 978
+
+  anime_goal:
+    # How many anime you need to guess to win (only with Goal: anime).
+    # If this is higher than Anime Count, it is lowered to Anime Count.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 1
+    # Maximum value is 978
+    40: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-1-978: 0 # random value between 1 and 978
+
+  only_genres:
+    # Play only with anime of these genres or target audiences, e.g. ["Romance"] or ["Shounen"].
+    # With several, an anime needs at least one of them. Empty = all anime.
+    # Genres then do not unlock anything at all (there are no genre items): you unlock anime only by
+    # letters and/or the Unlock by Year/Source/Season/Studio options. If none of these is on, letters are used.
+    # Anime Pool then counts only anime of these genres. If there are fewer than Anime Count, Anime Count is lowered.
+    []
+
+  only_genres_start_anime:
+    # Only with Only Genres: how many random anime you can guess right from the start.
+    # You get the items (letter, year ...) of exactly this many random anime as starting items.
+    # Their items may open a few more anime as well.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 2
+    # Maximum value is 8
+    3: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-2-8: 0 # random value between 2 and 8
+
+  unlock_mode:
+    # What you need before you may guess an anime.
+    # genres: its genres (see Genre Rule).
+    # letters: the first letter of its title (see Title Language).
+    # both: its genres AND its first letter. Needs at least 50 anime (Anime Count is raised if lower).
+    # Unlock by Year/Source/Season/Studio can be added on top of any mode.
+    genres: 0
+    letters: 0
+    both: 50
+
+  unlock_by_year:
+    # Also need the release year of the first part before you may guess an anime.
+    # Items like "Year: 2013"; before 2010 in ranges ("Year: 2005-2009", "Year: 2000-2004", "Year: Before 2000").
+    'false': 50
+    'true': 0
+
+  unlock_by_source:
+    # Also need what the anime is based on: "Source: Manga", "Source: Light Novel", "Source: Novel",
+    # "Source: Original", "Source: Visual Novel", "Source: Video Game" or "Source: Other".
+    'false': 50
+    'true': 0
+
+  unlock_by_season:
+    # Also need the season it first aired: "Season: Winter", "Season: Spring", "Season: Summer" or "Season: Fall".
+    'false': 50
+    'true': 0
+
+  unlock_by_studio:
+    # Also need the main studio of the first part, e.g. "Studio: MADHOUSE". Smaller studios share "Studio: Other".
+    'false': 50
+    'true': 0
+
+  title_language:
+    # Your language preference. It decides the first letter of each anime (only with letters or both)
+    # and in which language the client shows the anime titles.
+    # english: Attack on Titan = A.  romaji: Shingeki no Kyojin = S.
+    # Other languages: the title in that language, e.g. Spirited Away in German = "Chihiros Reise ins Zauberland" = C.
+    # Anime without a title in that language use the English one.
+    # japanese: titles are shown in Japanese; the letter comes from the Romaji title (Japanese has no A-Z).
+    # A leading "The" counts. Titles starting with a number or symbol use the "#" letter.
+    # Every known title in every language is accepted when guessing.
+    english: 50
+    romaji: 0
+    german: 0
+    spanish: 0
+    french: 0
+    japanese: 0
+    italian: 0
+
+  genre_rule:
+    # Which genres unlock an anime (only with Unlock Mode genres or both).
+    # any: one of its genres is enough.
+    # all: you need every genre of that anime (much harder).
+    any: 50
+    all: 0
+
+  genre_step:
+    # Only with Genre Rule "any": for every this many genres an anime has, it needs one more of them.
+    # Example with 6: 1-5 genres -> one genre is enough, 6-11 genres -> two needed, 12 or more -> three needed.
+    # Makes anime with many genres harder to unlock and spreads your checks over more spheres.
+    # 0 = off (one genre is always enough).
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 12
+    6: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-12: 0 # random value between 0 and 12
+
+  include_demographics:
+    # The target audience counts as an extra genre: Shounen, Shoujo, Seinen, Josei, Kids.
+    # Example: Naruto is Action, Adventure, ... and also Shounen.
+    # Many anime (e.g. Your Name, Cowboy Bebop) have no target audience; for them only the normal genres count.
+    # Only used with Genre Rule "any". With "all" the target audience is ignored, so it never becomes an extra requirement.
+    'false': 0
+    'true': 50
+
+  starting_genre:
+    # The genre you have unlocked from the start. random picks one that unlocks enough anime.
+    action: 0
+    adventure: 0
+    comedy: 0
+    drama: 0
+    ecchi: 0
+    fantasy: 0
+    horror: 0
+    mahou_shoujo: 0
+    mecha: 0
+    music: 0
+    mystery: 0
+    psychological: 0
+    romance: 0
+    sci_fi: 0
+    slice_of_life: 0
+    sports: 0
+    supernatural: 0
+    thriller: 0
+    shounen: 0
+    shoujo: 0
+    seinen: 0
+    josei: 0
+    kids: 0
+    random: 50
+
+  #########
+  # Items #
+  #########
+  perk_items:
+    # Adds the helpful perk items:
+    # Sukuna's Finger (up to 20x): each reveals a hint about an anime. With all fingers in your game:
+    # Domain Expansion, one anime of your choice counts as guessed.
+    # Dragon Balls (7x): once you have all 7 you may unlock a genre of your choice.
+    # Senzu Bean (3x): ends all running trap effects when you use it.
+    # Time Leap (3x): the next trap that hits you misses.
+    'false': 0
+    'true': 50
+
+  geass_items:
+    # How many Geass are in your game. Each Geass lets you pick any anime (even a locked one):
+    # it counts as guessed immediately. 0 = no Geass.
+    # At most 10% of your Anime Count is used (e.g. 50 anime -> at most 5 Geass).
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 50
+    10: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-50: 0 # random value between 0 and 50
+
+  stand_arrow_items:
+    # How many Stand Arrows are in your game. Each one reveals all information about an anime of your choice
+    # (year, studio, episodes, format, source, season and a blurred cover). 0 = no Stand Arrows.
+    # In small worlds there may be less room, then fewer are used.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 100
+    10: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-100: 0 # random value between 0 and 100
+
+  trap_items:
+    # Adds the trap items:
+    # Kira's Hand (5x): locks a random genre for 60 seconds.
+    # Isekai Truck (3x): shuffles the anime fields for 60 seconds (the numbers stay).
+    # Filler Arc (3x): hides all hints and info for 60 seconds.
+    # Tsundere (3x): for 30 seconds every correct answer is refused once ("B-baka!"); just try again.
+    # Kira's Hand details:
+    # If genres do not unlock anything in your world (e.g. Only Genres), it locks a letter instead.
+    # It never locks your last free genre/letter: then it waits until you have a second one.
+    'false': 0
+    'true': 50
+
+  trap_link:
+    # Trade traps with other games that support TrapLink: when you get a trap, other TrapLink players get one too,
+    # and their traps hit you as one of the Animepelago traps.
+    'false': 50
+    'true': 0
+
+  ###########################
+  # Item & Location Options #
+  ###########################
+  local_items:
+    # Forces these items to be in their native world.
+    []
+
+  non_local_items:
+    # Forces these items to be outside their native world.
+    []
+
+  start_inventory:
+    # Start with the specified amount of these items. Example: {Bomb: 1, Arrow: 3}
+    {}
+
+  start_hints:
+    # Start with these item's locations prefilled into the ``!hint`` command.
+    []
+
+  start_location_hints:
+    # Start with these locations and their item prefilled into the ``!hint`` command.
+    []
+
+  exclude_locations:
+    # Prevent these locations from having an important item.
+    []
+
+  priority_locations:
+    # Prevent these locations from having an unimportant item.
+    []
+
+  item_links:
+    # Share part of your item pool with other players.
+    []
+
+  plando_items:
+    # Generic items plando.
+    []

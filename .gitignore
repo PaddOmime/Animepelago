@@ -1,0 +1,15 @@
+# Alles in offline/ bleibt nur auf deinem PC (Skripte, Rohdaten, Pruefliste, Korrekturen)
+offline/
+
+# Python
+__pycache__/
+*.pyc
+*.tmp
+
+# Gebaute APWorld: kommt in die Releases, nicht ins Repo
+*.apworld
+
+# Archipelago-Testdateien
+*.archipelago
+*.apsave
+AP_*.zip

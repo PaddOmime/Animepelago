@@ -1,0 +1,1837 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Sicherheit: Die Seite darf nur eigene Skripte laden, Bilder nur von AniList und nur mit Archipelago-Servern
+     (WebSocket) und der AniList-API sprechen. So kann eingeschleuster Code nichts nachladen oder Daten wegschicken. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://s4.anilist.co https://*.anilist.co; connect-src 'self' ws: wss: https://graphql.anilist.co; media-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Animepelago</title>
+<style>
+:root{--bg:#f6f6f4;--fg:#1d1d1f;--mute:#6b6b70;--card:#fff;--line:#d9d9de;--ok:#1f8a4c;--bad:#b3261e;--warn:#c2570c;--perk:#d4a017;--p1:#2f6fd6;--p2:#d9480f;--accent:#3355cc;--grey:#e4e4e8}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--fg:#ececef;--mute:#9a9aa2;--card:#1f1f23;--line:#34343a;--ok:#4cc27e;--bad:#ff6b60;--warn:#ff9a4d;--perk:#f0c93a;--p1:#6fa3ff;--p2:#ff8a4d;--accent:#7d97ff;--grey:#2a2a2f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:0 0 12px}
+.hide{display:none!important}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--mute);margin-bottom:8px}
+input,select,button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+input,label select{width:100%}
+label>span:first-child{display:block;margin-bottom:2px}
+button{cursor:pointer}
+button.main{background:var(--accent);color:#fff;border-color:var(--accent)}
+a{color:var(--accent)}
+.btnlink{display:inline-block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 160px}
+#topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#msg{min-height:1.4em;margin-top:6px}
+.good{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+#stats{color:var(--mute);font-size:13px}
+.chips span{display:inline-block;border:1px solid var(--line);border-radius:12px;padding:1px 8px;margin:2px;font-size:12px}
+.chips .have{border-color:var(--ok);color:var(--ok)}
+.chips .miss{border-color:var(--bad);background:var(--grey);color:var(--mute)}
+.chips .perk{border-color:var(--perk);color:var(--perk);font-weight:600}
+.chips .blocked{border-color:var(--warn);color:var(--warn);text-decoration:line-through}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
+.grouph{font-size:14px;margin:14px 0 6px}
+.grouph span{color:var(--mute);font-weight:400}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:8px;aspect-ratio:1;position:relative;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;overflow:hidden}
+/* Farben wie bei Archipelago-Trackern: in Logik = gruen, nicht in Logik = rot und innen ausgegraut */
+.tile.open{border-color:var(--ok)}
+.tile.locked{border-color:var(--bad);background:var(--grey)}
+.tile.locked>*{opacity:.4}
+.tile.done{border-color:var(--line)}
+/* gelb = ueber einen Perk freigeschaltet (Dragon-Ball-Wunsch) oder geloest (Domain Expansion) */
+.tile.perk{border-color:var(--perk)}
+.tile .check{position:absolute;bottom:2px;right:5px;font-size:12px;color:var(--ok)}
+.tile .n{position:absolute;top:3px;left:5px;font-size:10px;color:var(--mute)}
+.tile .badge{position:absolute;top:3px;right:5px;font-size:10px}
+.tile .q{font-size:38px;font-weight:700;color:var(--mute);line-height:1}
+.tile .logo{max-width:100%;max-height:60%;object-fit:contain;flex:0 1 auto;min-height:0}
+/* Silhouette: Logo komplett schwarz (im Dunkelmodus weiss) */
+.tile:not(.done) .logo{filter:brightness(0)}
+@media (prefers-color-scheme:dark){.tile:not(.done) .logo{filter:brightness(0) invert(1)}}
+.tile .name{font-size:11px;line-height:1.2;text-align:center;margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tile .lock{position:absolute;bottom:3px;right:5px;font-size:11px}
+#tileinfo .hint{color:var(--warn)}
+#tileinfo .unlocks>div{margin:6px 0}
+#log{max-height:220px;overflow:auto;font-size:13px;margin:0;padding-left:18px}
+#scores table{border-collapse:collapse;font-size:13px;width:100%}
+#scores th,#scores td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left;white-space:nowrap}
+.mute{color:var(--mute)}
+#hmKeys button{min-width:34px;padding:6px 0;font-weight:600}
+#hmKeys button.hit{background:var(--ok);color:#fff;border-color:var(--ok)}
+#hmKeys button.miss{background:var(--grey);color:var(--mute);text-decoration:line-through}
+#hmPic line,#hmPic circle{stroke:var(--fg);stroke-width:3;fill:none;stroke-linecap:round}
+#bgGrid{border-collapse:separate;border-spacing:4px;width:100%;table-layout:fixed}
+#bgGrid th{font-size:12px;font-weight:600;padding:4px;text-align:center;vertical-align:middle;word-break:normal;overflow-wrap:break-word;hyphens:auto}
+#bgGrid.big th{font-size:10px;padding:2px}
+#bgGrid.big td{font-size:10px;height:58px}
+#bgGrid td{border:2px solid var(--line);border-radius:8px;height:64px;text-align:center;vertical-align:middle;font-size:12px;
+  cursor:pointer;padding:3px;word-break:break-word;background:var(--card)}
+#bgGrid .blogo{max-width:100%;max-height:40px;object-fit:contain;display:block;margin:2px auto 0}
+#bgGrid .bt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#bgGrid td.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+#bgGrid td.p1{border-color:var(--p1);background:color-mix(in srgb, var(--p1) 14%, var(--card))}
+#bgGrid td.p2{border-color:var(--p2);background:color-mix(in srgb, var(--p2) 14%, var(--card))}
+#bgGrid td.win{box-shadow:0 0 0 3px var(--perk) inset}
+#bgGrid .pmark{font-size:16px;font-weight:700;line-height:1}
+#bgGrid td.p1 .pmark,.p1t{color:var(--p1)} #bgGrid td.p2 .pmark,.p2t{color:var(--p2)}
+#bgGrid td.missed{border-color:var(--bad);background:var(--grey);color:var(--mute)}
+.subtab{font-size:13px;padding:5px 9px;border-style:dashed}
+.subtab::before{content:"↳ ";color:var(--mute)}
+.subtab.active{border:1px solid var(--accent);color:var(--accent);font-weight:600}
+#modeOff.parent{border-color:var(--accent);color:var(--accent)}
+.game-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line);margin-top:10px;font-size:13px}
+.game-row>span{flex:1 1 180px}
+#chat{display:flex;gap:8px;margin-top:8px}
+dialog{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:8px;max-width:520px;width:calc(100% - 32px)}
+dialog img{max-width:160px;float:right;margin:0 0 8px 10px;border-radius:4px}
+dialog li.no{color:var(--mute)}
+footer{color:var(--mute);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<main>
+<div id="topbar">
+  <h1>Animepelago</h1>
+  <span><button type="button" id="soundBtn" aria-label="Sound" style="margin-right:6px"></button><select id="uilang" aria-label="Language"><option value="en">English</option><option value="de">Deutsch</option></select></span>
+</div>
+
+<!-- Verbindung -->
+<div id="modes" class="row" style="margin-bottom:8px">
+  <button type="button" id="modeAP" class="main" style="flex:0 0 auto" data-t="modeAP"></button>
+  <button type="button" id="modeOff" style="flex:0 0 auto" data-t="modeOff"></button>
+  <button type="button" id="modeMore" class="subtab hide" style="flex:0 0 auto" data-t="modeMore"></button>
+</div>
+<div id="connect" class="box">
+  <div class="row">
+    <label><span data-t="server"></span><input id="host" required autocomplete="off" placeholder="archipelago.gg"></label>
+    <label style="flex:0 1 110px"><span data-t="port"></span><input id="port" type="number" min="1" max="65535" placeholder="38281"></label>
+    <label><span data-t="slot"></span><input id="slot" required autocomplete="off"></label>
+    <label><span data-t="password"></span><input id="password" type="password" autocomplete="off"></label>
+    <button type="button" class="main" id="go" style="flex:0 0 auto" data-t="connect"></button>
+  </div>
+  <div id="cmsg"></div>
+  <p style="margin:12px 0 0;font-size:13px;color:var(--mute)"><span data-t="noYaml"></span> <a id="yamlLink" class="btnlink" href="Animepelago.yaml" download="Animepelago.yaml" target="_blank" rel="noopener" data-t="yamlBtn"></a></p>
+</div>
+<div id="offline" class="box hide">
+  <div class="row">
+    <label><span data-t="oCount"></span><input id="oCount" type="number" min="10" value="50"></label>
+    <label><span data-t="oGoalType"></span><select id="oGoalType"><option value="anime" data-t="oGoalAnime"></option><option value="exodia">Exodia</option><option value="genre_master" data-t="oGoalGM"></option></select></label>
+    <label><span data-t="oGoal"></span><input id="oGoal" type="number" min="1" value="40"></label>
+  </div>
+  <div class="row">
+    <label><span data-t="oUnlock"></span><select id="oUnlock"><option value="both" data-t="oBoth"></option><option value="genres" data-t="oGenres"></option><option value="letters" data-t="oLetters"></option></select></label>
+    <label><span data-t="oLang"></span><select id="oLang"></select></label>
+    <label><span data-t="oRule"></span><select id="oRule"><option value="any" data-t="oAny"></option><option value="all" data-t="oAll"></option></select></label>
+    <label><span data-t="oOnly"></span><select id="oOnly"><option value="" data-t="oOnlyAll"></option></select></label>
+    <label id="oOnlyStartBox" class="hide"><span data-t="oOnlyStart"></span><input id="oOnlyStart" type="number" min="2" max="8" value="3"></label>
+    <label><span data-t="oGeass"></span><input id="oGeass" type="number" min="0" max="50" value="10"></label>
+    <label><span data-t="oArrows"></span><input id="oArrows" type="number" min="0" max="100" value="10"></label>
+  </div>
+  <div class="row" style="align-items:center">
+    <label style="flex:0 1 auto"><input id="oDemo" type="checkbox" checked style="width:auto"> <span data-t="oDemo"></span></label>
+    <label style="flex:0 1 auto"><input id="oPerks" type="checkbox" checked style="width:auto"> <span data-t="oPerks"></span></label>
+    <label style="flex:0 1 auto"><input id="oTraps" type="checkbox" checked style="width:auto"> <span data-t="oTraps"></span></label>
+  </div>
+  <div class="row" style="align-items:center">
+    <span data-t="oExtras" style="flex:0 0 auto;font-size:13px;color:var(--mute)"></span>
+    <label style="flex:0 1 auto"><input id="oxYear" type="checkbox" style="width:auto"> <span data-t="cat_year"></span></label>
+    <label style="flex:0 1 auto"><input id="oxSource" type="checkbox" style="width:auto"> <span data-t="cat_source"></span></label>
+    <label style="flex:0 1 auto"><input id="oxSeason" type="checkbox" style="width:auto"> <span data-t="cat_season"></span></label>
+    <label style="flex:0 1 auto"><input id="oxStudio" type="checkbox" style="width:auto"> <span data-t="cat_studio"></span></label>
+  </div>
+  <div class="row">
+    <button type="button" class="main" id="oNew" style="flex:0 0 auto" data-t="oNew"></button>
+    <button type="button" id="oContinue" class="hide" style="flex:0 0 auto" data-t="oContinue"></button>
+  </div>
+  <div id="omsg"></div>
+  <h3 data-t="scoresTitle" style="font-size:15px;margin:16px 0 6px"></h3>
+  <div id="scores" style="overflow-x:auto"></div>
+</div>
+
+<!-- Weitere: Minispiele mit eigenen Einstellungen -->
+<div id="more" class="box hide">
+  <h3 style="font-size:15px;margin:0 0 4px" data-t="moreTitle"></h3>
+  <p class="mute" style="font-size:13px;margin:0 0 8px" data-t="moreInfo"></p>
+  <div class="row">
+    <label><span data-t="oPool"></span><input id="mPool" type="number" min="50" value="500"></label>
+    <label><span data-t="oLang"></span><select id="mLang"></select></label>
+    <label><span data-t="oOnly"></span><select id="mOnly"><option value="" data-t="oOnlyAll"></option></select></label>
+  </div>
+  <div class="game-row">
+    <button type="button" id="hmStart" class="main" data-t="hmStart"></button>
+    <span class="mute" data-t="hmDesc"></span>
+  </div>
+  <div class="game-row">
+    <button type="button" id="bgStart" class="main" data-t="bgStart"></button>
+    <label style="flex:0 0 auto;margin:0"><span data-t="bgSizeLbl"></span><select id="bgSize"><option value="3" data-t="bgSize3"></option><option value="4" data-t="bgSize4"></option><option value="5" data-t="bgSize5"></option></select></label>
+    <span class="mute" data-t="bgDesc"></span>
+  </div>
+</div>
+
+<!-- Galgenmaennchen (Minispiel) -->
+<section id="hangman" class="hide">
+  <div class="box">
+    <div class="row" style="align-items:center">
+      <b style="flex:1 1 auto" data-t="hmTitle"></b>
+      <span id="hmScore" class="mute" style="flex:0 0 auto"></span>
+      <button type="button" id="hmBack" style="flex:0 0 auto" data-t="yBack"></button>
+    </div>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:8px">
+      <svg id="hmPic" viewBox="0 0 120 130" width="120" height="130" aria-hidden="true"></svg>
+      <div style="flex:1 1 200px">
+        <div id="hmWord" style="font:600 22px/1.5 monospace;letter-spacing:2px;word-break:break-word"></div>
+        <div id="hmHint" class="mute" style="font-size:13px;margin-top:4px"></div>
+        <div id="hmMsg" style="margin-top:6px"></div>
+      </div>
+    </div>
+    <div id="hmKeys" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px"></div>
+    <div class="row" style="margin-top:10px">
+      <input id="hmGuess" autocomplete="off" style="flex:4 1 200px">
+      <button type="button" id="hmSolve" style="flex:0 0 auto" data-t="hmSolve"></button>
+      <button type="button" id="hmNext" class="main hide" style="flex:0 0 auto" data-t="hmNext"></button>
+    </div>
+  </div>
+</section>
+
+<!-- Anime-Bingo (Offline-Minispiel) -->
+<section id="bingo" class="hide">
+  <div class="box">
+    <div class="row" style="align-items:center">
+      <b style="flex:1 1 auto" data-t="bgTitle"></b>
+      <span id="bgScore" class="mute" style="flex:0 0 auto"></span>
+      <button type="button" id="bgBack" style="flex:0 0 auto" data-t="yBack"></button>
+    </div>
+    <p id="bgHelpP" class="mute" style="font-size:13px;margin:6px 0" data-t="bgHelp"></p>
+    <div class="row" style="margin-bottom:6px">
+      <label><span data-t="bgP1"></span><input id="bgP1" maxlength="20" autocomplete="off"></label>
+      <label><span data-t="bgP2"></span><input id="bgP2" maxlength="20" autocomplete="off"></label>
+    </div>
+    <div id="bgTurnBox" style="font-weight:600;margin:4px 0"></div>
+    <div style="overflow-x:auto"><table id="bgGrid"></table></div>
+    <div class="row" style="margin-top:10px">
+      <input id="bgGuess" autocomplete="off" style="flex:4 1 200px">
+      <button type="button" id="bgEnter" class="main" style="flex:0 0 auto" data-t="bgEnter"></button>
+      <button type="button" id="bgNew" style="flex:0 0 auto" data-t="bgNew"></button>
+      <button type="button" id="bgEnd" class="hide" style="flex:0 0 auto" data-t="bgEnd"></button>
+    </div>
+    <div id="bgMsg" style="margin-top:6px"></div>
+  </div>
+</section>
+
+<!-- Spiel -->
+<section id="game" class="hide">
+  <div class="box">
+    <div class="row">
+      <input id="guess" autocomplete="off" style="flex:4 1 240px">
+      <button class="main" id="send" style="flex:0 0 auto" data-t="guessBtn"></button>
+      <button id="leave" style="flex:0 0 auto" data-t="disconnect"></button>
+    </div>
+    <div id="msg"></div>
+    <div id="stats"></div>
+  </div>
+  <div class="box">
+    <div id="genrerow"><b>🏷️ <span data-t="genres"></span></b> <span id="genres" class="chips"></span></div>
+    <div id="letterrow"><b>🔤 <span data-t="letters"></span></b> <span id="letters" class="chips"></span></div>
+    <div id="extrarows"></div>
+    <div id="perks" class="chips"></div>
+    <div id="wish" class="hide"></div>
+  </div>
+  <div class="row" style="margin-bottom:8px">
+    <select id="filter" style="flex:0 1 220px">
+      <option value="all" data-t="fAll"></option><option value="open" data-t="fOpen"></option>
+      <option value="locked" data-t="fLocked"></option><option value="done" data-t="fDone"></option>
+    </select>
+    <select id="sort" style="flex:0 1 220px">
+      <option value="num" data-t="sNum"></option><option value="genre" data-t="sGenre"></option>
+      <option value="letter" data-t="sLetter"></option><option value="demo" data-t="sDemo"></option>
+      <option value="year" data-t="sYear"></option><option value="source" data-t="sSource"></option>
+      <option value="season" data-t="sSeason"></option><option value="studio" data-t="sStudio"></option>
+    </select>
+  </div>
+  <div id="grid"></div>
+  <div class="box" style="margin-top:12px">
+    <b data-t="log"></b>
+    <ul id="log"></ul>
+    <div id="chat"><input id="say" autocomplete="off"><button type="button" id="sayBtn" data-t="sendChat"></button></div>
+  </div>
+</section>
+<dialog id="info"><div id="infobody"></div><button type="button" id="closeInfo" data-t="close"></button></dialog>
+<footer data-t="credits"></footer>
+</main>
+
+<script src="game_data.js"></script>
+<script>
+"use strict";
+// ---------- Texte DE/EN ----------
+const TXT = {
+  en: {modeAP:"Archipelago", modeOff:"Offline", oCount:"Anime in the game", oPool:"Pick from the N most popular",
+    oGoalType:"Goal", oGoalAnime:"Guess anime", oGoal:"Anime to guess", oUnlock:"Unlock by", oBoth:"Genres + letters",
+    oGenres:"Genres", oLetters:"Letters", oLang:"Title language", oRule:"Genre rule", oAny:"Any genre", oAll:"All genres",
+    oGeass:"Geass (max 10%)", oDemo:"Demographics count as genres", oPerks:"Perks (Sukuna, Dragon Balls, Senzu, Time Leap)", oTraps:"Traps (Kira, Isekai Truck, Filler Arc, Tsundere)",
+    offStats:" · ⏱ {0}", winTime:"Goal reached in {0}! 🎉", scoresTitle:"Highscores (this browser)",
+    noScores:"No finished offline games yet.", hApm:"Anime/min", hTime:"Time", hGuessed:"Guessed", hGoal:"Goal", hPool:"Pool", hHelps:"Helps", hMode:"Mode", hDate:"Date",
+    oExtras:"Also needed:", oOnlyStart:"Start anime (2-8)", oOnly:"Only one genre", oOnlyAll:"All genres", onlyStats:" · only {0}", noYaml:"No player YAML yet?", yamlBtn:"📄 Download Animepelago.yaml", isOpen:"You can guess this anime.", isLocked:"Still locked.", yourItems:"Your unlocked items for this anime:", noneYet:"None yet.", needOne:"one of them is enough", needAll:"all of them needed",
+    noGenreNeeded:"no genre needed", oArrows:"Stand Arrows", nOf:"{0} more of {1}", needsN:"(needs {0})", modeMore:"🎮 More", moreTitle:"🎮 Mini games", moreInfo:"Small games on their own. These settings apply to all of them.",
+    hmDesc:"Guess the title letter by letter. Every mistake reveals a clue.", bgSizeLbl:"Size", bgSize3:"3×3 (line)", bgSize4:"4×4 (line)", bgSize5:"5×5 (most fields)", bgEnd:"End round",
+    bgFields:"{0} fields", bgMostRule:"5×5: whoever has more fields at the end wins.",
+    bgHelpMost:"2 players, taking turns on this device. Pick a free field and name an anime that fits its row and column. A wrong answer (or an anime already in the grid) ends your turn. Whoever has more fields when the grid is full (or the round is ended) wins!",
+    bgDesc:"2 players: name anime that fit row and column. 3×3/4×4: first full line wins. 5×5: most fields wins.", hmStart:"🪢 Hangman", bgStart:"🎯 Anime Bingo", bgTitle:"🎯 Anime Bingo", bgEnter:"Enter", bgNew:"New round",
+    bgHelp:"2 players, taking turns on this device. Pick a free field and name an anime that fits its row and column. A wrong answer (or an anime that is already in the grid) ends your turn. First to get a full row, column or diagonal wins!",
+    bgP1:"Player 1 (✕)", bgP2:"Player 2 (◯)", bgPlayer:"Player {0}", bgTurn:"{0}'s turn", bgRight2:"✓ {0} takes the field with {1}.",
+    bgTurnLost:"Turn over for {0}.", bgWinner:"🏆 {0} wins! Tap a field to see other answers.", bgDraw:"Grid full – draw! Tap a field to see other answers.",
+    bgScoreTxt:"{0}/{1} fields · {2} tries · {3} points · best {4}", bgPossible:"possible", bgPickCell:"First pick a free field.",
+    bgUsed:"This anime is already in the grid.", bgRight:"✓ {0} (+100, rarity bonus +{1})", bgNoFit:"{0} doesn't fit this field.",
+    bgWin:"Bingo! Full grid with {0} points 🎉 Tap a field to see other answers.", bgOver:"No tries left. {0} points. Tap a field to see possible answers.",
+    bgNoGrid:"No fair grid possible with these settings. Pick more anime (\"most popular N\") or a smaller grid.", hmTitle:"🪢 Anime Hangman", hmSolve:"Guess title", hmNext:"Next anime", yBack:"Back",
+    hmLives:"{0} tries left", hmScore:"Streak {0} · best {1} · solved {2}", hmWon:"Solved! 🎉", hmLost:"Too bad! It was: {0}",
+    hmWrongTitle:"Not that one.", hmPh:"Or type the whole title …", before2000:"before 2000", trap_KirasHand:"Kira's Hand", "trap_Kira's Hand":"Kira's Hand", "trap_Isekai Truck":"Isekai Truck", "trap_Filler Arc":"Filler Arc", trap_Tsundere:"Tsundere",
+    trapHit_IsekaiTruck:"🚚 Isekai Truck! The fields are shuffled for 60 seconds.", trapHit_FillerArc:"📺 Filler Arc! Hints and info are hidden for 60 seconds.",
+    trapHit_Tsundere:"😤 Tsundere! For 30 seconds every correct answer is refused once.", tsundereNo:"😤 B-baka! It's not like you're right or anything… (try again)",
+    leapSaved:"⏪ Time Leap: {0} missed you!", trapLinkIn:"TrapLink from {0}: {1}", senzuUsed:"🫘 Senzu Bean: all trap effects are gone!",
+    perkSenzu:"Senzu Bean ({0}) – use", perkLeap:"Time Leap: {0} ready", goalGM:"Genre Master {0}/{1} genres ({2} anime each)",
+    fillerHidden:"Filler Arc – no hints for {0}s", typoOk:"(with a typo)", oGoalGM:"Genre Master", oNew:"New offline game", oContinue:"Continue saved game", you:"You", youGot:"You got: {0}",
+    fillIn:"Please fill in server and player name.", server:"Server", port:"Port", slot:"Player name", password:"Password (optional)", connect:"Connect",
+    disconnect:"Disconnect", guessBtn:"Guess", genres:"Genres:", letters:"Letters:", log:"Messages",
+    sendChat:"Send", close:"Close", sYear:"Sort: year", sSource:"Sort: source", sSeason:"Sort: season", sStudio:"Sort: studio",
+    cat_year:"Year", cat_source:"Source", cat_season:"Season", cat_studio:"Studio", sNum:"Sort: number", sGenre:"Sort: genre", sLetter:"Sort: letter", sDemo:"Sort: demographic", noDemo:"No demographic", fAll:"All anime", fOpen:"Guessable", fLocked:"Locked", fDone:"Guessed",
+    guessPh:"Type an anime title (any language) …", sayPh:"Chat or command, e.g. !hint",
+    connecting:"Connecting to {0} …", noConn:"Could not connect to {0}.", httpsNote:" This page runs on https, so the server must support wss (archipelago.gg does). For a local server open the page from your own computer.",
+    refused:"Connection refused: {0}", wrongGame:"This slot does not play Animepelago.", closed:"Connection lost.",
+    dataOld:"Warning: this page has database version {0}, the world was made with version {1}. Some anime may be missing.",
+    stats:"Guessed {0} of {1} · Goal: {2}", goalExodia:"collect all 5 Exodia pieces ({0}/5)", goalAnime:"{0} anime",
+    win:"Goal reached! 🎉", correct:"Correct: {0}", already:"Already guessed: {0}", locked:"{0} is still locked. Needed: {1}",
+    notIn:"That anime is not in your game.", unknown:"Unknown title.", need:"Needs: {0}", or:" or ", and:" and ",
+    perkSukuna:"Sukuna's Finger {0}/{1}", perkDragon:"Dragon Balls {0}/{1}", perkArrow:"Stand Arrow: {0} available ({1}/{2} found)", useArrow:"Use Stand Arrow ({0} left)", arrowUsed:"Stand Arrow: everything about anime #{0} was revealed.", perkGeass:"Geass: {0} available ({1}/{2} found)", useGeass:"Use Geass ({0} left)", domain:"Domain Expansion", domainUsed:"Domain Expansion used",
+    domainAsk:"Domain Expansion: open any anime and press 'Claim' to count it as guessed.", claim:"Claim",
+    wishAsk:"All Dragon Balls! Choose a genre:", wishBtn:"Wish", wished:"Wish granted: {0}",
+    hint:"For anime #{0} it was revealed: {1}", kira:"Kira's Hand! {0} is locked for 1 minute.", kiraName:"Kira's Hand", queuedN:"{0} trap(s) waiting", trapQueued:"{0} is waiting: your last free unlock is never locked. It strikes as soon as you have a second one.", deathRecv:"DeathLink from {0}: {1} is locked for 1 minute.",
+    deathSent:"Death Note! A DeathLink was sent.", blockedFor:"blocked ({0}s)",
+    hYear:"year {0}", hStudio:"studio {0}", hEps:"{0} episodes", hFormat:"format {0}", hSource:"source {0}",
+    hWords:"the title has {0} words", hMid:"letter in the middle of the title: {0}", hSeason:"season {0}", hCover:"cover (blurred)",
+    parts:"Parts", loadingInfo:"Loading info from AniList …", liveLoading:" · loading info ({0})", notCounted:"(not in the game)", alsoKnown:"Also known as", openAniList:"Open on AniList",
+    letterN:"Letter {0}", credits:"Data: AniList. Not affiliated with AniList or Archipelago. All titles and images © their respective owners."},
+  de: {modeAP:"Archipelago", modeOff:"Offline", oCount:"Anime im Spiel", oPool:"Aus den N beliebtesten",
+    oGoalType:"Ziel", oGoalAnime:"Anime erraten", oGoal:"Anime zum Sieg", oUnlock:"Freischalten über", oBoth:"Genres + Buchstaben",
+    oGenres:"Genres", oLetters:"Buchstaben", oLang:"Titelsprache", oRule:"Genre-Regel", oAny:"Ein Genre reicht", oAll:"Alle Genres",
+    oGeass:"Geass (max. 10 %)", oDemo:"Zielgruppen zählen als Genres", oPerks:"Perks (Sukuna, Dragon Balls)", oTraps:"Fallen (Kira, Isekai-Truck, Filler Arc, Tsundere)",
+    offStats:" · ⏱ {0}", winTime:"Ziel erreicht in {0}! 🎉", scoresTitle:"Highscores (dieser Browser)",
+    noScores:"Noch keine beendeten Offline-Spiele.", hApm:"Anime/Min.", hTime:"Zeit", hGuessed:"Erraten", hGoal:"Ziel", hPool:"Auswahl", hHelps:"Hilfen", hMode:"Modus", hDate:"Datum",
+    oExtras:"Zusätzlich nötig:", oOnlyStart:"Start-Anime (2–8)", oOnly:"Nur ein Genre", oOnlyAll:"Alle Genres", onlyStats:" · nur {0}", noYaml:"Noch keine Spieler-YAML?", yamlBtn:"📄 Animepelago.yaml herunterladen", isOpen:"Diesen Anime kannst du raten.", isLocked:"Noch gesperrt.", yourItems:"Deine freigeschalteten Items für diesen Anime:", noneYet:"Noch keine.", needOne:"eins davon reicht", needAll:"alle nötig",
+    noGenreNeeded:"kein Genre nötig", oArrows:"Stand Arrows", nOf:"noch {0} von {1}", needsN:"(braucht {0})", modeMore:"🎮 Weitere", moreTitle:"🎮 Minispiele", moreInfo:"Kleine Spiele für zwischendurch. Diese Einstellungen gelten für alle.",
+    hmDesc:"Errate den Titel Buchstabe für Buchstabe. Jeder Fehler deckt einen Hinweis auf.", bgSizeLbl:"Größe", bgSize3:"3×3 (Reihe)", bgSize4:"4×4 (Reihe)", bgSize5:"5×5 (meiste Felder)", bgEnd:"Runde beenden",
+    bgFields:"{0} Felder", bgMostRule:"5×5: Wer am Ende mehr Felder hat, gewinnt.",
+    bgHelpMost:"2 Spieler, abwechselnd an diesem Gerät. Wähle ein freies Feld und nenne einen Anime, der zu Zeile und Spalte passt. Falsche Antwort oder ein Anime, der schon im Raster steht = Zug vorbei. Wer am Ende mehr Felder hat (Raster voll oder Runde beendet), gewinnt!",
+    bgDesc:"2 Spieler: Nennt Anime, die zu Zeile und Spalte passen. 3×3/4×4: Wer zuerst eine Reihe hat, gewinnt. 5×5: Wer mehr Felder hat, gewinnt.", hmStart:"🪢 Galgenmännchen", bgStart:"🎯 Anime-Bingo", bgTitle:"🎯 Anime-Bingo", bgEnter:"Eintragen", bgNew:"Neue Runde",
+    bgHelp:"2 Spieler, abwechselnd an diesem Gerät. Wähle ein freies Feld und nenne einen Anime, der zu Zeile und Spalte passt. Falsche Antwort oder ein Anime, der schon im Raster steht = Zug vorbei. Wer zuerst eine ganze Zeile, Spalte oder Diagonale hat, gewinnt!",
+    bgP1:"Spieler 1 (✕)", bgP2:"Spieler 2 (◯)", bgPlayer:"Spieler {0}", bgTurn:"{0} ist dran", bgRight2:"✓ {0} holt sich das Feld mit {1}.",
+    bgTurnLost:"Zug vorbei für {0}.", bgWinner:"🏆 {0} gewinnt! Tippe ein Feld an, um andere Antworten zu sehen.", bgDraw:"Raster voll – unentschieden! Tippe ein Feld an, um andere Antworten zu sehen.",
+    bgScoreTxt:"{0}/{1} Felder · {2} Versuche · {3} Punkte · Bestwert {4}", bgPossible:"möglich", bgPickCell:"Wähle zuerst ein freies Feld.",
+    bgUsed:"Dieser Anime steht schon im Raster.", bgRight:"✓ {0} (+100, Seltenheitsbonus +{1})", bgNoFit:"{0} passt nicht in dieses Feld.",
+    bgWin:"Bingo! Volles Raster mit {0} Punkten 🎉 Tippe ein Feld an, um andere Antworten zu sehen.", bgOver:"Keine Versuche mehr. {0} Punkte. Tippe ein Feld an, um mögliche Antworten zu sehen.",
+    bgNoGrid:"Mit diesen Einstellungen geht kein faires Raster. Wähle mehr Anime („Aus den N beliebtesten“) oder ein kleineres Raster.", hmTitle:"🪢 Anime-Galgenmännchen", hmSolve:"Titel raten", hmNext:"Nächster Anime", yBack:"Zurück",
+    hmLives:"noch {0} Versuche", hmScore:"Serie {0} · Bestwert {1} · gelöst {2}", hmWon:"Gelöst! 🎉", hmLost:"Schade! Gesucht war: {0}",
+    hmWrongTitle:"Das ist er nicht.", hmPh:"Oder den ganzen Titel eintippen …", before2000:"vor 2000", trap_KirasHand:"Kiras Hand", "trap_Kira's Hand":"Kiras Hand", "trap_Isekai Truck":"Isekai-Truck", "trap_Filler Arc":"Filler Arc", trap_Tsundere:"Tsundere",
+    trapHit_IsekaiTruck:"🚚 Isekai-Truck! Die Felder sind 60 Sekunden durcheinander.", trapHit_FillerArc:"📺 Filler Arc! Hinweise und Infos sind 60 Sekunden ausgeblendet.",
+    trapHit_Tsundere:"😤 Tsundere! 30 Sekunden lang wird jede richtige Antwort einmal abgelehnt.", tsundereNo:"😤 B-baka! Es ist ja nicht so, als hättest du recht… (nochmal versuchen)",
+    leapSaved:"⏪ Time Leap: {0} ging daneben!", trapLinkIn:"TrapLink von {0}: {1}", senzuUsed:"🫘 Senzu-Bohne: Alle Fallen-Wirkungen sind weg!",
+    perkSenzu:"Senzu-Bohne ({0}) – einsetzen", perkLeap:"Time Leap: {0} bereit", goalGM:"Genre-Meister {0}/{1} Genres (je {2} Anime)",
+    fillerHidden:"Filler Arc – keine Hinweise für {0} s", typoOk:"(mit Tippfehler erkannt)", oGoalGM:"Genre-Meister", oNew:"Neues Offline-Spiel", oContinue:"Gespeichertes Spiel fortsetzen", you:"Du", youGot:"Du erhältst: {0}",
+    fillIn:"Bitte Server und Spielername ausfüllen.", server:"Server", port:"Port", slot:"Spielername", password:"Passwort (optional)", connect:"Verbinden",
+    disconnect:"Trennen", guessBtn:"Raten", genres:"Genres:", letters:"Buchstaben:", log:"Nachrichten",
+    sendChat:"Senden", close:"Schließen", sYear:"Sortieren: Jahr", sSource:"Sortieren: Vorlage", sSeason:"Sortieren: Jahreszeit", sStudio:"Sortieren: Studio",
+    cat_year:"Jahr", cat_source:"Vorlage", cat_season:"Jahreszeit", cat_studio:"Studio", sNum:"Sortieren: Nummer", sGenre:"Sortieren: Genre", sLetter:"Sortieren: Buchstabe", sDemo:"Sortieren: Zielgruppe", noDemo:"Keine Zielgruppe", fAll:"Alle Anime", fOpen:"Ratbar", fLocked:"Gesperrt", fDone:"Erraten",
+    guessPh:"Anime-Titel eingeben (jede Sprache) …", sayPh:"Chat oder Befehl, z. B. !hint",
+    connecting:"Verbinde mit {0} …", noConn:"Keine Verbindung zu {0}.", httpsNote:" Diese Seite läuft über https, der Server muss also wss können (archipelago.gg kann das). Für einen lokalen Server die Seite vom eigenen PC öffnen.",
+    refused:"Verbindung abgelehnt: {0}", wrongGame:"Dieser Spieler spielt nicht Animepelago.", closed:"Verbindung verloren.",
+    dataOld:"Achtung: Diese Seite hat Datenbank-Version {0}, die Welt wurde mit Version {1} erstellt. Einzelne Anime könnten fehlen.",
+    stats:"{0} von {1} erraten · Ziel: {2}", goalExodia:"alle 5 Exodia-Teile sammeln ({0}/5)", goalAnime:"{0} Anime",
+    win:"Ziel erreicht! 🎉", correct:"Richtig: {0}", already:"Schon erraten: {0}", locked:"{0} ist noch gesperrt. Es fehlt: {1}",
+    notIn:"Dieser Anime ist nicht in deinem Spiel.", unknown:"Unbekannter Titel.", need:"Braucht: {0}", or:" oder ", and:" und ",
+    perkSukuna:"Sukunas Finger {0}/{1}", perkDragon:"Dragon Balls {0}/{1}", perkArrow:"Stand Arrow: {0} verfügbar ({1}/{2} gefunden)", useArrow:"Stand Arrow einsetzen (noch {0})", arrowUsed:"Stand Arrow: Alles über Anime #{0} wurde aufgedeckt.", perkGeass:"Geass: {0} verfügbar ({1}/{2} gefunden)", useGeass:"Geass einsetzen (noch {0})", domain:"Domain Expansion", domainUsed:"Domain Expansion benutzt",
+    domainAsk:"Domain Expansion: Öffne einen Anime und drücke „Nehmen“, er zählt dann als erraten.", claim:"Nehmen",
+    wishAsk:"Alle Dragon Balls! Wähle ein Genre:", wishBtn:"Wünschen", wished:"Wunsch erfüllt: {0}",
+    hint:"Für Anime #{0} wurde aufgedeckt: {1}", kira:"Kiras Hand! {0} ist 1 Minute gesperrt.", kiraName:"Kiras Hand", queuedN:"{0} Falle(n) warten", trapQueued:"{0} wartet: Dein letztes freies Item wird nie gesperrt. Sie schlägt zu, sobald du ein zweites hast.", deathRecv:"DeathLink von {0}: {1} ist 1 Minute gesperrt.",
+    deathSent:"Death Note! Ein DeathLink wurde gesendet.", blockedFor:"gesperrt ({0} s)",
+    hYear:"Jahr {0}", hStudio:"Studio {0}", hEps:"{0} Folgen", hFormat:"Format {0}", hSource:"Vorlage {0}",
+    hWords:"der Titel hat {0} Wörter", hMid:"Buchstabe in der Mitte des Titels: {0}", hSeason:"Jahreszeit {0}", hCover:"Cover (verschwommen)",
+    parts:"Teile", loadingInfo:"Lade Infos von AniList …", liveLoading:" · lade Infos ({0})", notCounted:"(nicht im Spiel)", alsoKnown:"Auch bekannt als", openAniList:"Auf AniList öffnen",
+    letterN:"Buchstabe {0}", credits:"Daten: AniList. Nicht verbunden mit AniList oder Archipelago. Alle Titel und Bilder © der jeweiligen Rechteinhaber."},
+};
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let lang = store.get("ap_uilang"); if (!TXT[lang]) lang = (navigator.language||"").startsWith("de") ? "de" : "en";
+const t = (k,...a) => (TXT[lang][k] ?? TXT.en[k] ?? k).replace(/\{(\d)\}/g,(_,i)=>a[i]);
+function applyLang(){
+  document.documentElement.lang = lang; $("uilang").value = lang;
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t(el.dataset.t));
+  $("bgGuess").placeholder = t("guessPh");
+  $("guess").placeholder = t("guessPh"); $("say").placeholder = t("sayPh"); $("hmGuess").placeholder = t("hmPh");
+  if (G.slotData) render();
+  renderScores();
+}
+
+// ---------- Sounds (kurze Toene ueber WebAudio, abschaltbar) ----------
+let soundOn = store.get("ap_sound") !== "off", AC = null;
+const TUNES = {ok:[[660,.08],[880,.12]], bad:[[220,.15]], trap:[[300,.08],[200,.08],[300,.08],[200,.12]],
+  item:[[990,.06]], win:[[523,.12],[659,.12],[784,.12],[1047,.25]], leap:[[880,.06],[660,.06],[880,.1]], hit:[[740,.07]], miss:[[180,.1]]};
+function sfx(kind){
+  if (!soundOn || !TUNES[kind]) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    let t0 = AC.currentTime;
+    for (const [f, d] of TUNES[kind]) {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = kind === "bad" || kind === "miss" || kind === "trap" ? "square" : "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(.08, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + d);
+      o.connect(g).connect(AC.destination); o.start(t0); o.stop(t0 + d); t0 += d;
+    }
+  } catch (e) {}
+}
+
+// ---------- Hilfen ----------
+const $ = id => document.getElementById(id);
+// Bild-Adressen nur, wenn sie mit https:// beginnen (keine "javascript:"- oder "data:"-Tricks)
+const httpsOnly = u => typeof u === "string" && /^https:\/\//.test(u) ? u : null;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// Muss genau zu offline/skripts/client_pack.py passen (guess_key, cyrb53, hide)!
+const norm = s => String(s).toLowerCase().normalize("NFKD").replace(/\p{M}/gu,"").replace(/[^\p{L}\p{N}]+/gu,"");
+function cyrb53(str, seed=0){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0);}
+const SALT = "animepelago1:";
+const nameHash = s => { const k = norm(s); return k ? cyrb53(SALT + k).toString(36) : null; };
+function unhide(data, id){
+  const key = new TextEncoder().encode(SALT + id), raw = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+  return new TextDecoder().decode(raw.map((b, i) => b ^ key[i % key.length]));
+}
+const pretty = v => v ? String(v).replace(/_/g," ").toLowerCase().replace(/^./,c=>c.toUpperCase()) : "?";
+const fmtName = v => ["TV","OVA","ONA"].includes(v) ? v : v==="TV_SHORT" ? "TV short" : pretty(v);
+function hash(s){let h=2166136261;for(const c of s){h^=c.codePointAt(0);h=Math.imul(h,16777619)>>>0}return h}
+const DB = window.ANIMEPELAGO_DB;
+// Kleine Spieldatei entpacken: Titel entschleiern, Namen bleiben Pruefsummen.
+for (const a of DB.anime) {
+  a.titles = Object.fromEntries(Object.entries(a.t).map(([l, v]) => [l, unhide(v, a.id)]));
+  a.title = a.titles.english || a.titles.romaji || a.titles.native;
+  a.logo = a.l || null;
+  a.keys = new Set(a.k); a.c = a.c || []; a.genres = a.g; a.demographics = a.d; a.parts = a.p.map(([id, c]) => ({id, counted: !!c}));
+}
+const BY_ID = new Map(DB.anime.map(a => [a.id, a]));
+const ALL_KEYS = new Set(DB.anime.flatMap(a => a.k));
+
+// IDs wie in der APWorld (Items.py / Locations.py). Niemals aendern.
+const ITEM = 7417000000, GENRES = ["Action","Adventure","Comedy","Drama","Ecchi","Fantasy","Horror","Mahou Shoujo","Mecha",
+  "Music","Mystery","Psychological","Romance","Sci-Fi","Slice of Life","Sports","Supernatural","Thriller",
+  "Shounen","Shoujo","Seinen","Josei","Kids"];  // die letzten 5 = Zielgruppen (Include Demographics)
+const DEMOGRAPHICS = GENRES.slice(18);
+const LETTERS = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ", "#"];
+const SUKUNA = ITEM+100, DRAGON = ITEM+101, GEASS = ITEM+102, ARROW = ITEM+103, SENZU = ITEM+104, TIMELEAP = ITEM+105,
+  TRUCK = ITEM+202, FILLER = ITEM+203, TSUNDERE = ITEM+204, KIRA = ITEM+200, DEATHNOTE = ITEM+201, EXODIA = [0,1,2,3,4].map(i => ITEM+400+i);
+const MILESTONE = 7419000000;
+// Zusatz-Kategorien (extra_unlocks): Schluessel, Item-Name, ID-Bereich (wie in Items.py), Werteliste aus der Spieldatei
+const EXTRA = [["year","Year",600], ["source","Source",700], ["season","Season",750], ["studio","Studio",800]]
+  .map(([key, label, offset], i) => ({key, label, offset, index:i, values:(DB.meta.categories || {})[key] || []}));
+const EXTRA_BY = Object.fromEntries(EXTRA.map(e => [e.key, e]));
+// Wert eines Anime in einer Zusatz-Kategorie (aus slot_data; offline erzeugt die Engine dieselben Daten)
+const extraOf = (a, key) => G.slotData?.extra_values?.[a.id]?.[key] ?? null;
+// Emojis nur fuer die Chips oben (freigeschaltete Items). Item-Namen in Archipelago bleiben ohne.
+const EMOJI = {Action:"💥", Adventure:"🧭", Comedy:"😂", Drama:"🎭", Ecchi:"😳", Fantasy:"🧙", Horror:"👻", "Mahou Shoujo":"🪄",
+  Mecha:"🤖", Music:"🎵", Mystery:"🔍", Psychological:"🧠", Romance:"💕", "Sci-Fi":"🚀", "Slice of Life":"🍵", Sports:"⚽",
+  Supernatural:"✨", Thriller:"🔪", Shounen:"👦", Shoujo:"👧", Seinen:"🧔", Josei:"👩", Kids:"🧸",
+  Winter:"❄️", Spring:"🌸", Summer:"☀️", Fall:"🍂", Manga:"📚", "Light Novel":"📘", Novel:"📖", Original:"💡",
+  "Visual Novel":"🖼️", "Video Game":"🎮", Other:"📦"};
+const CAT_EMOJI = {genres:"🏷️", letters:"🔤", year:"📅", source:"📚", season:"🌤️", studio:"🎬", sukuna:"☝️", geass:"👁️", dragon:"🐉", arrow:"🏹"};
+const em = v => EMOJI[v] ? EMOJI[v] + " " : "";
+const activeExtras = () => (G.slotData?.extra_unlocks || []).map(k => EXTRA_BY[k]).filter(Boolean);
+
+// ---------- Zustand ----------
+const G = {
+  ws:null, slotData:null, slot:0, team:0, players:[], slotInfo:{}, seed:"", dp:Object.create(null), items:[], checked:new Set(),
+  state:null, pendingItems:false, won:false, anime:[], number:new Map(), filter:"all",
+};
+// Spielstand, der im Archipelago-Server gespeichert wird (DataStorage), damit Effekte nicht doppelt kommen.
+const freshState = () => ({done:0, hints:[], blocks:[], wish:null, domainUsed:false, geassIds:[], arrowIds:[],
+  effects:{}, tsunSeen:[], senzuUsed:0, leapUsed:0, queued:[]});
+const stateKey = () => `animepelago_${G.team}_${G.slot}`;
+// Sicherheit: Den Spielstand im Server koennten auch andere Spieler veraendern. Darum wird alles geprueft:
+// nur bekannte Felder, richtige Typen, sinnvolle Grenzen. Unbekanntes wird verworfen.
+const MAX_LIST = 5000;
+const isId = v => Number.isSafeInteger(v) && v > 0;
+const num = (v, lo, hi, d = lo) => Number.isFinite(+v) ? Math.min(hi, Math.max(lo, Math.floor(+v))) : d;
+const str = (v, max = 200) => typeof v === "string" ? v.slice(0, max) : null;
+function cleanState(raw){
+  const s = freshState();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return s;
+  const list = (v, f) => Array.isArray(v) ? v.slice(0, MAX_LIST).map(f).filter(x => x != null) : [];
+  const soon = Date.now() + 10 * 60 * 1000;  // keine Sperre/Falle darf laenger als 10 Minuten in der Zukunft liegen
+  s.done = num(raw.done, 0, 1e7);
+  s.hints = list(raw.hints, h => h && isId(h.id) && HINTS.includes(h.kind)
+    ? {id:h.id, kind:h.kind, value: typeof h.value === "boolean" || (typeof h.value === "number" && Number.isFinite(h.value)) ? h.value : str(h.value)} : null);
+  s.blocks = list(raw.blocks, b => {
+    if (!b || typeof b !== "object") return null;
+    const kind = b.genre ? "genre" : str(b.kind, 20), value = str(b.genre ?? b.value, 100);
+    if (!["genre","letter",...EXTRA.map(e => e.key)].includes(kind) || value == null) return null;
+    return {kind, value, until:num(b.until, 0, soon)};
+  });
+  s.wish = GENRES.includes(raw.wish) ? raw.wish : null;
+  s.domainUsed = raw.domainUsed === true;
+  if (isId(raw.domainId)) s.domainId = raw.domainId;
+  s.geassIds = list(raw.geassIds, v => isId(v) ? v : null);
+  s.arrowIds = list(raw.arrowIds, v => isId(v) ? v : null);
+  s.tsunSeen = list(raw.tsunSeen, v => isId(v) ? v : null);
+  s.senzuUsed = num(raw.senzuUsed, 0, 1e6);
+  s.leapUsed = num(raw.leapUsed, 0, 1e6);
+  s.queued = list(raw.queued, q => q && typeof q === "object"
+    ? {seconds:num(q.seconds, 1, 600, 60), cause: q.cause === "kira" ? "kira" : "death", from:str(q.from, 60)} : null).slice(0, 50);
+  const e = raw.effects;
+  if (e && typeof e === "object") {
+    for (const n of Object.keys(TRAP_SECONDS)) if (e[n] != null) s.effects[n] = num(e[n], 0, soon);
+    const seed = str(e.truckSeed, 40); if (seed) s.effects.truckSeed = seed;
+  }
+  return s;
+}
+// Sicherheit: slot_data kommt vom Server. Zahlen werden zu echten Zahlen, Listen nur mit bekannten Werten.
+// So kann nichts Fremdes (z. B. HTML-Code) in die Anzeige gelangen.
+function cleanSlotData(sd){
+  if (!sd || typeof sd !== "object" || !Array.isArray(sd.anime)) return null;
+  const c = Object.create(null), ids = sd.anime.filter(isId).slice(0, 20000), idSet = new Set(ids.map(String));
+  const pick = (v, allowed) => Array.isArray(v) ? v.filter(x => allowed.includes(x)) : [];
+  const perId = (obj, f) => { const o = Object.create(null);
+    if (obj && typeof obj === "object") for (const k of Object.keys(obj)) if (idSet.has(k)) { const v = f(obj[k]); if (v != null) o[k] = v; }
+    return o; };
+  c.anime = ids;
+  c.data_version = num(sd.data_version, 0, 1e9);
+  c.location_offset = num(sd.location_offset, 0, 9e15, 7418000000);
+  c.milestones = Array.isArray(sd.milestones) ? sd.milestones.map(m => num(m, 0, 1e6)).slice(0, 1000) : [];
+  c.goal = ["anime","exodia","genre_master"].includes(sd.goal) ? sd.goal : "anime";
+  c.genre_master_genres = num(sd.genre_master_genres, 0, 100);
+  c.genre_master_anime = num(sd.genre_master_anime, 0, 1000);
+  c.anime_goal = num(sd.anime_goal, 0, 20000);
+  c.unlock_mode = ["both","genres","letters","none"].includes(sd.unlock_mode) ? sd.unlock_mode : "both";
+  c.title_language = /^[a-z]{2,20}$/.test(sd.title_language) ? sd.title_language : "english";
+  c.letter_language = /^[a-z]{2,20}$/.test(sd.letter_language) ? sd.letter_language : c.title_language;
+  c.genre_rule = sd.genre_rule === "all" ? "all" : "any";
+  c.genre_step = num(sd.genre_step, 0, 100);
+  c.demographics = sd.demographics === true;
+  c.only_genres = pick(sd.only_genres, GENRES);
+  c.start_genres = pick(sd.start_genres, GENRES);
+  c.start_letters = pick(sd.start_letters, LETTERS);
+  c.extra_unlocks = pick(sd.extra_unlocks, EXTRA.map(e => e.key));
+  c.start_extra = Object.create(null);
+  for (const k of c.extra_unlocks) c.start_extra[k] = pick(sd.start_extra?.[k], EXTRA_BY[k].values);
+  c.extra_values = perId(sd.extra_values, v => { if (!v || typeof v !== "object") return null; const o = {};
+    for (const k of c.extra_unlocks) if (EXTRA_BY[k].values.includes(v[k])) o[k] = v[k];
+    return o; });
+  c.letters = perId(sd.letters, v => LETTERS.includes(v) ? v : null);
+  c.trap_link = sd.trap_link === true;
+  c.death_link = sd.death_link === true;
+  for (const k of ["sukuna_fingers","dragon_balls","geass","stand_arrows"]) c[k] = num(sd[k], 0, 1000);
+  return c;
+}
+
+// ---------- Verbindung ----------
+$("host").value = store.get("ap_host") || "archipelago.gg";
+$("port").value = store.get("ap_port") || "";
+$("slot").value = store.get("ap_slot") || "";
+const soundIcon = () => $("soundBtn").textContent = soundOn ? "🔊" : "🔇";
+$("soundBtn").onclick = () => { soundOn = !soundOn; store.set("ap_sound", soundOn ? "on" : "off"); soundIcon(); sfx("item"); };
+soundIcon();
+$("uilang").onchange = e => { lang = e.target.value; store.set("ap_uilang", lang); applyLang(); };
+
+// Enter in einem Feld = Knopf druecken
+const onEnter = (ids, fn) => ids.forEach(id => $(id).addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); fn(); } }));
+$("closeInfo").onclick = () => $("info").close();
+onEnter(["host","port","slot","password"], () => $("go").click());
+$("go").onclick = async () => {
+  if (!$("host").value.trim() || !$("slot").value.trim()) { cmsg(t("fillIn"), "bad"); return; }
+  let host = $("host").value.trim(), port = $("port").value.trim();
+  store.set("ap_host", host); store.set("ap_port", port); store.set("ap_slot", $("slot").value.trim());
+  let urls;
+  const m = host.match(/^(wss?):\/\/(.+)$/i);
+  if (m) urls = [m[1].toLowerCase()+"://"+m[2]+(port && !/:\d+$/.test(m[2]) ? ":"+port : "")];
+  else {
+    if (!port && /:\d+$/.test(host)) [host, port] = [host.replace(/:\d+$/,""), host.match(/:(\d+)$/)[1]];
+    const hp = host + ":" + (port || 38281);
+    // Sicherheit: unverschluesseltes ws:// nur fuer den eigenen PC (localhost) oder im lokalen Netz.
+    // Fuer fremde Server: "ws://server" ausdruecklich eintippen, wenn er kein wss:// kann.
+    const local = /^(localhost|127\.\d+\.\d+\.\d+|\[?::1\]?|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)$/i.test(host);
+    urls = local && location.protocol !== "https:" ? ["wss://"+hp, "ws://"+hp] : ["wss://"+hp];
+  }
+  $("go").disabled = true;
+  for (const url of urls) {
+    cmsg(t("connecting", url));
+    if (await tryOpen(url)) return;
+  }
+  cmsg(t("noConn", host) + (location.protocol === "https:" ? t("httpsNote") : ""), "bad");
+  $("go").disabled = false;
+};
+function cmsg(text, cls){ $("cmsg").textContent = text; $("cmsg").className = cls||""; }
+
+function tryOpen(url){
+  return new Promise(resolve => {
+    let ws; try { ws = new WebSocket(url); } catch(e){ return resolve(false); }
+    let opened = false;
+    const timer = setTimeout(() => { if(!opened){ ws.close(); resolve(false);} }, 8000);
+    ws.onopen = () => { opened = true; clearTimeout(timer); G.ws = ws; resolve(true); };
+    ws.onerror = () => { if(!opened){ clearTimeout(timer); resolve(false);} };
+    ws.onclose = () => { if(opened) onClosed(); };
+    ws.onmessage = ev => {
+      // Sicherheit: kaputte Nachrichten duerfen das Spiel nicht zum Absturz bringen
+      let msgs; try { msgs = JSON.parse(ev.data); } catch(e) { console.warn("Unlesbare Nachricht", e); return; }
+      if (!Array.isArray(msgs)) return;
+      for (const msg of msgs) { try { if (msg && typeof msg === "object") handle(msg); } catch(e) { console.error("Fehler bei", msg?.cmd, e); } }
+    };
+  });
+}
+function send(...cmds){
+  if (G.offline) { OFFLINE.receive(cmds); return; }
+  if (G.ws && G.ws.readyState === 1) G.ws.send(JSON.stringify(cmds));
+}
+function onClosed(){
+  G.ws = null; $("go").disabled = false;
+  if (!$("game").classList.contains("hide")) { say(t("closed"), "bad"); log(t("closed")); }
+  setMode("ap");
+}
+$("leave").onclick = () => {
+  if (G.ws) G.ws.close();
+  const off = G.offline; G.offline = false; G.slotData = null;
+  $("game").classList.add("hide"); setMode(off ? "off" : "ap");
+};
+
+function uuid(){ let u = store.get("ap_uuid"); if(!u){ u = Math.random().toString(36).slice(2)+Date.now().toString(36); store.set("ap_uuid", u);} return u; }
+
+// ---------- Nachrichten vom Server ----------
+function handle(msg){
+  switch (msg.cmd) {
+    case "RoomInfo":
+      G.seed = msg.seed_name;
+      send({cmd:"GetDataPackage", games: msg.games});
+      send({cmd:"Connect", game:"Animepelago", name:$("slot").value.trim(), password:$("password").value, uuid:uuid(),
+        version:{major:0, minor:6, build:8, class:"Version"}, items_handling:0b111, tags:[], slot_data:true});
+      break;
+    case "DataPackage":
+      for (const [game, d] of Object.entries(msg.data?.games || {}))
+        if (d?.item_name_to_id && d?.location_name_to_id) G.dp[game] = {items:Object.fromEntries(Object.entries(d.item_name_to_id).map(([n,i])=>[i,n])),
+                      locs:Object.fromEntries(Object.entries(d.location_name_to_id).map(([n,i])=>[i,n]))};
+      break;
+    case "ConnectionRefused":
+      cmsg(t("refused", (msg.errors||[]).join(", ")), "bad"); G.ws.close(); break;
+    case "Connected": onConnected(msg); break;
+    case "ReceivedItems":
+      if (msg.index === 0) G.items = [];
+      else if (msg.index !== G.items.length) { send({cmd:"Sync"}); break; }
+      if (!Array.isArray(msg.items)) break;
+      // Sicherheit: nur gueltige Eintraege, hoechstens 100 000 Items (schuetzt vor Speicher-Ueberlauf)
+      for (const it of msg.items) if (it && Number.isSafeInteger(it.item) && G.items.length < 100000) G.items.push(it);
+      if (G.state) processItems(); else G.pendingItems = true;
+      render(); break;
+    case "RoomUpdate":
+      if (Array.isArray(msg.checked_locations)) { msg.checked_locations.filter(Number.isSafeInteger).forEach(l => G.checked.add(l)); render(); checkGoal(); }
+      if (msg.players) G.players = msg.players;
+      break;
+    case "Retrieved":
+      if (msg.keys && typeof msg.keys === "object" && Object.hasOwn(msg.keys, stateKey()) && !G.state) {
+        G.state = cleanState(msg.keys[stateKey()]);
+        processItems(); render(); checkGoal();
+      }
+      break;
+    case "PrintJSON": log(printJSON(msg)); break;
+    case "Bounced": {
+      const tags = Array.isArray(msg.tags) ? msg.tags : [], data = (msg.data && typeof msg.data === "object") ? msg.data : {};
+      if (!tags.includes("DeathLink") && !tags.includes("TrapLink")) break;
+      // Sicherheit/Fairness: hoechstens 10 DeathLinks/TrapLinks pro Minute, der Rest wird ignoriert
+      const now = Date.now(); G.linkTimes = (G.linkTimes || []).filter(x => x > now - 60000);
+      if (G.linkTimes.length >= 10) break;
+      G.linkTimes.push(now);
+      data.source = typeof data.source === "string" ? data.source.slice(0, 60) : "?";
+      if (tags.includes("DeathLink") && G.slotData?.death_link) onDeathLink(data);
+      if (tags.includes("TrapLink") && G.slotData?.trap_link) onTrapLink(data);
+      break; }
+  }
+}
+
+function onConnected(msg){
+  const sd = cleanSlotData(msg.slot_data);
+  if (!sd) { cmsg(t("wrongGame"), "bad"); if (G.ws) G.ws.close(); return; }
+  G.slotData = sd; G.slot = num(msg.slot, 0, 1e6); G.team = num(msg.team, 0, 1e6);
+  G.players = Array.isArray(msg.players) ? msg.players : []; G.slotInfo = (msg.slot_info && typeof msg.slot_info === "object") ? msg.slot_info : {};
+  G.checked = new Set((Array.isArray(msg.checked_locations) ? msg.checked_locations : []).filter(Number.isSafeInteger)); G.state = null; G.won = false; G.wonSent = false;
+  G.anime = sd.anime.map(id => BY_ID.get(id)).filter(Boolean);
+  // Kachel-Nummern in einer festen, zufaellig wirkenden Reihenfolge, damit die Sortierung nichts verraet.
+  const order = [...G.anime].sort((a,b) => hash(G.seed+":"+a.id) - hash(G.seed+":"+b.id));
+  G.number = new Map(order.map((a,i) => [a.id, i+1]));
+  G.anime = order;
+  const tags = [...(sd.death_link ? ["DeathLink"] : []), ...(sd.trap_link ? ["TrapLink"] : [])];
+  if (tags.length) send({cmd:"ConnectUpdate", items_handling:0b111, tags});
+  send({cmd:"Get", keys:[stateKey()]});
+  ["connect","offline","modes"].forEach(id => $(id).classList.add("hide")); $("game").classList.remove("hide"); cmsg("");
+  $("chat").classList.toggle("hide", !!G.offline);
+  if (G.anime.length < sd.anime.length || sd.data_version > DB.meta.version)
+    say(t("dataOld", DB.meta.version, sd.data_version), "warn");
+  $("letterrow").classList.toggle("hide", !usesLetters(sd));
+  $("genrerow").classList.toggle("hide", !usesGenres(sd));
+  $("guess").focus();
+  render();
+  const o0 = owned(), first = G.anime.filter(a => isDone(a) || canGuess(a, o0)), rest = G.anime.filter(a => !first.includes(a));
+  LIVE.need([...first, ...rest].map(a => a.id));
+}
+function saveState(){ send({cmd:"Set", key:stateKey(), default:{}, want_reply:false, operations:[{operation:"replace", value:G.state}]}); }
+
+// ---------- Items ----------
+const count = id => G.items.filter(i => i.item === id).length;
+function owned(){
+  const now = Date.now(), sd = G.slotData, st = G.state || freshState();
+  const genres = new Set(sd.start_genres), letters = new Set(sd.start_letters);
+  const extra = Object.fromEntries(EXTRA.map(e => [e.key, new Set(sd.start_extra?.[e.key] || [])]));
+  for (const it of G.items) {
+    const o = it.item - ITEM;
+    if (o >= 0 && o < GENRES.length) genres.add(GENRES[o]);
+    if (o >= 500 && o < 500 + LETTERS.length) letters.add(LETTERS[o-500]);
+    for (const e of EXTRA) if (o >= e.offset && o < e.offset + e.values.length) extra[e.key].add(e.values[o - e.offset]);
+  }
+  // Wunsch-Genre (Dragon Balls) nur als Perk markieren, solange das echte Item noch fehlt
+  const perkGenre = st.wish && !genres.has(st.wish) ? st.wish : null;
+  if (st.wish) genres.add(st.wish);
+  const active = st.blocks.filter(b => b.until > now).map(b => b.genre ? {kind:"genre", value:b.genre} : b);
+  const blockedOf = kind => new Set(active.filter(b => b.kind === kind).map(b => b.value));
+  const blocked = blockedOf("genre"), blockedLetters = blockedOf("letter");
+  const blockedExtra = Object.fromEntries(EXTRA.map(e => [e.key, blockedOf(e.key)]));
+  return {genres, letters, extra, blocked, blockedLetters, blockedExtra, perkGenre};
+}
+function processItems(){
+  // Effekte nur fuer neue Items (Index > gespeicherter Stand), damit nach Neuverbinden nichts doppelt passiert.
+  const st = G.state; let changed = false;
+  for (let i = st.done; i < G.items.length; i++) {
+    const id = G.items[i].item, from = playerName(G.items[i].player);
+    if (id === SUKUNA) { const h = makeHint(i); if (h) { st.hints.push(h); log(t("hint", G.number.get(h.id), hintText(h))); } }
+    if (TRAPS[id]) { hitByTrap(TRAPS[id]); sendTrapLink(TRAPS[id]); }
+    else if (id - ITEM < 100 || (id - ITEM >= 500 && id - ITEM < 1000)) sfx("item");
+    if (id === DEATHNOTE && G.slotData.death_link) {
+      send({cmd:"Bounce", tags:["DeathLink"], data:{time:Date.now()/1000, source:playerName(G.slot), cause:`${playerName(G.slot)} found a Death Note.`}});
+      log(t("deathSent"));
+    }
+    changed = true;
+  }
+  st.done = G.items.length;
+  // Wartende Fallen: vielleicht ist durch die neuen Items jetzt etwas sperrbar
+  if (applyQueuedBlocks()) changed = true;
+  if (changed) saveState();
+}
+// Falle: sperrt ein zufaelliges freigeschaltetes Item fuer einige Sekunden.
+// Genres, wenn sie in dieser Welt zaehlen; sonst Buchstaben (z. B. bei Only Genres); sonst Jahr/Vorlage/...
+// Das letzte freie wird nie gesperrt (sonst stuende das Spiel still); dann wartet die Falle in der Warteschlange.
+// ---------- Fallen und Hilfen ----------
+// Fallen: Kira's Hand (sperrt), Isekai Truck (mischt Felder), Filler Arc (blendet Infos aus), Tsundere (lehnt einmal ab)
+const TRAPS = {[KIRA]:"Kira's Hand", [TRUCK]:"Isekai Truck", [FILLER]:"Filler Arc", [TSUNDERE]:"Tsundere"};
+const TRAP_SECONDS = {"Isekai Truck":60, "Filler Arc":60, "Tsundere":30};
+const effectLeft = name => { const u = G.state?.effects?.[name] || 0; return Math.max(0, Math.ceil((u - Date.now()) / 1000)); };
+const leapsLeft = () => G.state ? Math.max(0, count(TIMELEAP) - (G.state.leapUsed || 0)) : 0;
+const senzuLeft = () => G.state ? Math.max(0, count(SENZU) - (G.state.senzuUsed || 0)) : 0;
+function hitByTrap(name, from){
+  const st = G.state; st.effects = st.effects || {};
+  if (leapsLeft() > 0) { st.leapUsed = (st.leapUsed || 0) + 1; log(t("leapSaved", t("trap_" + name))); sfx("leap"); return; }
+  sfx("trap");
+  if (name === "Kira's Hand") {
+    const g = blockRandom(60); if (g) log(t("kira", g)); else queueBlock(60, "kira");
+    return;
+  }
+  st.effects[name] = Date.now() + TRAP_SECONDS[name] * 1000;
+  if (name === "Isekai Truck") st.effects.truckSeed = Math.random().toString(36).slice(2);
+  if (name === "Tsundere") st.tsunSeen = [];
+  log(t("trapHit_" + name.replace(/\W/g, ""), from || ""));
+}
+// TrapLink: eigene Fallen an andere Spiele weitergeben, fremde Fallen als eine von unseren empfangen
+function sendTrapLink(name){
+  if (!G.slotData?.trap_link || G.offline) return;
+  send({cmd:"Bounce", tags:["TrapLink"], data:{time:Date.now()/1000, source:playerName(G.slot), trap_name:name}});
+}
+function onTrapLink(data){
+  if (!G.state || data.source === playerName(G.slot)) return;
+  const ours = Object.values(TRAPS);
+  const name = ours.includes(data.trap_name) ? data.trap_name : ours[Math.floor(Math.random() * ours.length)];
+  log(t("trapLinkIn", data.source || "?", typeof data.trap_name === "string" ? data.trap_name.slice(0, 60) : "?"));
+  hitByTrap(name, data.source); saveState(); render();
+}
+// Senzu-Bohne: beendet alle laufenden Fallen-Wirkungen
+function anyTrapActive(){
+  const st = G.state; if (!st) return false;
+  return st.blocks.some(b => b.until > Date.now()) || (st.queued || []).length > 0 ||
+         Object.keys(TRAP_SECONDS).some(n => effectLeft(n) > 0);
+}
+function useSenzu(){
+  if (senzuLeft() <= 0 || !anyTrapActive()) return;
+  const st = G.state; st.senzuUsed = (st.senzuUsed || 0) + 1;
+  st.blocks = []; st.queued = []; st.effects = {}; st.tsunSeen = [];
+  saveState(); log(t("senzuUsed")); sfx("item"); render();
+}
+function blockRandom(seconds){
+  const o = owned(), sd = G.slotData;
+  let kind = null, free = [];
+  if (usesGenres(sd)) { kind = "genre"; free = [...o.genres].filter(g => !o.blocked.has(g)); }
+  else if (usesLetters(sd)) { kind = "letter"; free = [...o.letters].filter(l => !o.blockedLetters.has(l)); }
+  else for (const e of activeExtras()) {
+    const f = [...o.extra[e.key]].filter(v => !o.blockedExtra[e.key].has(v));
+    if (f.length >= 2) { kind = e.key; free = f; break; }
+  }
+  if (free.length < 2) return null;
+  const value = free[Math.floor(Math.random()*free.length)];
+  G.state.blocks = G.state.blocks.filter(b => b.until > Date.now());
+  G.state.blocks.push({kind, value, until:Date.now()+seconds*1000});
+  return kind === "genre" ? value : kind === "letter" ? t("letterN", value) : `${t("cat_" + kind)} ${value}`;
+}
+// Restzeit einer Sperre in Sekunden (0 = nicht gesperrt)
+function blockLeft(kind, value){
+  const now = Date.now(), b = (G.state?.blocks||[]).find(b => (b.genre ? b.genre === value && kind === "genre" : b.kind === kind && b.value === value) && b.until > now);
+  return b ? Math.ceil((b.until - now) / 1000) : 0;
+}
+function onDeathLink(data){
+  if (data.source === playerName(G.slot)) return;
+  // Vorlaeufige Wirkung: ein zufaelliges Genre 1 Minute sperren.
+  if (!G.state) return;
+  const g = blockRandom(60);
+  if (g) log(t("deathRecv", data.source || "?", g)); else queueBlock(60, "death", data.source || "?");
+  saveState(); render();
+}
+// Warteschlange: ist gerade nichts sperrbar (nichts freigeschaltet oder alles schon gesperrt), wartet die Falle
+// und sperrt das naechste, was frei wird (neues Item oder abgelaufene Sperre) fuer die volle Zeit.
+function queueBlock(seconds, cause, from){
+  if ((G.state.queued || []).length >= 20) return;  // Warteschlange begrenzen
+  G.state.queued = [...(G.state.queued || []), {seconds, cause, from}];
+  log(t("trapQueued", cause === "kira" ? t("kiraName") : "DeathLink"));
+}
+function applyQueuedBlocks(){
+  let changed = false;
+  while (G.state?.queued?.length) {
+    const q = G.state.queued[0], g = blockRandom(q.seconds);
+    if (!g) break;
+    G.state.queued.shift(); changed = true;
+    log(q.cause === "kira" ? t("kira", g) : t("deathRecv", q.from || "?", g));
+  }
+  return changed;
+}
+setInterval(() => {
+  if (!G.state) return;
+  if (G.state.queued?.length && applyQueuedBlocks()) { saveState(); render(); return; }
+  const recent = u => u > Date.now() - 1500;
+  if (G.state.blocks.some(b => recent(b.until)) || Object.keys(TRAP_SECONDS).some(n => recent(G.state.effects?.[n] || 0))) render();
+}, 1000);
+
+// ---------- Hinweise (Sukuna) ----------
+const HINTS = ["year","studio","episodes","format","source","words","middle","season","cover"];
+function makeHint(index){
+  const open = G.anime.filter(a => !isDone(a));
+  if (!open.length) return null;
+  const r = hash(G.seed + ":sukuna:" + index);
+  const a = open[r % open.length];
+  const have = new Set(G.state.hints.filter(h => h.id === a.id).map(h => h.kind));
+  const kinds = HINTS.filter(k => !have.has(k) && hintValue(a, k) != null);
+  if (!kinds.length) return null;
+  const kind = kinds[(r >>> 8) % kinds.length];
+  return {id:a.id, kind, value:hintValue(a, kind)};
+}
+function hintValue(a, kind){
+  const name = displayTitle(a), m = LIVE.get(a.id);  // m = Live-Daten von AniList (falls schon geladen)
+  switch (kind) {
+    case "year": return m?.startDate?.year ?? null; case "studio": return m?.studios?.nodes?.[0]?.name ?? null;
+    case "episodes": return episodesOf(a); case "format": return m?.format ? fmtName(m.format) : null;
+    case "source": return m?.source ? pretty(m.source) : null; case "season": return m?.season ? pretty(m.season) : null;
+    case "words": return name.split(/\s+/).length;
+    case "middle": { const l = [...name.replace(/\s/g,"")]; return l[Math.floor(l.length/2)].toUpperCase(); }
+    case "cover": return m?.coverImage?.large ? true : null;
+  }
+}
+function hintText(h){
+  const v = h.value ?? hintValue(BY_ID.get(h.id), h.kind);
+  return {year:t("hYear",v), studio:t("hStudio",v), episodes:t("hEps",v), format:t("hFormat",v), source:t("hSource",v),
+          words:t("hWords",v), middle:t("hMid",v), season:t("hSeason",v), cover:t("hCover")}[h.kind];
+}
+
+// ---------- Anime ----------
+const locId = a => G.slotData.location_offset + a.id;
+const isDone = a => G.checked.has(locId(a));
+function displayTitle(a){
+  const l = G.slotData?.title_language || "english";
+  if (l === "japanese") return a.titles.native || a.titles.romaji || a.title;
+  return a.titles[l] || a.titles.english || a.titles.romaji || a.title;
+}
+// Genres eines Anime im Spiel: mit "Include Demographics" zaehlt die Zielgruppe mit.
+// Die only_genres (Welt nur mit diesem Genre) zaehlen nicht zum Freischalten.
+// Freischalt-Modus: "genres", "letters", "both" oder "none" (nur Zusatz-Kategorien, z. B. bei Only Genres)
+const usesGenres = sd => sd.unlock_mode === "genres" || sd.unlock_mode === "both";
+const usesLetters = sd => sd.unlock_mode === "letters" || sd.unlock_mode === "both";
+// Bei "any": pro genre_step Genres eines Anime ein weiteres noetig (6: 1-5 -> 1, 6-11 -> 2, 12+ -> 3)
+const genresNeeded = (n, step) => step ? Math.max(1, Math.min(n, 1 + Math.floor(n / step))) : 1;
+const genresOf = a => {
+  const sd = G.slotData, only = new Set(sd?.only_genres || []);
+  return (sd?.demographics ? [...a.genres, ...(a.demographics||[])] : a.genres).filter(g => !only.has(g));
+};
+function canGuess(a, o){
+  const sd = G.slotData, ag = genresOf(a), gs = ag.filter(g => o.genres.has(g) && !o.blocked.has(g));
+  const genreOk = !ag.length || (sd.genre_rule === "all" ? gs.length === ag.length : gs.length >= genresNeeded(ag.length, sd.genre_step));
+  const letterOk = o.letters.has(sd.letters[a.id]) && !o.blockedLetters.has(sd.letters[a.id]);
+  const extraOk = activeExtras().every(e => { const v = extraOf(a, e.key); return v == null || (o.extra[e.key].has(v) && !o.blockedExtra[e.key].has(v)); });
+  return extraOk && (!usesGenres(sd) || genreOk) && (!usesLetters(sd) || letterOk);
+}
+function needs(a, o){
+  const sd = G.slotData, parts = [];
+  if (usesGenres(sd)) {
+    const ag = genresOf(a), miss = ag.filter(g => !o.genres.has(g) || o.blocked.has(g));
+    const need = genresNeeded(ag.length, sd.genre_step), have = ag.length - miss.length;
+    const ok = !ag.length || (sd.genre_rule === "all" ? miss.length === 0 : have >= need);
+    if (!ok) parts.push(sd.genre_rule === "all" || need - have === miss.length ? miss.join(t("and"))
+      : need > 1 ? t("nOf", need - have, miss.join(", ")) : miss.join(t("or")));
+  }
+  if (usesLetters(sd) && (!o.letters.has(sd.letters[a.id]) || o.blockedLetters.has(sd.letters[a.id]))) parts.push(t("letterN", sd.letters[a.id]));
+  for (const e of activeExtras()) { const v = extraOf(a, e.key); if (v != null && (!o.extra[e.key].has(v) || o.blockedExtra[e.key].has(v))) parts.push(`${t("cat_" + e.key)} ${v}`); }
+  return parts.join(" + ");
+}
+
+// ---------- Raten ----------
+$("send").onclick = guess;
+$("guess").onkeydown = e => { if (e.key === "Enter") guess(); };
+// Tippfehler verzeihen: alle Schreibweisen mit genau einem Fehler (Buchstabe zu viel/zu wenig/falsch/vertauscht)
+// pruefen. Die Namen stehen nur als Pruefsumme in der Datei, deshalb werden die Varianten der Eingabe geprueft.
+function typoKeys(text){
+  const q = norm(text), out = new Set();
+  if (q.length < 5 || q.length > 60) return out;
+  const AB = "abcdefghijklmnopqrstuvwxyz0123456789", add = v => out.add(cyrb53(SALT + v).toString(36));
+  for (let i = 0; i <= q.length; i++) {
+    if (i < q.length) add(q.slice(0, i) + q.slice(i + 1));
+    if (i < q.length - 1) add(q.slice(0, i) + q[i + 1] + q[i] + q.slice(i + 2));
+    for (const c of AB) { add(q.slice(0, i) + c + q.slice(i)); if (i < q.length) add(q.slice(0, i) + c + q.slice(i + 1)); }
+  }
+  return out;
+}
+// Anime finden, deren Namen zur Eingabe passen: erst genau, sonst mit einem Tippfehler (nur wenn eindeutig)
+function findAnime(text, list, prefer){
+  const q = nameHash(text); if (!q) return {hits: [], fuzzy: false, known: false};
+  let hits = list.filter(a => a.keys.has(q));
+  if (hits.length) return {hits, fuzzy: false, known: true};
+  const v = typoKeys(text);
+  hits = list.filter(a => [...a.keys].some(k => v.has(k)));
+  if (hits.length === 1) return {hits, fuzzy: true, known: true};
+  // Mehrdeutiger Tippfehler: wenn genau einer davon passt (z. B. zum Bingo-Feld), zaehlt der
+  if (prefer && hits.filter(prefer).length === 1) return {hits: hits.filter(prefer), fuzzy: true, known: true};
+  return {hits: [], fuzzy: false, known: ALL_KEYS.has(q) || DB.anime.some(a => [...a.keys].some(k => v.has(k)))};
+}
+function guess(){
+  if (!norm($("guess").value)) return;
+  const {hits, fuzzy, known} = findAnime($("guess").value, G.anime);
+  if (!hits.length) { say(known ? t("notIn") : t("unknown"), "bad"); sfx("bad"); return; }
+  const o = owned(), fresh = hits.filter(a => !isDone(a) && canGuess(a, o));
+  // Tsundere: jede richtige Antwort wird waehrend der Falle einmal abgelehnt
+  if (fresh.length && effectLeft("Tsundere") > 0 && fresh.some(a => !G.state.tsunSeen.includes(a.id))) {
+    G.state.tsunSeen.push(...fresh.map(a => a.id)); saveState();
+    say(t("tsundereNo"), "warn"); sfx("bad"); return;
+  }
+  if (fresh.length) {
+    say(t("correct", fresh.map(a => `#${G.number.get(a.id)} ${displayTitle(a)}`).join(", ")) + (fuzzy ? " " + t("typoOk") : ""), "good"); sfx("ok");
+    checkAnime(fresh);
+    $("guess").value = "";
+  } else if (hits.every(isDone)) { say(t("already", hits.map(displayTitle).join(", ")), "warn"); sfx("bad"); }
+  else { const a = hits.find(a => !isDone(a)); say(t("locked", "#"+G.number.get(a.id), needs(a, o)), "bad"); sfx("bad"); }
+}
+function checkAnime(list){
+  const locs = list.map(locId);
+  locs.forEach(l => G.checked.add(l));
+  const done = G.anime.filter(isDone).length;
+  for (const n of G.slotData.milestones) if (done >= n) locs.push(MILESTONE + n);
+  send({cmd:"LocationChecks", locations:locs});
+  render(); checkGoal();
+}
+// Genre-Meister: in wie vielen Genres schon genug Anime erraten sind
+function genreMasterProgress(){
+  const sd = G.slotData, counts = {};
+  for (const a of G.anime.filter(isDone))
+    for (const g of sd.demographics ? [...a.genres, ...a.demographics] : a.genres) counts[g] = (counts[g] || 0) + 1;
+  return Object.values(counts).filter(n => n >= sd.genre_master_anime).length;
+}
+function checkGoal(){
+  if (!G.slotData || G.wonSent) return;
+  const sd = G.slotData, done = G.anime.filter(isDone).length;
+  const won = sd.goal === "exodia" ? EXODIA.every(id => count(id) > 0)
+            : sd.goal === "genre_master" ? genreMasterProgress() >= sd.genre_master_genres : done >= sd.anime_goal;
+  if (won) {
+    G.wonSent = true; send({cmd:"StatusUpdate", status:30});
+    sfx("win");
+    if (G.offline) { OFFLINE.finish(done); say(t("winTime", fmtTime(OFFLINE.time())), "good"); log(t("winTime", fmtTime(OFFLINE.time()))); }
+    else { say(t("win"), "good"); log(t("win")); }
+  }
+}
+
+// ---------- Perks: Domain Expansion und Wunsch ----------
+function domainReady(){ const sd = G.slotData; return sd.sukuna_fingers > 0 && count(SUKUNA) >= sd.sukuna_fingers && G.state && !G.state.domainUsed; }
+function dragonReady(){ const sd = G.slotData; return sd.dragon_balls > 0 && count(DRAGON) >= sd.dragon_balls && G.state && !G.state.wish; }
+// Geass: jedes erhaltene Geass loest einen Anime nach Wahl (auch gesperrte)
+const geassLeft = () => G.state ? Math.max(0, count(GEASS) - (G.state.geassIds||[]).length) : 0;
+function useGeass(id){
+  if (geassLeft() <= 0) return;
+  const a = BY_ID.get(id); G.state.geassIds = [...(G.state.geassIds||[]), id]; saveState();
+  say(t("correct", `#${G.number.get(a.id)} ${displayTitle(a)}`) + " (Geass)", "good"); checkAnime([a]);
+}
+// Stand Arrow: deckt bei einem Anime alle Infos auf (laedt sie vorher live, falls noetig)
+const arrowsLeft = () => G.state ? Math.max(0, count(ARROW) - (G.state.arrowIds||[]).length) : 0;
+function useArrow(id){
+  if (arrowsLeft() <= 0) return;
+  const a = BY_ID.get(id);
+  G.state.arrowIds = [...(G.state.arrowIds||[]), id]; saveState();
+  const reveal = () => {
+    const have = new Set(G.state.hints.filter(h => h.id === id).map(h => h.kind));
+    for (const kind of HINTS) {
+      const value = hintValue(a, kind);
+      if (!have.has(kind) && value != null) G.state.hints.push({id, kind, value});
+    }
+    saveState(); log(t("arrowUsed", G.number.get(id))); render();
+    if ($("info").open) showTile(id);
+  };
+  // Haupteintrag und Teile (fuer die Folgen) zuerst laden; klappt das nicht, wird aufgedeckt, was da ist
+  const ids = [id, ...a.parts.map(p => p.id)];
+  let done = false; const finish = () => { if (!done) { done = true; reveal(); } };
+  LIVE.need(ids, true, finish); setTimeout(finish, 8000);
+}
+function claim(id){
+  if (!domainReady()) return;
+  const a = BY_ID.get(id); G.state.domainUsed = true; G.state.domainId = id; saveState();
+  say(t("correct", `#${G.number.get(a.id)} ${displayTitle(a)}`), "good"); checkAnime([a]);
+}
+function wish(){
+  const g = $("wishsel").value; if (!g || !dragonReady()) return;
+  G.state.wish = g; saveState(); log(t("wished", g)); render();
+}
+
+// ---------- Anzeige ----------
+$("filter").onchange = e => { G.filter = e.target.value; render(); };
+G.sort = store.get("ap_sort") || "num"; $("sort").value = G.sort;
+$("sort").onchange = e => { G.sort = e.target.value; store.set("ap_sort", G.sort); render(); };
+// Gruppen fuer die Sortierung. Ein Anime mit mehreren Genres steht in jeder seiner Genre-Gruppen.
+function groups(list){
+  const sd = G.slotData;
+  if (G.sort === "genre")
+    return GENRES.filter(g => !DEMOGRAPHICS.includes(g)).map(g => [g, list.filter(a => a.genres.includes(g))]);
+  if (G.sort === "demo")
+    return [...DEMOGRAPHICS.map(d => [d, list.filter(a => a.demographics.includes(d))]),
+            [t("noDemo"), list.filter(a => !a.demographics.length)]];
+  if (G.sort === "letter") {
+    // Ohne Buchstaben-Modus wuerde der Buchstabe etwas verraten: dann nur bei erratenen Anime
+    const known = a => usesLetters(sd) || isDone(a);
+    return [...LETTERS.map(l => [l, list.filter(a => known(a) && sd.letters[a.id] === l)]),
+            ["?", list.filter(a => !known(a))]];
+  }
+  if (EXTRA_BY[G.sort]) {
+    const e = EXTRA_BY[G.sort], val = a => a.c?.[e.index] ?? null;
+    return [...e.values.map(v => [v, list.filter(a => val(a) === v)]), ["?", list.filter(a => val(a) == null)]];
+  }
+  return [[null, list]];
+}
+function renderStats(){
+  if (!G.slotData) return;
+  const sd = G.slotData, done = G.anime.filter(isDone).length, off = G.offline ? OFFLINE.info() : null;
+  const goal = sd.goal === "exodia" ? t("goalExodia", EXODIA.filter(id => count(id) > 0).length)
+    : sd.goal === "genre_master" ? t("goalGM", genreMasterProgress(), sd.genre_master_genres, sd.genre_master_anime) : t("goalAnime", sd.anime_goal);
+  $("stats").textContent = t("stats", done, G.anime.length, goal)
+    + ((sd.only_genres || []).length ? t("onlyStats", sd.only_genres.join(", ")) : "")
+    + (off ? t("offStats", fmtTime(OFFLINE.time())) + (off.finished ? " ✓" : "") : "")
+    + (LIVE.pending() ? t("liveLoading", LIVE.pending()) : "");
+}
+function render(){
+  if (!G.slotData) return;
+  const sd = G.slotData, o = owned(), done = G.anime.filter(isDone).length;
+  const goal = sd.goal === "exodia" ? t("goalExodia", EXODIA.filter(id => count(id) > 0).length)
+    : sd.goal === "genre_master" ? t("goalGM", genreMasterProgress(), sd.genre_master_genres, sd.genre_master_anime) : t("goalAnime", sd.anime_goal);
+  renderStats();
+  const now = Date.now();
+  const shownGenres = (sd.demographics ? GENRES : GENRES.filter(g => !DEMOGRAPHICS.includes(g)))
+    .filter(g => !(sd.only_genres || []).includes(g));
+  $("genres").innerHTML = shownGenres.map(g => {
+    const left = blockLeft("genre", g);
+    return left ? `<span class="blocked" title="${t("blockedFor", left)}">${em(g)}${esc(g)} ${left}s</span>`
+             : `<span class="${g === o.perkGenre ? "perk" : o.genres.has(g) ? "have" : "miss"}">${em(g)}${esc(g)}</span>`;
+  }).join("");
+  $("letters").innerHTML = LETTERS.map(l => { const left = blockLeft("letter", l);
+    return left ? `<span class="blocked">${l} ${left}s</span>` : `<span class="${o.letters.has(l) ? "have" : "miss"}">${l}</span>`; }).join("");
+  // Zusatz-Kategorien: nur Werte, die in dieser Welt vorkommen
+  $("extrarows").innerHTML = activeExtras().map(e => {
+    const used = new Set(G.anime.map(a => extraOf(a, e.key)).filter(v => v != null));
+    // Studio "Other" bekommt kein Kisten-Emoji (das gehoert zur Vorlage "Other")
+    const ve = v => e.key === "studio" ? "" : em(v);
+    return `<div><b>${CAT_EMOJI[e.key]} ${t("cat_" + e.key)}:</b> <span class="chips">${e.values.filter(v => used.has(v))
+      .map(v => { const left = blockLeft(e.key, v);
+        return left ? `<span class="blocked">${ve(v)}${esc(v)} ${left}s</span>` : `<span class="${o.extra[e.key].has(v) ? "have" : "miss"}">${ve(v)}${esc(v)}</span>`; }).join("")}</span></div>`;
+  }).join("");
+  const perks = [];
+  if (sd.sukuna_fingers) perks.push(`<span class="${domainReady() ? "have" : ""}">☝️ ${t("perkSukuna", count(SUKUNA), sd.sukuna_fingers)}${G.state?.domainUsed ? " · " + t("domainUsed") : ""}</span>`);
+  if (sd.stand_arrows) perks.push(`<span class="${arrowsLeft() > 0 ? "perk" : ""}">🏹 ${t("perkArrow", arrowsLeft(), count(ARROW), sd.stand_arrows)}</span>`);
+  if (sd.geass) perks.push(`<span class="${geassLeft() > 0 ? "perk" : ""}">👁️ ${t("perkGeass", geassLeft(), count(GEASS), sd.geass)}</span>`);
+  if (sd.dragon_balls) perks.push(`<span class="${dragonReady() ? "have" : ""}">🐉 ${t("perkDragon", count(DRAGON), sd.dragon_balls)}${G.state?.wish ? " · " + esc(G.state.wish) : ""}</span>`);
+  if (count(SENZU)) perks.push(`<button type="button" id="senzuBtn" class="${senzuLeft() && anyTrapActive() ? "perk" : ""}" ${senzuLeft() && anyTrapActive() ? "" : "disabled"}>🫘 ${t("perkSenzu", senzuLeft())}</button>`);
+  if (count(TIMELEAP)) perks.push(`<span class="${leapsLeft() ? "perk" : ""}">⏪ ${t("perkLeap", leapsLeft())}</span>`);
+  for (const [n, e] of [["Isekai Truck","🚚"],["Filler Arc","📺"],["Tsundere","😤"]]) if (effectLeft(n)) perks.push(`<span class="blocked">${e} ${t("trap_" + n)} ${effectLeft(n)}s</span>`);
+  if (G.state?.queued?.length) perks.push(`<span class="blocked">✋ ${t("queuedN", G.state.queued.length)}</span>`);
+  $("perks").innerHTML = perks.join("") + (domainReady() ? `<div class="warn">${t("domainAsk")}</div>` : "");
+  if ($("senzuBtn")) $("senzuBtn").onclick = useSenzu;
+  const w = $("wish");
+  if (dragonReady()) {
+    if (w.classList.contains("hide")) {
+      w.innerHTML = `${t("wishAsk")} <select id="wishsel">${shownGenres.filter(g => !o.genres.has(g)).map(g => `<option>${esc(g)}</option>`).join("")}</select> <button id="wishbtn">${t("wishBtn")}</button>`;
+      $("wishbtn").onclick = wish;
+    }
+    w.classList.remove("hide");
+  } else w.classList.add("hide");
+
+  const tileHtml = a => {
+    const n = G.number.get(a.id), d = isDone(a), open = !d && canGuess(a, o);
+    const kind = d ? "done" : open ? "open" : "locked";
+    // ratbar nur dank Wunsch-Genre, oder per Domain Expansion geloest -> gelb
+    const viaPerk = d ? G.state?.domainId === a.id || (G.state?.geassIds||[]).includes(a.id)
+                      : open && o.perkGenre && !canGuess(a, {...o, genres:new Set([...o.genres].filter(g => g !== o.perkGenre))});
+    if (G.filter !== "all" && G.filter !== kind) return "";
+    const hints = d || effectLeft("Filler Arc") ? 0 : (G.state?.hints||[]).filter(h => h.id === a.id).length;
+    const pic = a.logo ? `<img class="logo" src="${esc(a.logo)}" alt="" loading="lazy">` : (d ? "" : `<div class="q">?</div>`);
+    return `<div class="tile ${kind}${viaPerk ? " perk" : ""}" data-id="${a.id}" title="#${n}"><div class="n">#${n}</div>`
+      + (hints ? `<div class="badge" title="${hints}">💡${hints}</div>` : "")
+      + pic + (d ? `<div class="name">${esc(displayTitle(a))}</div>` : "")
+      + (kind === "locked" ? `<div class="lock">🔒</div>` : d ? `<div class="check">✓</div>` : "") + `</div>`;
+  };
+  const truck = effectLeft("Isekai Truck") > 0, seed = G.state?.effects?.truckSeed || "";
+  const order = truck ? [...G.anime].sort((x, y) => hash(seed + x.id) - hash(seed + y.id)) : G.anime;
+  $("grid").innerHTML = groups(order).filter(([, l]) => l.length).map(([name, l]) => {
+    const tiles = l.map(tileHtml).join("");
+    if (name === null) return `<div class="grid">${tiles}</div>`;
+    return tiles ? `<h4 class="grouph">${esc(name)} <span>${l.filter(isDone).length}/${l.length}</span></h4><div class="grid">${tiles}</div>` : "";
+  }).join("");
+}
+$("grid").onclick = e => {
+  const tile = e.target.closest(".tile"); if (!tile) return;
+  const id = +tile.dataset.id;
+  if (tile.classList.contains("done")) showInfo(id); else showTile(id);
+};
+// Ein noch nicht erratenes Feld: was fehlt, aufgedeckte Hinweise, Domain Expansion
+// Welche deiner freigeschalteten Items zu diesem Anime gehoeren (gruen, gelb = Perk, orange = gerade gesperrt).
+// Fehlendes wird nicht verraten. Nur Kategorien, die in dieser Welt zaehlen.
+function unlockTable(a, o){
+  const sd = G.slotData, rows = [];
+  const chip = (label, state) => `<span class="${state}">${label}</span>`;
+  if (usesGenres(sd)) {
+    const ag = genresOf(a), have = ag.filter(g => o.genres.has(g));
+    const need = sd.genre_rule === "all" ? ag.length : genresNeeded(ag.length, sd.genre_step);
+    if (have.length || need > 1) rows.push(`<div><b>🏷️ ${t("genres")}</b> <span class="mute">${t("needsN", need)}</span> <span class="chips">${have.map(g =>
+      chip(em(g) + esc(g), o.blocked.has(g) ? "blocked" : g === o.perkGenre ? "perk" : "have")).join("")}</span></div>`);
+  }
+  if (usesLetters(sd) && o.letters.has(sd.letters[a.id]))
+    rows.push(`<div><b>🔤 ${t("letters")}</b> <span class="chips">${chip(esc(sd.letters[a.id]), o.blockedLetters.has(sd.letters[a.id]) ? "blocked" : "have")}</span></div>`);
+  for (const e of activeExtras()) {
+    const v = extraOf(a, e.key);
+    if (v != null && o.extra[e.key].has(v))
+      rows.push(`<div><b>${CAT_EMOJI[e.key]} ${t("cat_" + e.key)}:</b> <span class="chips">${chip((e.key === "studio" ? "" : em(v)) + esc(v), o.blockedExtra[e.key].has(v) ? "blocked" : "have")}</span></div>`);
+  }
+  return `<div class="unlocks"><div class="mute">${t("yourItems")}</div>${rows.join("") || `<div class="mute">${t("noneYet")}</div>`}</div>`;
+}
+function showTile(id){
+  const a = BY_ID.get(id), o = owned(), open = canGuess(a, o), n = G.number.get(id);
+  if (effectLeft("Filler Arc")) {
+    $("infobody").innerHTML = `<div id="tileinfo"><h3>#${n}</h3><p class="${open ? "good" : "bad"}"><b>${open ? t("isOpen") : t("isLocked")}</b></p>
+      <p class="warn">📺 ${t("fillerHidden", effectLeft("Filler Arc"))}</p></div>`;
+    if (!$("info").open) $("info").showModal();
+    return;
+  }
+  const hints = (G.state?.hints||[]).filter(h => h.id === id), cover = httpsOnly(LIVE.get(id)?.coverImage?.large);
+  G.infoId = null;
+  $("infobody").innerHTML = `<div id="tileinfo"><h3>#${n}</h3>
+    ${hints.some(h => h.kind === "cover") && cover ? `<img src="${esc(cover)}" alt="" style="filter:blur(9px)">` : ""}
+    <p class="${open ? "good" : "bad"}"><b>${open ? t("isOpen") : t("isLocked")}</b></p>
+    ${unlockTable(a, o)}
+    ${hints.filter(h => h.kind !== "cover").map(h => `<div class="hint">💡 ${esc(hintText(h))}</div>`).join("")}
+    ${domainReady() ? `<p><button class="main" id="claimbtn">${t("domain")}: ${t("claim")}</button></p>` : ""}
+    ${geassLeft() > 0 ? `<p><button class="main" id="geassbtn">${t("useGeass", geassLeft())}</button></p>` : ""}
+    ${arrowsLeft() > 0 && !(G.state.arrowIds||[]).includes(id) ? `<p><button class="main" id="arrowbtn">🏹 ${t("useArrow", arrowsLeft())}</button></p>` : ""}</div>`;
+  if ($("arrowbtn")) $("arrowbtn").onclick = () => { $("arrowbtn").disabled = true; useArrow(id); };
+  if (geassLeft() > 0) $("geassbtn").onclick = () => { $("info").close(); useGeass(id); };
+  if (domainReady()) $("claimbtn").onclick = () => { $("info").close(); claim(id); };
+  if (!$("info").open) $("info").showModal();
+}
+function showInfo(id){
+  const a = BY_ID.get(id), T = a.titles, m = LIVE.get(a.id);
+  if (effectLeft("Filler Arc")) {
+    $("infobody").innerHTML = `<h3>${esc(displayTitle(a))}</h3><p class="warn">📺 ${t("fillerHidden", effectLeft("Filler Arc"))}</p>`;
+    if (!$("info").open) $("info").showModal();
+    return;
+  }
+  // Teile nachladen, falls noch nicht da (eine Anfrage), danach neu zeichnen
+  const missing = a.parts.map(p => p.id).filter(i => !LIVE.get(i));
+  if (missing.length) LIVE.need(missing, true, () => { if ($("info").open && G.infoId === id) showInfo(id); });
+  G.infoId = id;
+  const rows = [["Romaji",T.romaji],["English",T.english],["Deutsch",T.german],["Español",T.spanish],["Français",T.french],["Italiano",T.italian],["Português",T.portuguese],["日本語",T.native]]
+    .filter(r => r[1]).map(r => `<div><b>${r[0]}:</b> ${esc(r[1])}</div>`).join("");
+  const shown = new Set(Object.values(T));
+  const aka = (m?.synonyms || []).filter(n => !shown.has(n)).slice(0, 12);
+  const eps = episodesOf(a), cover = httpsOnly(m?.coverImage?.large);
+  const facts = m ? [m.startDate?.year, fmtName(m.format), eps ? eps + " ep." : "", (m.studios?.nodes || []).map(s => s.name).join(", "), m.source ? pretty(m.source) : ""]
+                  : [t("loadingInfo")];
+  $("infobody").innerHTML = `${cover ? `<img src="${esc(cover)}" alt="">` : ""}<h3>${esc(displayTitle(a))}</h3>${rows}
+    <p>${facts.filter(Boolean).map(esc).join(" · ")}</p>
+    <p>${esc(genresOf(a).join(", "))}</p>
+    ${aka.length ? `<p><b>${t("alsoKnown")}:</b> ${aka.map(esc).join(" · ")}</p>` : ""}
+    <b>${t("parts")}</b><ul>${a.parts.map(p => { const x = LIVE.get(p.id);
+      const label = x ? `${esc(x.title?.english || x.title?.romaji || "")} (${esc([fmtName(x.format), x.startDate?.year].filter(Boolean).join(", "))})` : "…";
+      return `<li class="${p.counted ? "" : "no"}">${label}${p.counted ? "" : " " + t("notCounted")}</li>`; }).join("")}</ul>
+    <p><a href="https://anilist.co/anime/${a.id}" target="_blank" rel="noopener">${t("openAniList")}</a></p>`;
+  if (!$("info").open) $("info").showModal();
+}
+
+// ---------- Live-Infos von AniList ----------
+// Cover, Jahr, Studio, Folgen, Teile ... werden nicht mitgeliefert, sondern hier geholt:
+// hoechstens 50 Anime pro Anfrage, Pause zwischen Anfragen, bei Sperre (429) warten.
+// Alles wird im Browser gespeichert, damit beim naechsten Mal keine Anfrage noetig ist.
+const LIVE = (() => {
+  const URL = "https://graphql.anilist.co", KEY = "animepelago_live_v1", GAP = 2500, DAY = 864e5;
+  const QUERY = `query($ids:[Int]){Page(perPage:50){media(id_in:$ids,type:ANIME){id title{romaji english native} synonyms
+    format status episodes season source startDate{year} nextAiringEpisode{episode} coverImage{large color}
+    studios(isMain:true){nodes{name}}}}}`;
+  let cache = Object.create(null);
+  // Sicherheit: nur gueltige Eintraege aus dem Browser-Speicher uebernehmen
+  try { const raw = JSON.parse(localStorage.getItem(KEY) || "{}");
+    if (raw && typeof raw === "object") for (const [k, e] of Object.entries(raw))
+      if (/^\d+$/.test(k) && e && typeof e.t === "number" && e.d && typeof e.d === "object") cache[k] = e;
+  } catch(e) {}
+  const queue = [], waiting = new Map(); let busy = false, last = 0, saveTimer = null, failures = 0;
+  const fresh = e => e && Date.now() - e.t < (e.d.status === "RELEASING" ? 3 : 60) * DAY;
+  const get = id => cache[id]?.d || null;
+  function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch(e) {} }, 1000); }
+  function need(ids, urgent, done){
+    const todo = ids.filter(id => !fresh(cache[id]) && !queue.includes(id));
+    if (urgent) queue.unshift(...todo); else queue.push(...todo);
+    if (done) { if (!ids.some(id => !fresh(cache[id]))) done(); else ids.forEach(id => waiting.set(id, done)); }
+    pump();
+  }
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  async function pump(){
+    if (busy) return; busy = true;
+    while (queue.length) {
+      await sleep(Math.max(0, last + GAP - Date.now()));
+      const batch = queue.slice(0, 50); last = Date.now();
+      try {
+        const r = await fetch(URL, {method:"POST", headers:{"Content-Type":"application/json", Accept:"application/json"},
+                                     body:JSON.stringify({query:QUERY, variables:{ids:batch}})});
+        if (r.status === 429) { await sleep(((+r.headers.get("Retry-After")) || 60) * 1000 + 2000); continue; }
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const media = (await r.json()).data?.Page?.media || [];
+        const now = Date.now();
+        for (const m of media) cache[m.id] = {t:now, d:m};
+        // IDs, die AniList nicht (mehr) kennt, nicht endlos neu fragen
+        for (const id of batch) if (!cache[id]) cache[id] = {t:now, d:{id, missing:true}};
+        queue.splice(0, batch.length); failures = 0; save();
+        const cbs = new Set(batch.map(id => waiting.get(id)).filter(Boolean)); batch.forEach(id => waiting.delete(id));
+        cbs.forEach(cb => cb());
+        render();
+      } catch (e) {
+        // AniList nicht erreichbar: spaeter nochmal, nach 3 Fehlern aufgeben (das Spiel laeuft trotzdem)
+        if (++failures >= 3) { queue.length = 0; break; }
+        await sleep(30000 * failures);
+      }
+    }
+    busy = false;
+  }
+  return {get, need, pending: () => queue.length};
+})();
+// Folgen: Summe der zaehlenden TV-/ONA-Teile; nur wenn alle Teile geladen sind
+function episodesOf(a){
+  let sum = 0;
+  for (const p of a.parts.filter(p => p.counted)) {
+    const m = LIVE.get(p.id); if (!m) return null;
+    if (["TV","TV_SHORT","ONA"].includes(m.format))
+      sum += m.status === "RELEASING" && m.nextAiringEpisode ? m.nextAiringEpisode.episode - 1 : (m.episodes || 0);
+  }
+  return sum || null;
+}
+
+// ---------- Offline-Modus ----------
+// Spielt den Archipelago-Server im Browser nach: gleiche Items, gleiche Checks, gleiche Regeln.
+// Fuer jeden Check gibt es ein Item aus dem Pool. Gibt es nichts mehr zu raten, kommt gezielt ein
+// Genre/Buchstabe, der wieder etwas freischaltet (so bleibt man nie stecken).
+const OFFLINE = (() => {
+  const KEY = "animepelago_offline_v1", MILESTONES = [1,2,3,5,10,15,20,25,30,40,50,75,100,150,200,250,300,400,500,600,700,800,900,1000];
+  const MIN_START = 3;
+  let S = null;  // gespeichertes Offline-Spiel
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch(e) { return null; } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
+  const rnd = n => Math.floor(Math.random() * n);
+  const shuffle = l => { for (let i = l.length - 1; i > 0; i--) { const j = rnd(i + 1); [l[i], l[j]] = [l[j], l[i]]; } return l; };
+  function firstLetter(text){
+    for (const ch of String(text || "").normalize("NFKD")) {
+      if (/\p{M}/u.test(ch)) continue;
+      const c = ch.toUpperCase(); return c >= "A" && c <= "Z" && c.length === 1 ? c : "#";
+    }
+    return "#";
+  }
+  function letterOf(a, lang){
+    const T = a.titles, en = T.english || T.romaji || a.title;
+    if (lang === "romaji" || lang === "japanese") return firstLetter(T.romaji || a.title);
+    if (lang === "english") return firstLetter(en);
+    return firstLetter(T[lang] || en);
+  }
+  // Freischalt-Stand: g = Genres, l = Buchstaben, x = Zusatz-Kategorien (je ein Set)
+  const emptyOwn = () => ({g: new Set(), l: new Set(), x: Object.fromEntries(EXTRA.map(e => [e.key, new Set()]))});
+  const copyOwn = o => ({g: new Set(o.g), l: new Set(o.l), x: Object.fromEntries(Object.entries(o.x).map(([k, v]) => [k, new Set(v)]))});
+  // Ist ein Anime mit diesem Stand offen? cats = welche Einzelwert-Kategorien geprueft werden
+  function isOpen(sd, id, own, cats){
+    const a = BY_ID.get(id);
+    if (usesGenres(sd)) {
+      const ag = (sd.demographics ? [...a.genres, ...a.demographics] : a.genres).filter(g => !(sd.only_genres || []).includes(g));
+      if (ag.length && !(sd.genre_rule === "all" ? ag.every(g => own.g.has(g)) : ag.filter(g => own.g.has(g)).length >= genresNeeded(ag.length, sd.genre_step || 0))) return false;
+    }
+    for (const c of cats) {
+      const v = c === "letter" ? sd.letters[id] : sd.extra_values[id][c];
+      if (v != null && !(c === "letter" ? own.l : own.x[c]).has(v)) return false;
+    }
+    return true;
+  }
+  const singleCats = sd => [...(usesLetters(sd) ? ["letter"] : []), ...sd.extra_unlocks];
+  // Wie viele noch nicht erratene Anime sind mit diesem Stand offen?
+  function openCount(sd, own, checked, cats = singleCats(sd)){
+    let n = 0;
+    for (const id of sd.anime) if (!checked.has(sd.location_offset + id) && isOpen(sd, id, own, cats)) n++;
+    return n;
+  }
+  // Item-ID <-> (Kategorie, Wert)
+  function unlockOf(id){
+    const o = id - ITEM;
+    if (o >= 0 && o < GENRES.length) return ["genre", GENRES[o]];
+    if (o >= 500 && o < 500 + LETTERS.length) return ["letter", LETTERS[o - 500]];
+    for (const e of EXTRA) if (o >= e.offset && o < e.offset + e.values.length) return [e.key, e.values[o - e.offset]];
+    return null;
+  }
+  const unlockId = (c, v) => c === "genre" ? ITEM + GENRES.indexOf(v) : c === "letter" ? ITEM + 500 + LETTERS.indexOf(v)
+                                         : ITEM + EXTRA_BY[c].offset + EXTRA_BY[c].values.indexOf(v);
+  function addTo(own, c, v){ if (c === "genre") own.g.add(v); else if (c === "letter") own.l.add(v); else own.x[c].add(v); }
+  function create(o){
+    const extras = o.extras || [];
+    let useG = o.unlock !== "letters", useL = o.unlock !== "genres";
+    // Nur ein Genre: Genres schalten nichts frei; ohne andere Kategorie wird nach Buchstaben freigeschaltet
+    if (o.only) { useG = false; if (!useL && !extras.length) useL = true; }
+    // Nur ein Genre: nur Anime, die es haben (Genre oder Zielgruppe)
+    const cand = o.only ? DB.anime.filter(a => a.genres.includes(o.only) || a.demographics.includes(o.only)) : DB.anime;
+    let count = Math.max(10, Math.min(o.count, DB.anime.length));
+    if (useG + useL + extras.length >= 2) count = Math.max(count, Math.min(50, DB.anime.length));
+    count = Math.min(count, cand.length);
+    // Wie in der APWorld (pool_size_for): aus den Top 500, bei grossen Welten aus den Top "2 x Anzahl"
+    const pool = cand.slice(0, Math.max(500, 2 * count));  // Spieldatei ist nach Beliebtheit sortiert
+    const sel = shuffle([...pool]).slice(0, count);
+    const lang = o.lang, letters = Object.fromEntries(sel.map(a => [a.id, letterOf(a, lang)]));
+    const sd = {data_version: DB.meta.version, anime: sel.map(a => a.id).sort((x, y) => x - y), location_offset: 7418000000,
+      milestones: MILESTONES.filter(n => n <= count), goal: o.goalType, anime_goal: Math.min(o.goal, count),
+      unlock_mode: useG && useL ? "both" : useG ? "genres" : useL ? "letters" : "none", title_language: lang, letter_language: lang === "japanese" ? "romaji" : lang,
+      genre_rule: o.rule, genre_step: o.rule === "any" ? (o.step ?? 6) : 0, demographics: o.demo && o.rule === "any", only_genres: o.only ? [o.only] : [], letters, death_link: false,
+      extra_unlocks: extras, extra_values: Object.fromEntries(sel.map(a => [a.id, Object.fromEntries(extras.map(k => [k, a.c[EXTRA_BY[k].index] ?? null]))]))};
+    const gen = a => (sd.demographics ? [...a.genres, ...a.demographics] : a.genres).filter(g => !(sd.only_genres || []).includes(g));
+    const start = emptyOwn(), none = new Set();
+    if (!useG) GENRES.forEach(g => start.g.add(g));  // ohne Genre-Modus zaehlen Genres nicht
+    if (useG) {
+      // Startgenre zufaellig unter den selteneren (wie in der APWorld), damit anfangs nicht zu viel offen ist
+      const cnt = Object.fromEntries(GENRES.map(g => [g, sel.filter(a => gen(a).includes(g)).length]));
+      const usable = GENRES.filter(g => cnt[g] >= MIN_START).sort((x, y) => cnt[x] - cnt[y] || (x < y ? -1 : 1)).slice(0, 4);
+      start.g.add(usable.length ? usable[rnd(usable.length)] : GENRES.find(g => g !== o.only));
+      // Bei "all" bzw. Stufen-Regel sparsam Genres dazugeben, bis genug offen sind
+      const need = a => sd.genre_rule === "all" ? gen(a).length : genresNeeded(gen(a).length, sd.genre_step);
+      for (let guard = 0; guard < sel.length && openCount(sd, start, none, []) < MIN_START; guard++) {
+        const rest = sel.filter(a => !isOpen(sd, a.id, start, []));
+        const extra = a => need(a) - gen(a).filter(g => start.g.has(g)).length;
+        const a = rest.sort((x, y) => extra(x) - extra(y) || Math.random() - .5)[0];
+        gen(a).filter(g => !start.g.has(g)).sort((x, y) => cnt[x] - cnt[y]).slice(0, extra(a)).forEach(g => start.g.add(g));
+      }
+    }
+    // Start-Werte je Einzelwert-Kategorie, jede beruecksichtigt die vorherigen (wie in der APWorld)
+    const cats = singleCats(sd);
+    // Nur ein Genre: genau N zufaellige Anime ziehen und ihre Items als Start-Items geben
+    if (o.only) {
+      // Bevorzugt Anime, deren Items moeglichst wenige andere mit oeffnen (wie in der APWorld)
+      const target = Math.min(sel.length, Math.max(2, Math.min(8, o.onlyStart || 3)));
+      const valsOf = a => cats.map(c => [c, c === "letter" ? letters[a.id] : sd.extra_values[a.id][c]]).filter(([, v]) => v != null);
+      while (openCount(sd, start, none) < target) {
+        const closed = sel.filter(a => !isOpen(sd, a.id, start, cats));
+        let best = [], bestN = Infinity;
+        for (const a of shuffle([...closed]).slice(0, 60)) {
+          const trial = copyOwn(start); valsOf(a).forEach(([c, v]) => addTo(trial, c, v));
+          const n = openCount(sd, trial, none);
+          if (n < bestN) { best = [a]; bestN = n; } else if (n === bestN) best.push(a);
+        }
+        valsOf(best[rnd(best.length)]).forEach(([c, v]) => addTo(start, c, v));
+      }
+    }
+    (o.only ? [] : cats).forEach((c, i) => {
+      const done = cats.slice(0, i + 1);
+      for (let guard = 0; guard < 60 && openCount(sd, start, none, done) < MIN_START; guard++) {
+        const gain = {};
+        for (const a of sel) {
+          const v = c === "letter" ? letters[a.id] : sd.extra_values[a.id][c];
+          const have = c === "letter" ? start.l : start.x[c];
+          if (v != null && !have.has(v) && isOpen(sd, a.id, start, done.slice(0, -1))) gain[v] = (gain[v] || 0) + 1;
+        }
+        const best = Object.entries(gain).sort((x, y) => y[1] - x[1]); if (!best.length) break;
+        addTo(start, c, best[rnd(Math.min(3, best.length))][0]);
+      }
+    });
+    sd.start_genres = useG ? [...start.g] : []; sd.start_letters = [...start.l];
+    sd.start_extra = Object.fromEntries(extras.map(k => [k, [...start.x[k]]]));
+    // Item-Pool wie in der APWorld: alle benutzten Werte, die man nicht schon hat
+    let items = [];
+    if (useG) items.push(...GENRES.filter(g => sel.some(a => gen(a).includes(g)) && !start.g.has(g)).map(g => unlockId("genre", g)));
+    for (const c of cats) {
+      const vals = new Set(sel.map(a => c === "letter" ? letters[a.id] : sd.extra_values[a.id][c]).filter(v => v != null));
+      for (const v of vals) if (!(c === "letter" ? start.l : start.x[c]).has(v)) items.push(unlockId(c, v));
+    }
+    const slots = count + sd.milestones.length;
+    if (items.length > slots - (o.goalType === "exodia" ? 5 : 0)) {
+      // Zu wenige Checks: ueberzaehlige Freischalt-Items gibt es von Anfang an (wie in der APWorld)
+      shuffle(items);
+      for (const id of items.splice(0, items.length - slots + (o.goalType === "exodia" ? 5 : 0))) {
+        const [c, v] = unlockOf(id); addTo(start, c, v);
+      }
+      sd.start_genres = useG ? [...start.g] : []; sd.start_letters = [...start.l];
+      sd.start_extra = Object.fromEntries(extras.map(k => [k, [...start.x[k]]]));
+    }
+    if (o.goalType === "exodia") items.push(...EXODIA);
+    if (o.goalType === "genre_master") {
+      const cnt = {}; for (const a of sel) for (const g of sd.demographics ? [...a.genres, ...a.demographics] : a.genres) cnt[g] = (cnt[g] || 0) + 1;
+      let k = 5; while (k > 1 && !Object.values(cnt).some(v => v >= k)) k--;
+      sd.genre_master_anime = k; sd.genre_master_genres = Math.max(1, Math.min(8, Object.values(cnt).filter(v => v >= k).length));
+    }
+    let free = slots - items.length;
+    const add = (id, n, whole) => { if (whole && free < n) return 0; const k = Math.max(0, Math.min(n, free)); items.push(...Array(k).fill(id)); free -= k; return k; };
+    sd.geass = add(GEASS, Math.min(o.geass, Math.floor(count / 10)));
+    sd.stand_arrows = add(ARROW, Math.max(0, Math.min(100, o.arrows || 0)));
+    sd.dragon_balls = o.perks ? add(DRAGON, 7, true) : 0;
+    if (o.perks) { add(SENZU, 3); add(TIMELEAP, 3); }
+    sd.sukuna_fingers = o.perks ? add(SUKUNA, 20) : 0;
+    add(DEATHNOTE, 1);
+    if (o.traps) { add(KIRA, 5); add(TRUCK, 3); add(FILLER, 3); add(TSUNDERE, 3); }
+    if (o.goalType !== "exodia") EXODIA.forEach(id => add(id, 1));
+    add(ITEM + 300, free);
+    S = {seed: Math.random().toString(36).slice(2), sd, pool: shuffle(items), items: [], checked: [], store: {},
+         time: 0, finished: null, opts: {...o, count, pool: pool.length}};
+    save();
+  }
+  // Ein Item fuer einen Check auswaehlen (siehe oben)
+  function reward(){
+    if (!S.pool.length) return [];
+    const sd = S.sd, checked = new Set(S.checked), got = [];
+    const owned = () => {
+      const own = emptyOwn();
+      sd.start_genres.forEach(g => own.g.add(g)); sd.start_letters.forEach(l => own.l.add(l));
+      for (const [k, vs] of Object.entries(sd.start_extra || {})) vs.forEach(v => own.x[k].add(v));
+      if (sd.unlock_mode === "letters") GENRES.forEach(x => own.g.add(x));
+      for (const it of [...S.items, ...got]) { const u = unlockOf(it); if (u) addTo(own, ...u); }
+      return own;
+    };
+    let own = owned();
+    if (openCount(sd, own, checked) > 0) { got.push(S.pool.splice(rnd(S.pool.length), 1)[0]); return got; }
+    // Nichts mehr zu raten: das Freischalt-Item nehmen, das am meisten oeffnet (notfalls mehrere)
+    while (S.pool.some(id => unlockOf(id))) {
+      let best = -1, bestN = -1;
+      S.pool.forEach((id, i) => {
+        const u = unlockOf(id); if (!u) return;
+        const o2 = copyOwn(own); addTo(o2, ...u);
+        const n = openCount(sd, o2, checked); if (n > bestN) { bestN = n; best = i; }
+      });
+      got.push(S.pool.splice(best, 1)[0]); own = owned();
+      if (bestN > 0) break;
+    }
+    return got;
+  }
+  const deliver = msgs => setTimeout(() => msgs.forEach(handle), 0);
+  function start(){
+    G.offline = true; G.seed = S.seed;
+    deliver([{cmd:"Connected", slot:1, team:0, players:[{team:0, slot:1, alias:t("you"), name:t("you")}],
+              slot_info:{1:{name:t("you"), game:"Animepelago"}}, checked_locations:[...S.checked], missing_locations:[], slot_data:S.sd},
+             {cmd:"ReceivedItems", index:0, items:S.items.map(i => ({item:i, location:-1, player:1, flags:0}))}]);
+  }
+  function receive(cmds){
+    for (const c of cmds) {
+      if (c.cmd === "Get") deliver([{cmd:"Retrieved", keys:Object.fromEntries(c.keys.map(k => [k, S.store[k] ?? null]))}]);
+      else if (c.cmd === "Set") { S.store[c.key] = c.operations.at(-1).value; save(); }
+      else if (c.cmd === "LocationChecks") {
+        const fresh = c.locations.filter(l => !S.checked.includes(l)); if (!fresh.length) continue;
+        S.checked.push(...fresh);
+        const index = S.items.length, got = fresh.flatMap(() => reward());
+        S.items.push(...got); save();
+        for (const id of got) log(t("youGot", itemName(id)));
+        deliver([{cmd:"RoomUpdate", checked_locations:fresh}, {cmd:"ReceivedItems", index, items:got.map(i => ({item:i, location:-1, player:1, flags:0}))}]);
+      }
+    }
+  }
+  // Timer: zaehlt nur, solange das Spiel offen und das Fenster sichtbar ist
+  let lastTick = 0;
+  function tick(){
+    const now = Date.now();
+    if (G.offline && S && !S.finished && !$("game").classList.contains("hide") && document.visibilityState === "visible" && lastTick)
+      S.time += Math.min(now - lastTick, 5000);
+    lastTick = now;
+  }
+  setInterval(() => { tick(); if (G.offline && S && !S.finished) { renderStats(); if (Math.floor(S.time / 1000) % 5 === 0) save(); } }, 1000);
+  document.addEventListener("visibilitychange", () => { tick(); if (S) save(); });
+  function finish(done){
+    tick(); if (!S || S.finished) return;
+    const sd = S.sd, st = S.store[stateKey()] || {};
+    S.finished = {time: S.time, date: new Date().toISOString().slice(0, 10), done, total: sd.anime.length,
+                  pool: S.opts?.pool, goal: sd.goal === "exodia" ? "Exodia" : sd.anime_goal,
+                  helps: (st.geassIds || []).length + (st.domainUsed ? 1 : 0),
+                  mode: [sd.unlock_mode, sd.genre_rule, sd.title_language].join(" · ")};
+    save(); addScore(S.finished);
+  }
+  return {create, start, receive, finish, saved: () => (S = S || load()), clear: () => { S = null; },
+          time: () => S ? S.time : 0, info: () => S && {pool: S.opts?.pool, finished: S.finished}};
+})();
+// Highscores (nur im Browser gespeichert): gewonnene Offline-Spiele, schnellste zuerst
+const SCORES = "animepelago_scores_v1";
+// Sicherheit: nur gueltige Eintraege laden (die Liste koennte von Hand veraendert worden sein)
+const loadScores = () => { let l; try { l = JSON.parse(localStorage.getItem(SCORES) || "[]"); } catch(e) { return []; }
+  if (!Array.isArray(l)) return [];
+  return l.filter(e => e && typeof e === "object").slice(-500).map(e => ({done:num(e.done, 0, 1e6), total:num(e.total, 0, 1e6),
+    time:num(e.time, 1, 1e12, 1), helps:num(e.helps, 0, 1e6), pool:e.pool == null ? null : num(e.pool, 0, 1e6),
+    goal:String(e.goal ?? "").slice(0, 60), mode:String(e.mode ?? "").slice(0, 60), date:String(e.date ?? "").slice(0, 30)})); };
+function addScore(entry){ const l = loadScores(); l.push(entry); try { localStorage.setItem(SCORES, JSON.stringify(l)); } catch(e) {} }
+const fmtTime = ms => { const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(s % 60).padStart(2, "0"); };
+function renderScores(){
+  const apm = e => e.done / Math.max(e.time / 60000, 1 / 60);  // Anime pro Minute
+  const l = loadScores().sort((a, b) => apm(b) - apm(a)).slice(0, 20);
+  $("scores").innerHTML = !l.length ? `<p class="mute">${t("noScores")}</p>` :
+    `<table><tr><th>#</th><th>${t("hApm")}</th><th>${t("hTime")}</th><th>${t("hGuessed")}</th><th>${t("hGoal")}</th><th>${t("hHelps")}</th><th>${t("hMode")}</th><th>${t("hDate")}</th></tr>`
+    + l.map((e, i) => `<tr><td>${i + 1}</td><td><b>${apm(e).toFixed(2)}</b></td><td>${fmtTime(e.time)}</td><td>${e.done}/${e.total}</td><td>${esc(e.goal)}</td>`
+      + `<td>${num(e.helps, 0, 1e6)}</td><td>${esc(e.mode)}</td><td>${esc(e.date)}</td></tr>`).join("") + `</table>`;
+}
+function itemName(id){
+  const o = id - ITEM;
+  if (o >= 0 && o < GENRES.length) return "Genre: " + GENRES[o];
+  if (o >= 500 && o < 527) return "Letter: " + LETTERS[o - 500];
+  for (const e of EXTRA) if (o >= e.offset && o < e.offset + e.values.length) return `${e.label}: ${e.values[o - e.offset]}`;
+  return {100:"Sukuna's Finger", 101:"Dragon Ball", 102:"Geass", 103:"Stand Arrow", 104:"Senzu Bean", 105:"Time Leap", 202:"Isekai Truck", 203:"Filler Arc", 204:"Tsundere", 200:"Kira's Hand", 201:"Death Note", 300:"Filler Episode",
+          400:"Exodia the Forbidden One", 401:"Right Arm of the Forbidden One", 402:"Left Arm of the Forbidden One",
+          403:"Right Leg of the Forbidden One", 404:"Left Leg of the Forbidden One"}[o] || "Item " + id;
+}
+// Modus-Auswahl auf der Startseite
+function setMode(m){
+  store.set("ap_mode", m);
+  $("modes").classList.remove("hide");
+  $("connect").classList.toggle("hide", m !== "ap"); $("offline").classList.toggle("hide", m !== "off"); $("more").classList.toggle("hide", m !== "more");
+  // "Weitere" ist ein Unter-Tab von Offline: nur sichtbar, wenn Offline (oder Weitere) aktiv ist
+  $("modeAP").classList.toggle("main", m === "ap"); $("modeOff").classList.toggle("main", m === "off");
+  $("modeOff").classList.toggle("parent", m === "more");
+  $("modeMore").classList.toggle("hide", m === "ap"); $("modeMore").classList.toggle("active", m === "more");
+  $("oContinue").classList.toggle("hide", !OFFLINE.saved());
+  renderScores();
+}
+$("modeAP").onclick = () => setMode("ap");
+$("modeOff").onclick = () => setMode("off");
+$("modeMore").onclick = () => setMode("more");
+$("oNew").onclick = () => {
+  const n = id => +$(id).value || 0;
+  OFFLINE.create({count:n("oCount"), goalType:$("oGoalType").value, goal:n("oGoal"), unlock:$("oUnlock").value,
+                  lang:$("oLang").value, rule:$("oRule").value, step:6, only:$("oOnly").value, onlyStart:+$("oOnlyStart").value || 3, geass:Math.min(50, n("oGeass")), arrows:Math.min(100, n("oArrows")), demo:$("oDemo").checked,
+                  perks:$("oPerks").checked, traps:$("oTraps").checked,
+                  extras:EXTRA.filter(e => $("ox" + e.label).checked).map(e => e.key)});
+  OFFLINE.start();
+};
+// ---------- Galgenmaennchen ----------
+// Zufaelliger Anime aus den beliebtesten; Titel in deiner Sprache; 7 Fehlversuche; ganzer Titel jederzeit moeglich.
+const HM = (() => {
+  const KEY = "animepelago_hangman_v1", LIVES = 7;
+  const PARTS = ['<line x1="10" y1="125" x2="70" y2="125"/>', '<line x1="30" y1="125" x2="30" y2="10"/>',
+    '<line x1="30" y1="10" x2="85" y2="10"/><line x1="85" y1="10" x2="85" y2="25"/>', '<circle cx="85" cy="37" r="12"/>',
+    '<line x1="85" y1="49" x2="85" y2="85"/>', '<line x1="85" y1="60" x2="68" y2="72"/><line x1="85" y1="60" x2="102" y2="72"/>',
+    '<line x1="85" y1="85" x2="70" y2="108"/><line x1="85" y1="85" x2="100" y2="108"/>'];
+  let st = null, best = {streak: 0, solved: 0};
+  try { best = Object.assign(best, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(best)); } catch(e) {} };
+  const base = ch => ch.normalize("NFKD").replace(/\p{M}/gu, "").toUpperCase();
+  const guessable = ch => /^[A-Z0-9]$/.test(base(ch));
+  function titleOf(a, lang){
+    const T = a.titles, en = T.english || T.romaji || a.title;
+    return lang === "japanese" || lang === "romaji" ? (T.romaji || en) : (T[lang] || en);
+  }
+  function start(){
+    const lang = $("mLang").value, only = $("mOnly").value;
+    let pool = DB.anime.slice(0, Math.max(50, +$("mPool").value || 500));
+    if (only) pool = pool.filter(a => a.genres.includes(only) || a.demographics.includes(only));
+    if (!pool.length) pool = DB.anime;
+    st = {streak: st?.streak || 0, lang, pool};
+    round();
+    ["offline", "modes", "connect", "more"].forEach(id => $(id).classList.add("hide"));
+    $("hangman").classList.remove("hide");
+  }
+  function round(){
+    const pool = st.pool.filter(a => [...titleOf(a, st.lang)].some(guessable));
+    st.a = pool[Math.floor(Math.random() * pool.length)];
+    st.word = titleOf(st.a, st.lang); st.guessed = new Set(); st.wrong = 0; st.over = false;
+    LIVE.need([st.a.id], true, () => { if (st && !st.over) draw(); });  // Format/Folgen live, falls moeglich
+    $("hmMsg").textContent = ""; $("hmMsg").className = ""; $("hmGuess").value = "";
+    $("hmNext").classList.add("hide"); $("hmSolve").disabled = false;
+    $("hmKeys").innerHTML = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"].map(c => `<button type="button" data-k="${c}">${c}</button>`).join("");
+    draw();
+  }
+  function draw(reveal){
+    $("hmWord").textContent = [...st.word].map(ch => !guessable(ch) || reveal || st.guessed.has(base(ch)) ? ch : "_").join("");
+    // Pro Fehler wird eine Info aufgedeckt (beim letzten Fehler ist es vorbei)
+    const shown = reveal ? clues().length : st.wrong;
+    $("hmHint").innerHTML = `<div>${t("hmLives", LIVES - st.wrong)}</div>` + clues().slice(0, shown).map(c => `<div>${esc(c)}</div>`).join("");
+    $("hmPic").innerHTML = PARTS.slice(0, st.wrong).join("");
+    $("hmScore").textContent = t("hmScore", st.streak, best.streak, best.solved);
+  }
+  // Infos in fester Reihenfolge; Jahr, Jahreszeit, Vorlage, Studio stehen in der Spieldatei, Format/Folgen kommen live
+  function clues(){
+    const a = st.a, [year, source, season, studio] = a.c || [], m = LIVE.get(a.id);
+    const words = st.word.split(/\s+/).length;
+    return [
+      "🏷️ " + a.genres.join(", "),
+      year && "📅 " + t("cat_year") + " " + (year === "Before 2000" ? t("before2000") : year),
+      season && "🌤️ " + t("cat_season") + " " + season,
+      source && "📚 " + t("cat_source") + " " + source,
+      studio && studio !== "Other" && "🎬 " + t("cat_studio") + " " + studio,
+      m?.format && "📺 " + t("hFormat", fmtName(m.format)),
+      episodesOf(a) && "🔢 " + t("hEps", episodesOf(a)),
+      "🔤 " + t("hWords", words),
+    ].filter(Boolean).slice(0, LIVES - 1);
+  }
+  const solvedAll = () => [...st.word].every(ch => !guessable(ch) || st.guessed.has(base(ch)));
+  function letter(k){
+    if (!st || st.over || st.guessed.has(k)) return;
+    st.guessed.add(k);
+    const hit = [...st.word].some(ch => guessable(ch) && base(ch) === k);
+    const btn = $("hmKeys").querySelector(`[data-k="${k}"]`); if (btn) { btn.disabled = true; btn.classList.add(hit ? "hit" : "miss"); }
+    if (!hit) st.wrong++;
+    sfx(hit ? "hit" : "miss");
+    if (solvedAll()) finish(true); else if (st.wrong >= LIVES) finish(false); else draw();
+  }
+  function solve(){
+    if (!st || st.over) return;
+    if (!norm($("hmGuess").value)) return;
+    if (findAnime($("hmGuess").value, [st.a]).hits.length) finish(true);
+    else { st.wrong++; $("hmMsg").textContent = t("hmWrongTitle"); $("hmMsg").className = "bad"; $("hmGuess").value = "";
+           if (st.wrong >= LIVES) finish(false); else draw(); }
+  }
+  function finish(won){
+    st.over = true;
+    sfx(won ? "win" : "bad");
+    if (won) { st.streak++; best.solved++; best.streak = Math.max(best.streak, st.streak); }
+    else st.streak = 0;
+    save(); draw(true);
+    $("hmMsg").textContent = won ? t("hmWon") : t("hmLost", st.word); $("hmMsg").className = won ? "good" : "bad";
+    $("hmKeys").querySelectorAll("button").forEach(b => b.disabled = true);
+    $("hmSolve").disabled = true; $("hmNext").classList.remove("hide"); $("hmNext").focus();
+  }
+  $("hmKeys").onclick = e => { const b = e.target.closest("[data-k]"); if (b) letter(b.dataset.k); };
+  document.addEventListener("keydown", e => {
+    if ($("hangman").classList.contains("hide") || e.target.tagName === "INPUT" || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = base(e.key || ""); if (/^[A-Z0-9]$/.test(k)) letter(k);
+  });
+  $("hmSolve").onclick = solve; onEnter(["hmGuess"], solve);
+  $("hmNext").onclick = round;
+  $("hmBack").onclick = () => { $("hangman").classList.add("hide"); setMode("more"); };
+  return {start};
+})();
+$("hmStart").onclick = () => HM.start();
+// ---------- Anime-Bingo ----------
+// Raster mit Themen an Zeilen und Spalten; jedes Feld braucht einen Anime, der beide erfuellt.
+// Jedes Feld hat mindestens so viele passende Anime wie das Raster Felder -> man kann sich nie verspielen.
+const BG = (() => {
+  const KEY = "animepelago_bingo_v1";
+  let st = null, best = {score: 0, full: 0};
+  try { best = Object.assign(best, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch(e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(best)); } catch(e) {} };
+  const RANK = new Map(DB.anime.map((a, i) => [a.id, i + 1]));  // Beliebtheits-Rang (Spieldatei ist sortiert)
+  const decade = y => !y ? null : y === "Before 2000" ? "<2000" : y.startsWith("200") ? "2000s" : +y < 2020 ? "2010s" : "2020s";
+  // Alle moeglichen Themen: {key, label, test(a)}
+  function themes(pool, lang){
+    const out = [], add = (key, label, test) => out.push({key, label, test});
+    for (const g of GENRES.slice(0, 18)) add("g:" + g, em(g) + g, a => a.genres.includes(g));
+    for (const d of DEMOGRAPHICS) add("d:" + d, em(d) + d, a => a.demographics.includes(d));
+    const studios = {}; pool.forEach(a => (a.s || []).forEach(x => studios[x] = (studios[x] || 0) + 1));
+    for (const x of Object.keys(studios)) add("s:" + x, "🎬 " + x, a => (a.s || []).includes(x));
+    for (const x of ["Manga", "Light Novel", "Novel", "Original", "Visual Novel", "Video Game"]) add("src:" + x, em(x) + x, a => a.c?.[1] === x);
+    for (const x of ["<2000", "2000s", "2010s", "2020s"]) add("dec:" + x, "📅 " + x, a => decade(a.c?.[0]) === x);
+    for (const x of ["Winter", "Spring", "Summer", "Fall"]) add("sea:" + x, em(x) + x, a => a.c?.[2] === x);
+    for (const l of "ABCDEFGHIJKLMNOPRSTWY") add("l:" + l, "🔤 " + l, a => firstLetterOf(a, lang) === l);
+    return out;
+  }
+  function firstLetterOf(a, lang){
+    const T = a.titles, en = T.english || T.romaji || a.title;
+    const tt = lang === "romaji" || lang === "japanese" ? (T.romaji || en) : (T[lang] || en);
+    for (const ch of tt.normalize("NFKD")) { if (/\p{M}/u.test(ch)) continue; const c = ch.toUpperCase(); return c >= "A" && c <= "Z" ? c : "#"; }
+    return "#";
+  }
+  function generate(n, pool, lang){
+    const need = n * n, all = themes(pool, lang).filter(th => pool.filter(th.test).length >= need);
+    const typeOf = th => th.key.split(":")[0];
+    const fits = (x, y) => pool.filter(a => x.test(a) && y.test(a)).length >= need;
+    // Abwechslung: hoechstens n Themen derselben Art (z. B. Genres) im ganzen Raster
+    const typesOk = list => { const c = {}; for (const t of list) c[typeOf(t)] = (c[typeOf(t)] || 0) + 1; return Object.values(c).every(v => v <= Math.max(3, n)); };
+    const shuffled = l => [...l].sort(() => Math.random() - .5);
+    for (let attempt = 0; attempt < 600; attempt++) {
+      // Zeilen zufaellig, dann nur Spalten, die mit ALLEN Zeilen genug Anime haben
+      const rows = shuffled(all).slice(0, n);
+      if (!typesOk(rows)) continue;
+      const okCols = shuffled(all.filter(c => !rows.includes(c) && rows.every(r => fits(r, c))));
+      const cols = [];
+      for (const c of okCols) { if (cols.length === n) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
+      if (cols.length < n) continue;
+      const cand = rows.map(r => cols.map(c => pool.filter(a => r.test(a) && c.test(a))));
+      return {rows, cols, cand};
+    }
+    return null;
+  }
+  // Zwei Spieler am selben Geraet, abwechselnd. Wer zuerst eine ganze Zeile, Spalte oder Diagonale hat, gewinnt.
+  // Falsche Antwort = Zug vorbei. Belegte Felder bleiben belegt.
+  const wins = [0, 0];
+  const pname = i => ($("bgP" + (i + 1)).value.trim() || t("bgPlayer", i + 1)).slice(0, 20);
+  function start(){
+    const lang = $("mLang").value, only = $("mOnly").value, n = +$("bgSize").value || 3;
+    let pool = DB.anime.slice(0, Math.max(50, +$("mPool").value || 500));
+    if (only) pool = pool.filter(a => a.genres.includes(only) || a.demographics.includes(only));
+    const g = generate(n, pool, lang);
+    ["offline", "modes", "connect", "more"].forEach(id => $(id).classList.add("hide"));
+    $("bingo").classList.remove("hide");
+    if (!g) { st = null; $("bgGrid").innerHTML = ""; say2(t("bgNoGrid"), "bad"); return; }
+    // Wer anfaengt, wechselt jede Runde
+    const first = st ? 1 - st.first : 0;
+    st = {n, lang, mode: n >= 5 ? "most" : "line", ...g, cells: Array.from({length: n}, () => Array(n).fill(null)),
+          owner: Array.from({length: n}, () => Array(n).fill(-1)), sel: null, turn: first, first, over: false, line: null};
+    $("bgHelpP").dataset.t = st.mode === "most" ? "bgHelpMost" : "bgHelp"; $("bgHelpP").textContent = t($("bgHelpP").dataset.t);
+    $("bgGrid").classList.toggle("big", n >= 5);
+    say2((st.mode === "most" ? t("bgMostRule") + " " : "") + t("bgTurn", pname(st.turn)), ""); $("bgGuess").value = ""; draw();
+  }
+  function draw(){
+    const {n, rows, cols, cells, owner, sel, over, line} = st;
+    const inLine = (r, c) => line && line.some(([x, y]) => x === r && y === c);
+    let h = `<tr><th></th>${cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
+    for (let r = 0; r < n; r++) {
+      h += `<tr><th>${esc(rows[r].label)}</th>`;
+      for (let c = 0; c < n; c++) {
+        const a = cells[r][c], o = owner[r][c], isSel = !over && sel && sel[0] === r && sel[1] === c;
+        const cls = [o === 0 ? "p1" : o === 1 ? "p2" : "", isSel ? "sel" : "", inLine(r, c) ? "win" : "", over && !a ? "missed" : ""].join(" ");
+        // Richtig belegt: Logo zeigen, wenn es eins gibt (spaeter von TMDB), sonst den Namen
+        const name = esc(displayTitleOf(a || {titles:{}}, st.lang));
+        const text = a ? `<div class="pmark">${o === 0 ? "✕" : "◯"}</div>` + (a.logo
+            ? `<img class="blogo" src="${esc(a.logo)}" alt="${name}" title="${name}">`
+            : `<div class="bt" title="${name}">${name}</div>`)
+                       : over ? `${st.cand[r][c].length} ${t("bgPossible")}` : "";
+        h += `<td class="${cls}" data-r="${r}" data-c="${c}">${text}</td>`;
+      }
+      h += `</tr>`;
+    }
+    $("bgGrid").innerHTML = h;
+    const own = p => owner.flat().filter(x => x === p).length;
+    $("bgScore").innerHTML = `<span class="p1t">✕ ${esc(pname(0))} ${wins[0]}</span> : <span class="p2t">${wins[1]} ${esc(pname(1))} ◯</span>`
+      + (st.mode === "most" ? `<div style="font-size:12px"><span class="p1t">${t("bgFields", own(0))}</span> : <span class="p2t">${t("bgFields", own(1))}</span></div>` : "");
+    $("bgEnd").classList.toggle("hide", st.mode !== "most" || over);
+    $("bgTurnBox").innerHTML = over ? "" : `<span class="${st.turn ? "p2t" : "p1t"}">${st.turn ? "◯" : "✕"} ${esc(t("bgTurn", pname(st.turn)))}</span>`;
+  }
+  const displayTitleOf = (a, lang) => lang === "japanese" ? (a.titles.native || a.title) : (a.titles[lang] || a.titles.english || a.titles.romaji || a.title);
+  function enter(){
+    if (!st || st.over || !norm($("bgGuess").value)) return;
+    if (!st.sel) { say2(t("bgPickCell"), "warn"); return; }
+    const [r, c] = st.sel, used = new Set(st.cells.flat().filter(Boolean).map(a => a.id));
+    const fits = a => st.rows[r].test(a) && st.cols[c].test(a);
+    const {hits, fuzzy} = findAnime($("bgGuess").value, DB.anime, fits);
+    const ok = hits.find(fits);
+    const who = st.turn;
+    if (ok && used.has(ok.id)) {  // schon im Raster: zaehlt wie ein Fehler
+      sfx("bad"); say2(t("bgUsed") + " " + t("bgTurnLost", pname(who)), "bad");
+    } else if (ok) {
+      st.cells[r][c] = ok; st.owner[r][c] = who; sfx("ok");
+      say2(t("bgRight2", pname(who), displayTitleOf(ok, st.lang)) + (fuzzy ? " " + t("typoOk") : ""), "good");
+    } else {
+      sfx("bad");
+      say2((hits.length ? t("bgNoFit", displayTitleOf(hits[0], st.lang)) : t("unknown")) + " " + t("bgTurnLost", pname(who)), "bad");
+    }
+    $("bgGuess").value = ""; st.sel = null;
+    const placed = ok && st.owner.flat().length && st.cells.flat().some(x => x && x.id === ok.id) && st.owner[r][c] === who;
+    const line = placed && st.mode === "line" ? winLine(who) : null;
+    if (line) { st.line = line; finish(who); }
+    else if (st.cells.flat().every(Boolean)) finish(st.mode === "most" ? mostWinner() : -1);
+    else { st.turn = 1 - who; }
+    draw();
+  }
+  // Gewinnreihe des Spielers suchen (Zeilen, Spalten, Diagonalen)
+  function winLine(p){
+    const n = st.n, lines = [];
+    for (let i = 0; i < n; i++) { lines.push([...Array(n)].map((_, j) => [i, j])); lines.push([...Array(n)].map((_, j) => [j, i])); }
+    lines.push([...Array(n)].map((_, j) => [j, j])); lines.push([...Array(n)].map((_, j) => [j, n - 1 - j]));
+    return lines.find(l => l.every(([r, c]) => st.owner[r][c] === p)) || null;
+  }
+  // 5x5: wer mehr Felder hat, gewinnt
+  function mostWinner(){
+    const a = st.owner.flat().filter(x => x === 0).length, b = st.owner.flat().filter(x => x === 1).length;
+    return a > b ? 0 : b > a ? 1 : -1;
+  }
+  function finish(winner){
+    st.over = true;
+    if (winner >= 0) { wins[winner]++; sfx("win"); say2(t("bgWinner", pname(winner)), "good"); }
+    else { sfx("bad"); say2(t("bgDraw"), "warn"); }
+  }
+  const say2 = (text, cls) => { $("bgMsg").textContent = text; $("bgMsg").className = cls; };
+  $("bgGrid").onclick = e => {
+    const td = e.target.closest("td"); if (!td || !st) return;
+    const r = +td.dataset.r, c = +td.dataset.c;
+    if (st.over) {  // nach dem Spiel: zeigen, was gepasst haette
+      const list = st.cand[r][c].slice(0, 8).map(a => displayTitleOf(a, st.lang)).join(", ");
+      say2(`${st.rows[r].label} + ${st.cols[c].label}: ${list}${st.cand[r][c].length > 8 ? " …" : ""}`, "");
+      return;
+    }
+    if (!st.cells[r][c]) { st.sel = [r, c]; draw(); say2(t("bgTurn", pname(st.turn)) + " · " + `${st.rows[r].label} + ${st.cols[c].label}`, ""); $("bgGuess").focus(); }
+  };
+  $("bgEnter").onclick = enter; onEnter(["bgGuess"], enter);
+  ["bgP1", "bgP2"].forEach(id => $(id).addEventListener("input", () => st && draw()));
+  $("bgNew").onclick = start;
+  $("bgEnd").onclick = () => { if (st && !st.over && st.mode === "most") { finish(mostWinner()); draw(); } };
+  $("bgBack").onclick = () => { $("bingo").classList.add("hide"); setMode("more"); };
+  return {start};
+})();
+$("bgStart").onclick = () => BG.start();
+$("oContinue").onclick = () => { if (OFFLINE.saved()) OFFLINE.start(); };
+$("oCount").max = $("oGoal").max = $("mPool").max = DB.anime.length;
+// Titelsprachen: nur die, die in der Datenbank genug Titel haben (25-%-Regel)
+const LANG_NAMES = {english:"English", romaji:"Romaji", japanese:"日本語", german:"Deutsch", spanish:"Español",
+  french:"Français", italian:"Italiano", portuguese:"Português"};
+$("oLang").innerHTML = (DB.meta.title_languages || ["english","romaji","japanese","german","spanish","french"])
+  .map(l => `<option value="${l}">${LANG_NAMES[l] || l}</option>`).join("");
+$("mLang").innerHTML = $("oLang").innerHTML;
+// Zielgruppen gibt es nur mit "Ein Genre reicht"
+const syncDemo = () => { const all = $("oRule").value === "all"; $("oDemo").disabled = all; $("oDemo").parentElement.style.opacity = all ? .5 : 1; };
+$("oRule").onchange = syncDemo; syncDemo();
+// Start-Anime-Feld nur zeigen, wenn ein Genre gewaehlt ist
+$("oOnly").onchange = () => $("oOnlyStartBox").classList.toggle("hide", !$("oOnly").value);
+// Genre-Auswahl fuer "Nur ein Genre" (mit Anzahl verfuegbarer Anime)
+for (const g of GENRES) {
+  const n = DB.anime.filter(a => a.genres.includes(g) || a.demographics.includes(g)).length;
+  if (n >= 10) { $("oOnly").insertAdjacentHTML("beforeend", `<option value="${esc(g)}">${esc(g)} (${n})</option>`);
+                 $("mOnly").insertAdjacentHTML("beforeend", `<option value="${esc(g)}">${esc(g)} (${n})</option>`); }
+}
+
+// ---------- Log und Chat ----------
+function playerName(slot){ const p = (G.players||[]).find(p => p.slot === slot && p.team === G.team); return p ? p.alias || p.name : (G.slotInfo[slot]?.name || "Player " + slot); }
+function gameOf(slot){ return G.slotInfo[slot]?.game; }
+function printJSON(msg){
+  return (msg.data||[]).map(part => {
+    switch (part.type) {
+      case "player_id": return playerName(+part.text);
+      case "item_id": return G.dp[gameOf(part.player)]?.items[part.text] ?? "Item " + part.text;
+      case "location_id": return G.dp[gameOf(part.player)]?.locs[part.text] ?? "Location " + part.text;
+      default: return part.text;
+    }
+  }).join("");
+}
+function log(text){ const li = document.createElement("li"); li.textContent = text; $("log").prepend(li); while ($("log").children.length > 200) $("log").lastChild.remove(); }
+function say(text, cls){ $("msg").textContent = text; $("msg").className = cls||""; }
+const sayNow = () => { const s = $("say").value.trim(); if (s) send({cmd:"Say", text:s}); $("say").value = ""; };
+$("sayBtn").onclick = sayNow; onEnter(["say"], sayNow);
+
+applyLang();
+setMode(["off", "more"].includes(store.get("ap_mode")) ? store.get("ap_mode") : "ap");
+</script>
+</body>
+</html>

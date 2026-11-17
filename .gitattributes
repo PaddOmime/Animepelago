@@ -1,0 +1,5 @@
+# Windows-Batchdateien brauchen Windows-Zeilenenden
+*.bat text eol=crlf
+*.cmd text eol=crlf
+# Alles andere: Git entscheidet selbst
+* text=auto
