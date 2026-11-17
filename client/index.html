@@ -81,6 +81,17 @@ button:disabled{opacity:.5;cursor:default}
 #bgGrid td.p2{border-color:var(--p2);background:color-mix(in srgb, var(--p2) 14%, var(--card))}
 #bgGrid td.win{box-shadow:0 0 0 3px var(--perk) inset}
 #bgGrid .pmark{font-size:16px;font-weight:700;line-height:1}
+/* Am PC: Bingo-Raster nicht ueber die ganze Breite ziehen, groessere Felder und Schrift */
+@media (min-width:700px){
+  #bgGrid{max-width:780px;margin:0 auto}
+  #bgGrid th{font-size:15px;padding:6px}
+  #bgGrid td{height:112px;font-size:15px}
+  #bgGrid .blogo{max-height:72px}
+  #bgGrid .pmark{font-size:22px}
+  #bgGrid.big th{font-size:13px;padding:4px}
+  #bgGrid.big td{height:96px;font-size:13px}
+  #bgGrid.big .blogo{max-height:56px}
+}
 #bgGrid td.p1 .pmark,.p1t{color:var(--p1)} #bgGrid td.p2 .pmark,.p2t{color:var(--p2)}
 #bgGrid td.missed{border-color:var(--bad);background:var(--grey);color:var(--mute)}
 .subtab{font-size:13px;padding:5px 9px;border-style:dashed}
