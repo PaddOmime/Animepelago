@@ -7,6 +7,7 @@
 **Install:** download `animepelago.apworld` below and double-click it (or copy it into `custom_worlds`), replacing 0.1.0. Host and all players should use the same version.
 
 ### New
+- **1470 anime** (up from 978), 1429 of them with logo silhouettes.
 - **29 joke filler items** without any effect, just for fun: *AYAYA!*, *Ara Ara*, *Nya!*, *Waifu*, *Husbando*, *Straw Hat*, *Gum-Gum Fruit*, *Den Den Mushi*, *Going Merry*, *Thousand Sunny*, *Zangetsu*, *Hogyoku*, *Hollow Purple*, *Gojo's Blindfold*, *Naruto's Headband*, *Tanjiro's Hanafuda Earrings*, *Inosuke's Boar Mask*, *Saitama's Gloves*, *Survey Corps Cloak*, *3D Maneuver Gear*, *NerveGear*, *Philosopher's Stone* and more. About one in four filler slots gets one of them (item group `Fillers`).
 - **Anime Bingo:** choose which theme types appear (Genre, Demographic, Studio, Source, Decade, Season, Letter) and a new **6×7** board (most fields wins). A smarter check makes sure you can never get stuck.
 - Bigger Bingo fields and text on desktop screens.
@@ -18,7 +19,7 @@
 - **Pulpup** for testing.
 
 ---
-🇩🇪 **Neu in 0.1.1:** 29 Spaß-Füller ohne Wirkung (AYAYA!, Waifu, Husbando, Strohhut, Teleschnecke …), Bingo mit frei wählbaren Themen und neuem 6×7-Feld, Titel ohne Staffel-Angaben („My Hero Academia/Staffel 1“ → „My Hero Academia“). Danke an **Pulpup** fürs Testen! Bitte die alte `animepelago.apworld` ersetzen; Host und alle Spieler brauchen dieselbe Version.
+🇩🇪 **Neu in 0.1.1:** 1470 Anime (vorher 978), 29 Spaß-Füller ohne Wirkung (AYAYA!, Waifu, Husbando, Strohhut, Teleschnecke …), Bingo mit frei wählbaren Themen und neuem 6×7-Feld, Titel ohne Staffel-Angaben („My Hero Academia/Staffel 1“ → „My Hero Academia“). Danke an **Pulpup** fürs Testen! Bitte die alte `animepelago.apworld` ersetzen; Host und alle Spieler brauchen dieselbe Version.
 
 ## 0.1.0 (Beta)
 First public beta: 978 anime (968 with logo silhouettes), titles in 7 languages, unlocks by genre / letter / year / source / season / studio, goals (anime, Exodia, Genre Master), perks and traps, DeathLink, TrapLink, Universal Tracker, offline mode, Hangman and Anime Bingo.

@@ -115,12 +115,12 @@ Animepelago:
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 10
-    # Maximum value is 978
+    # Maximum value is 1470
     50: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
-    random-range-10-978: 0 # random value between 10 and 978
+    random-range-10-1470: 0 # random value between 10 and 1470
 
   anime_goal:
     # How many anime you need to guess to win (only with Goal: anime).
@@ -128,12 +128,12 @@ Animepelago:
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 1
-    # Maximum value is 978
+    # Maximum value is 1470
     40: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
-    random-range-1-978: 0 # random value between 1 and 978
+    random-range-1-1470: 0 # random value between 1 and 1470
 
   only_genres:
     # Play only with anime of these genres or target audiences, e.g. ["Romance"] or ["Shounen"].
