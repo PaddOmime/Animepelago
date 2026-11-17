@@ -67,6 +67,27 @@ ITEMS.update({
     "Filler Episode":  (ITEM_ID_OFFSET + 300, ItemClassification.filler, 0),
 })
 
+# Spass-Fueller ohne Wirkung (nur zur Auflockerung). Nummern 301 ff. -- nur hinten anhaengen, nie umsortieren!
+FLAVOR_FILLERS = [
+    "AYAYA!",
+    "Ara Ara",
+    "Nya!",
+    "Gum-Gum Fruit",
+    "Flame-Flame Fruit",
+    "Usopp's Slingshot",
+    "Nami's Clima-Tact",
+    "Waifu",
+    "Zangetsu",
+    "Hogyoku",
+    "Cursed Technique Lapse: Blue",
+    "Cursed Technique Reversal: Red",
+    "Hollow Purple",
+    "Philosopher's Stone",
+    "Husbando",
+]
+for _i, _name in enumerate(FLAVOR_FILLERS):
+    ITEMS[_name] = (ITEM_ID_OFFSET + 301 + _i, ItemClassification.filler, 0)
+
 for _i, _l in enumerate(LETTERS):
     ITEMS[letter_item(_l)] = (ITEM_ID_OFFSET + 500 + _i, ItemClassification.progression, 1)
 
@@ -98,6 +119,7 @@ item_name_groups: dict[str, set[str]] = {
     **{_label + "s": {extra_item(_cat, v) for v in CATEGORIES.get(_cat, [])} for _cat, (_label, _) in EXTRA_CATEGORIES.items()},
     "Traps": {"Kira's Hand", "Death Note", "Isekai Truck", "Filler Arc", "Tsundere"},
     "Perks": {"Sukuna's Finger", "Dragon Ball", "Geass", "Stand Arrow", "Senzu Bean", "Time Leap"},
+    "Fillers": {"Filler Episode", *FLAVOR_FILLERS},
 }
 
 FILLER_ITEM = "Filler Episode"

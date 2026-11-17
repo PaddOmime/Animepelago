@@ -1447,7 +1447,8 @@ const OFFLINE = (() => {
     add(DEATHNOTE, 1);
     if (o.traps) { add(KIRA, 5); add(TRUCK, 3); add(FILLER, 3); add(TSUNDERE, 3); }
     if (o.goalType !== "exodia") EXODIA.forEach(id => add(id, 1));
-    add(ITEM + 300, free);
+    // Rest: meist "Filler Episode" (300), etwa jedes vierte Mal ein Spass-Fueller ohne Wirkung (301-314)
+    while (free > 0) { items.push(Math.random() < .25 ? ITEM + 301 + Math.floor(Math.random() * FLAVOR.length) : ITEM + 300); free--; }
     S = {seed: Math.random().toString(36).slice(2), sd, pool: shuffle(items), items: [], checked: [], store: {},
          time: 0, finished: null, opts: {...o, count, pool: pool.length}};
     save();
@@ -1541,8 +1542,11 @@ function renderScores(){
     + l.map((e, i) => `<tr><td>${i + 1}</td><td><b>${apm(e).toFixed(2)}</b></td><td>${fmtTime(e.time)}</td><td>${e.done}/${e.total}</td><td>${esc(e.goal)}</td>`
       + `<td>${num(e.helps, 0, 1e6)}</td><td>${esc(e.mode)}</td><td>${esc(e.date)}</td></tr>`).join("") + `</table>`;
 }
+// Spass-Fueller ohne Wirkung (gleiche Reihenfolge wie FLAVOR_FILLERS in Items.py, Nummern 301 ff.)
+const FLAVOR = ["AYAYA!", "Ara Ara", "Nya!", "Gum-Gum Fruit", "Flame-Flame Fruit", "Usopp's Slingshot", "Nami's Clima-Tact", "Waifu", "Zangetsu", "Hogyoku", "Cursed Technique Lapse: Blue", "Cursed Technique Reversal: Red", "Hollow Purple", "Philosopher's Stone", "Husbando"];
 function itemName(id){
   const o = id - ITEM;
+  if (o >= 301 && o < 301 + FLAVOR.length) return FLAVOR[o - 301];
   if (o >= 0 && o < GENRES.length) return "Genre: " + GENRES[o];
   if (o >= 500 && o < 527) return "Letter: " + LETTERS[o - 500];
   for (const e of EXTRA) if (o >= e.offset && o < e.offset + e.values.length) return `${e.label}: ${e.values[o - e.offset]}`;

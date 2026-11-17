@@ -17,7 +17,7 @@ from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
 
 from .data import ANIME, ANIME_BY_ID, DATA_VERSION, DEMOGRAPHICS, GENRES, HAS_CATEGORY, HAS_DEMOGRAPHICS, LETTERS
-from .Items import (EXODIA_PIECES, EXTRA_CATEGORIES, FILLER_ITEM, GAME, ITEMS, AnimepelagoItem, extra_item,
+from .Items import (EXODIA_PIECES, EXTRA_CATEGORIES, FILLER_ITEM, FLAVOR_FILLERS, GAME, ITEMS, AnimepelagoItem, extra_item,
                     genre_item, item_name_groups, item_name_to_id, letter_item)
 from .Locations import (LOCATION_ID_OFFSET, MILESTONES, AnimepelagoLocation, location_name_groups,
                         location_name_to_id, milestone_name)
@@ -438,7 +438,9 @@ class AnimepelagoWorld(World):
             pool += [self.create_item(name) for _ in range(take)]
             free -= take
 
-        pool += [self.create_item(FILLER_ITEM) for _ in range(free)]
+        # Rest: meist "Filler Episode", etwa jedes vierte Mal ein Spass-Fueller (AYAYA!, Waifu ...) ohne Wirkung
+        pool += [self.create_item(self.random.choice(FLAVOR_FILLERS) if self.random.random() < 0.25 else FILLER_ITEM)
+                 for _ in range(free)]
         self.multiworld.itempool += pool
         # Fuer den Client: wie viele davon wirklich im Spiel sind (alle gefunden -> Spezial-Perk)
         self.perk_counts = {name: sum(1 for i in pool if i.name == name)
