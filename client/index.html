@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Sicherheit: Die Seite darf nur eigene Skripte laden, Bilder nur von AniList und nur mit Archipelago-Servern
      (WebSocket) und der AniList-API sprechen. So kann eingeschleuster Code nichts nachladen oder Daten wegschicken. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://s4.anilist.co https://*.anilist.co; connect-src 'self' ws: wss: https://graphql.anilist.co; media-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://s4.anilist.co https://*.anilist.co https://image.tmdb.org; connect-src 'self' ws: wss: https://graphql.anilist.co; media-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Animepelago</title>
 <style>
 :root{--bg:#f6f6f4;--fg:#1d1d1f;--mute:#6b6b70;--card:#fff;--line:#d9d9de;--ok:#1f8a4c;--bad:#b3261e;--warn:#c2570c;--perk:#d4a017;--p1:#2f6fd6;--p2:#d9480f;--accent:#3355cc;--grey:#e4e4e8}
@@ -328,7 +328,7 @@ const TXT = {
     hYear:"year {0}", hStudio:"studio {0}", hEps:"{0} episodes", hFormat:"format {0}", hSource:"source {0}",
     hWords:"the title has {0} words", hMid:"letter in the middle of the title: {0}", hSeason:"season {0}", hCover:"cover (blurred)",
     parts:"Parts", loadingInfo:"Loading info from AniList …", liveLoading:" · loading info ({0})", notCounted:"(not in the game)", alsoKnown:"Also known as", openAniList:"Open on AniList",
-    letterN:"Letter {0}", credits:"Data: AniList. Not affiliated with AniList or Archipelago. All titles and images © their respective owners."},
+    letterN:"Letter {0}", credits:"Data: AniList, Wikidata. Logos: TMDB – this product uses the TMDB API but is not endorsed or certified by TMDB. Not affiliated with AniList or Archipelago. All titles and images © their respective owners."},
   de: {modeAP:"Archipelago", modeOff:"Offline", oCount:"Anime im Spiel", oPool:"Aus den N beliebtesten",
     oGoalType:"Ziel", oGoalAnime:"Anime erraten", oGoal:"Anime zum Sieg", oUnlock:"Freischalten über", oBoth:"Genres + Buchstaben",
     oGenres:"Genres", oLetters:"Buchstaben", oLang:"Titelsprache", oRule:"Genre-Regel", oAny:"Ein Genre reicht", oAll:"Alle Genres",
@@ -374,7 +374,7 @@ const TXT = {
     hYear:"Jahr {0}", hStudio:"Studio {0}", hEps:"{0} Folgen", hFormat:"Format {0}", hSource:"Vorlage {0}",
     hWords:"der Titel hat {0} Wörter", hMid:"Buchstabe in der Mitte des Titels: {0}", hSeason:"Jahreszeit {0}", hCover:"Cover (verschwommen)",
     parts:"Teile", loadingInfo:"Lade Infos von AniList …", liveLoading:" · lade Infos ({0})", notCounted:"(nicht im Spiel)", alsoKnown:"Auch bekannt als", openAniList:"Auf AniList öffnen",
-    letterN:"Buchstabe {0}", credits:"Daten: AniList. Nicht verbunden mit AniList oder Archipelago. Alle Titel und Bilder © der jeweiligen Rechteinhaber."},
+    letterN:"Buchstabe {0}", credits:"Daten: AniList, Wikidata. Logos: TMDB – this product uses the TMDB API but is not endorsed or certified by TMDB. Nicht verbunden mit AniList oder Archipelago. Alle Titel und Bilder © der jeweiligen Rechteinhaber."},
 };
 const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let lang = store.get("ap_uilang"); if (!TXT[lang]) lang = (navigator.language||"").startsWith("de") ? "de" : "en";
@@ -430,7 +430,9 @@ const DB = window.ANIMEPELAGO_DB;
 for (const a of DB.anime) {
   a.titles = Object.fromEntries(Object.entries(a.t).map(([l, v]) => [l, unhide(v, a.id)]));
   a.title = a.titles.english || a.titles.romaji || a.titles.native;
-  a.logo = a.l || null;
+  // Logo von TMDB: in der Spieldatei steht nur der Pfad ("/abc.png"), die Adresse wird hier gebaut.
+  // Sicherheit: nur einfache Pfade ohne weitere "/" oder Sonderzeichen werden angenommen.
+  a.logo = typeof a.l === "string" && /^\/[A-Za-z0-9_-]+\.(png|svg|jpg|webp)$/.test(a.l) ? "https://image.tmdb.org/t/p/w300" + a.l : null;
   a.keys = new Set(a.k); a.c = a.c || []; a.genres = a.g; a.demographics = a.d; a.parts = a.p.map(([id, c]) => ({id, counted: !!c}));
 }
 const BY_ID = new Map(DB.anime.map(a => [a.id, a]));

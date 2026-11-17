@@ -13,3 +13,7 @@ __pycache__/
 *.archipelago
 *.apsave
 AP_*.zip
+
+# Geheime Schluessel (falls sie doch einmal ausserhalb von offline/ landen)
+tmdb_key.txt
+*.key
