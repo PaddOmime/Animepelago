@@ -4,6 +4,9 @@
 
 Guess anime to send checks to your friends. Their games send you genres, letters and perks that unlock more anime to guess.
 
+### ▶ [Play now in your browser](https://paddomime.github.io/Animepelago/client/)
+Archipelago mode, offline mode and mini games (Hangman, Anime Bingo). No install needed.
+
 > 🇩🇪 Deutsche Anleitung: siehe [unten](#deutsch)
 
 **Status:** beta. Things may still change between versions.
@@ -45,7 +48,7 @@ Guess anime to send checks to your friends. Their games send you genres, letters
 1. Download `animepelago.apworld` from the [Releases](../../releases) and double-click it (or put it into `custom_worlds` in your Archipelago folder).
 2. Create your player YAML: in the Archipelago Launcher use **Generate Template Options**, or start from `Animepelago.yaml` in the release.
 3. Generate and host the game as usual.
-4. Open the **web client**: **[LINK TO GITHUB PAGES]**. Enter server, port, your slot name and the password (if any), and start guessing.
+4. Open the **web client**: **[https://paddomime.github.io/Animepelago/client/](https://paddomime.github.io/Animepelago/client/)**. Enter server, port, your slot name and the password (if any), and start guessing.
 
 ### Offline mode
 
@@ -103,6 +106,9 @@ The code is licensed under the [MIT License](LICENSE). Data from third parties k
 
 Errate Anime, um Checks an deine Mitspieler zu schicken. Ihre Spiele schicken dir Genres, Buchstaben und Perks, die weitere Anime freischalten.
 
+### ▶ [Jetzt im Browser spielen](https://paddomime.github.io/Animepelago/client/)
+Archipelago-Modus, Offline-Modus und Minispiele (Galgenmännchen, Anime-Bingo). Keine Installation nötig.
+
 ### So funktioniert es
 
 - In deiner Welt sind eine Menge Anime, wie viele, legst du selbst fest. Jeder erratene Anime ist ein **Check**.
@@ -119,7 +125,7 @@ Errate Anime, um Checks an deine Mitspieler zu schicken. Ihre Spiele schicken di
 1. `animepelago.apworld` aus den [Releases](../../releases) herunterladen und doppelt anklicken (oder in den Ordner `custom_worlds` deiner Archipelago-Installation legen).
 2. Die Spieler-YAML erstellen: im Archipelago-Launcher über **Generate Template Options**, oder mit `Animepelago.yaml` aus dem Release.
 3. Das Spiel wie gewohnt erstellen und hosten.
-4. Den **Web-Client** öffnen: **[LINK ZU GITHUB PAGES]**. Server, Port, Spielername und gegebenenfalls Passwort eingeben und losraten.
+4. Den **Web-Client** öffnen: **[https://paddomime.github.io/Animepelago/client/](https://paddomime.github.io/Animepelago/client/)**. Server, Port, Spielername und gegebenenfalls Passwort eingeben und losraten.
 
 **Offline-Modus:** Kein Archipelago-Server zur Hand? Im Web-Client **Offline** wählen, Einstellungen festlegen und allein spielen. Jeder erratene Anime gibt ein Item aus demselben Pool, der Spielstand wird im Browser gespeichert.
 
