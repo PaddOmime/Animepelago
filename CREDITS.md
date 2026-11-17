@@ -4,6 +4,10 @@ Animepelago is a free, non-commercial fan project by **paddomime**.
 It is not affiliated with, endorsed or sponsored by any of the services, companies or projects below.
 All anime titles, cover images, logos and other media belong to their respective owners.
 
+## Contributors
+1. **paddomime**: creator
+2. **Pulpup**
+
 ## Data
 
 ### AniList
@@ -13,20 +17,16 @@ Anime list, titles, genres, target audience (demographic tags), popularity, and 
 - Used under the AniList API Terms of Use (free, non-commercial use). Animepelago is an unofficial project and not affiliated with AniList.
 - Cover images are loaded directly from AniList's servers and are not stored in this repository.
 
-<!-- Erst eintragen, wenn die Daten wirklich verwendet werden: -->
-<!--
 ### Wikidata
 Anime titles in additional languages.
 - <https://www.wikidata.org>
 - Data available under CC0 1.0 (public domain); credit given as a courtesy.
--->
-<!--
+
 ### TMDB
 Logo images for the silhouette hints.
 - <https://www.themoviedb.org>
 - This product uses the TMDB API but is not endorsed or certified by TMDB.
-  (TMDB also requires showing their logo alongside this notice, e.g. on the website.)
--->
+- Logo images are loaded directly from TMDB's servers and are not stored in this repository.
 <!--
 ### AnimeThemes
 Opening and ending information.
@@ -43,7 +43,9 @@ Animepelago is a game for the Archipelago multiworld randomizer.
 ## Items and references
 The perk and trap item names refer to anime and manga for fun:
 Sukuna's Finger and Domain Expansion (*Jujutsu Kaisen*), Dragon Balls (*Dragon Ball*), Geass (*Code Geass*),
-Kira's Hand and Death Note (*Death Note*), Exodia (*Yu-Gi-Oh!*). All of these belong to their respective owners.
+Kira's Hand and Death Note (*Death Note*), Exodia (*Yu-Gi-Oh!*). The joke filler items (Straw Hat, Zangetsu, Hollow Purple,
+NerveGear …) refer to *One Piece*, *Bleach*, *Jujutsu Kaisen*, *Naruto*, *Demon Slayer*, *One-Punch Man*, *Attack on Titan*,
+*Sword Art Online* and *Fullmetal Alchemist*. All of these belong to their respective owners.
 
 ## Made with help from
 Claude (Anthropic) helped write the code and documentation.
