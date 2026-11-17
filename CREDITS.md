@@ -6,7 +6,7 @@ All anime titles, cover images, logos and other media belong to their respective
 
 ## Contributors
 1. **paddomime**: creator
-2. **Pulpup**
+2. **Pulpup**: testing
 
 ## Data
 
