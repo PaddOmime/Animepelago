@@ -185,6 +185,17 @@ footer{color:var(--mute);font-size:12px;margin-top:20px}
     <label style="flex:0 0 auto;margin:0"><span data-t="bgSizeLbl"></span><select id="bgSize"><option value="3" data-t="bgSize3"></option><option value="4" data-t="bgSize4"></option><option value="5" data-t="bgSize5"></option></select></label>
     <span class="mute" data-t="bgDesc"></span>
   </div>
+  <!-- Bingo: welche Themen-Arten an Zeilen und Spalten vorkommen duerfen (der Spieler waehlt selbst) -->
+  <div class="game-row" id="bgThemes" style="gap:4px 14px;justify-content:flex-start;padding-top:0;border-top:0">
+    <span class="mute" data-t="bgThemes" style="flex:0 0 auto"></span>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="g" checked style="width:auto"> <span data-t="th_g"></span></label>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="d" checked style="width:auto"> <span data-t="th_d"></span></label>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="s" checked style="width:auto"> <span data-t="th_s"></span></label>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="src" checked style="width:auto"> <span data-t="th_src"></span></label>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="dec" checked style="width:auto"> <span data-t="th_dec"></span></label>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="sea" checked style="width:auto"> <span data-t="th_sea"></span></label>
+    <label style="flex:0 1 auto"><input type="checkbox" data-th="l" checked style="width:auto"> <span data-t="th_l"></span></label>
+  </div>
 </div>
 
 <!-- Galgenmaennchen (Minispiel) -->
@@ -296,12 +307,15 @@ const TXT = {
     bgHelpMost:"2 players, taking turns on this device. Pick a free field and name an anime that fits its row and column. A wrong answer (or an anime already in the grid) ends your turn. Whoever has more fields when the grid is full (or the round is ended) wins!",
     bgDesc:"2 players: name anime that fit row and column. 3×3/4×4: first full line wins. 5×5: most fields wins.", hmStart:"🪢 Hangman", bgStart:"🎯 Anime Bingo", bgTitle:"🎯 Anime Bingo", bgEnter:"Enter", bgNew:"New round",
     bgHelp:"2 players, taking turns on this device. Pick a free field and name an anime that fits its row and column. A wrong answer (or an anime that is already in the grid) ends your turn. First to get a full row, column or diagonal wins!",
+    bgThemes:"Bingo themes:", th_g:"Genre", th_d:"Demographic", th_s:"Studio", th_src:"Source", th_dec:"Decade", th_sea:"Season", th_l:"Letter",
+    bgNoThemes:"Pick at least one theme type for Bingo.",
+    bgNoGridOne:"No grid possible with only this theme type: every anime has just one {0}, so a row and a column of it never match. Add a second type (e.g. Genre).",
     bgP1:"Player 1 (✕)", bgP2:"Player 2 (◯)", bgPlayer:"Player {0}", bgTurn:"{0}'s turn", bgRight2:"✓ {0} takes the field with {1}.",
     bgTurnLost:"Turn over for {0}.", bgWinner:"🏆 {0} wins! Tap a field to see other answers.", bgDraw:"Grid full – draw! Tap a field to see other answers.",
     bgScoreTxt:"{0}/{1} fields · {2} tries · {3} points · best {4}", bgPossible:"possible", bgPickCell:"First pick a free field.",
     bgUsed:"This anime is already in the grid.", bgRight:"✓ {0} (+100, rarity bonus +{1})", bgNoFit:"{0} doesn't fit this field.",
     bgWin:"Bingo! Full grid with {0} points 🎉 Tap a field to see other answers.", bgOver:"No tries left. {0} points. Tap a field to see possible answers.",
-    bgNoGrid:"No fair grid possible with these settings. Pick more anime (\"most popular N\") or a smaller grid.", hmTitle:"🪢 Anime Hangman", hmSolve:"Guess title", hmNext:"Next anime", yBack:"Back",
+    bgNoGrid:"No fair grid possible with these settings. Pick more theme types, more anime (\"most popular N\") or a smaller grid.", hmTitle:"🪢 Anime Hangman", hmSolve:"Guess title", hmNext:"Next anime", yBack:"Back",
     hmLives:"{0} tries left", hmScore:"Streak {0} · best {1} · solved {2}", hmWon:"Solved! 🎉", hmLost:"Too bad! It was: {0}",
     hmWrongTitle:"Not that one.", hmPh:"Or type the whole title …", before2000:"before 2000", trap_KirasHand:"Kira's Hand", "trap_Kira's Hand":"Kira's Hand", "trap_Isekai Truck":"Isekai Truck", "trap_Filler Arc":"Filler Arc", trap_Tsundere:"Tsundere",
     trapHit_IsekaiTruck:"🚚 Isekai Truck! The fields are shuffled for 60 seconds.", trapHit_FillerArc:"📺 Filler Arc! Hints and info are hidden for 60 seconds.",
@@ -342,12 +356,15 @@ const TXT = {
     bgHelpMost:"2 Spieler, abwechselnd an diesem Gerät. Wähle ein freies Feld und nenne einen Anime, der zu Zeile und Spalte passt. Falsche Antwort oder ein Anime, der schon im Raster steht = Zug vorbei. Wer am Ende mehr Felder hat (Raster voll oder Runde beendet), gewinnt!",
     bgDesc:"2 Spieler: Nennt Anime, die zu Zeile und Spalte passen. 3×3/4×4: Wer zuerst eine Reihe hat, gewinnt. 5×5: Wer mehr Felder hat, gewinnt.", hmStart:"🪢 Galgenmännchen", bgStart:"🎯 Anime-Bingo", bgTitle:"🎯 Anime-Bingo", bgEnter:"Eintragen", bgNew:"Neue Runde",
     bgHelp:"2 Spieler, abwechselnd an diesem Gerät. Wähle ein freies Feld und nenne einen Anime, der zu Zeile und Spalte passt. Falsche Antwort oder ein Anime, der schon im Raster steht = Zug vorbei. Wer zuerst eine ganze Zeile, Spalte oder Diagonale hat, gewinnt!",
+    bgThemes:"Bingo-Themen:", th_g:"Genre", th_d:"Zielgruppe", th_s:"Studio", th_src:"Vorlage", th_dec:"Jahrzehnt", th_sea:"Jahreszeit", th_l:"Buchstabe",
+    bgNoThemes:"Wähle für das Bingo mindestens eine Themen-Art.",
+    bgNoGridOne:"Mit nur dieser Themen-Art geht kein Raster: Jeder Anime hat nur einen Wert ({0}), Zeile und Spalte passen also nie zusammen. Nimm eine zweite Art dazu (z. B. Genre).",
     bgP1:"Spieler 1 (✕)", bgP2:"Spieler 2 (◯)", bgPlayer:"Spieler {0}", bgTurn:"{0} ist dran", bgRight2:"✓ {0} holt sich das Feld mit {1}.",
     bgTurnLost:"Zug vorbei für {0}.", bgWinner:"🏆 {0} gewinnt! Tippe ein Feld an, um andere Antworten zu sehen.", bgDraw:"Raster voll – unentschieden! Tippe ein Feld an, um andere Antworten zu sehen.",
     bgScoreTxt:"{0}/{1} Felder · {2} Versuche · {3} Punkte · Bestwert {4}", bgPossible:"möglich", bgPickCell:"Wähle zuerst ein freies Feld.",
     bgUsed:"Dieser Anime steht schon im Raster.", bgRight:"✓ {0} (+100, Seltenheitsbonus +{1})", bgNoFit:"{0} passt nicht in dieses Feld.",
     bgWin:"Bingo! Volles Raster mit {0} Punkten 🎉 Tippe ein Feld an, um andere Antworten zu sehen.", bgOver:"Keine Versuche mehr. {0} Punkte. Tippe ein Feld an, um mögliche Antworten zu sehen.",
-    bgNoGrid:"Mit diesen Einstellungen geht kein faires Raster. Wähle mehr Anime („Aus den N beliebtesten“) oder ein kleineres Raster.", hmTitle:"🪢 Anime-Galgenmännchen", hmSolve:"Titel raten", hmNext:"Nächster Anime", yBack:"Zurück",
+    bgNoGrid:"Mit diesen Einstellungen geht kein faires Raster. Wähle mehr Themen-Arten, mehr Anime („Aus den N beliebtesten“) oder ein kleineres Raster.", hmTitle:"🪢 Anime-Galgenmännchen", hmSolve:"Titel raten", hmNext:"Nächster Anime", yBack:"Zurück",
     hmLives:"noch {0} Versuche", hmScore:"Serie {0} · Bestwert {1} · gelöst {2}", hmWon:"Gelöst! 🎉", hmLost:"Schade! Gesucht war: {0}",
     hmWrongTitle:"Das ist er nicht.", hmPh:"Oder den ganzen Titel eintippen …", before2000:"vor 2000", trap_KirasHand:"Kiras Hand", "trap_Kira's Hand":"Kiras Hand", "trap_Isekai Truck":"Isekai-Truck", "trap_Filler Arc":"Filler Arc", trap_Tsundere:"Tsundere",
     trapHit_IsekaiTruck:"🚚 Isekai-Truck! Die Felder sind 60 Sekunden durcheinander.", trapHit_FillerArc:"📺 Filler Arc! Hinweise und Infos sind 60 Sekunden ausgeblendet.",
@@ -1677,23 +1694,45 @@ const BG = (() => {
     for (const ch of tt.normalize("NFKD")) { if (/\p{M}/u.test(ch)) continue; const c = ch.toUpperCase(); return c >= "A" && c <= "Z" ? c : "#"; }
     return "#";
   }
-  function generate(n, pool, lang){
-    const need = n * n, all = themes(pool, lang).filter(th => pool.filter(th.test).length >= need);
+  // Welche Themen-Arten der Spieler angehakt hat (g, d, s, src, dec, sea, l). Wird im Browser gemerkt.
+  const THEME_KEY = "animepelago_bingo_themes";
+  const chosenTypes = () => [...document.querySelectorAll("#bgThemes input[data-th]")].filter(x => x.checked).map(x => x.dataset.th);
+  try { const saved = JSON.parse(localStorage.getItem(THEME_KEY) || "null");
+    if (Array.isArray(saved)) document.querySelectorAll("#bgThemes input[data-th]").forEach(x => x.checked = saved.includes(x.dataset.th));
+  } catch(e) {}
+  document.querySelectorAll("#bgThemes input[data-th]").forEach(x => x.addEventListener("change", () => {
+    try { localStorage.setItem(THEME_KEY, JSON.stringify(chosenTypes())); } catch(e) {} }));
+  function generate(n, pool, lang, types){
     const typeOf = th => th.key.split(":")[0];
-    const fits = (x, y) => pool.filter(a => x.test(a) && y.test(a)).length >= need;
-    // Abwechslung: hoechstens n Themen derselben Art (z. B. Genres) im ganzen Raster
-    const typesOk = list => { const c = {}; for (const t of list) c[typeOf(t)] = (c[typeOf(t)] || 0) + 1; return Object.values(c).every(v => v <= Math.max(3, n)); };
+    const count = (x, y) => pool.filter(a => x.test(a) && y.test(a)).length;
+    // Nie festfahren: Jedes Feld braucht mehr passende Anime, als andere Felder ihm "wegnehmen" koennen.
+    // Ein anderes Feld kann nur stoeren, wenn ein Anime in beide passt, und es nimmt hoechstens einen weg.
+    // (Bei Buchstabe x Jahreszeit passt ein Anime meist nur in EIN Feld, dann reichen 2 Kandidaten.)
+    const safe = cand => {
+      const sets = cand.flat().map(l => new Set(l.map(a => a.id)));
+      return sets.every((s, i) => s.size >= 1 + Math.max(1, sets.filter((o, j) => j !== i && [...o].some(id => s.has(id))).length));
+    };
+    // Bei nur einer Themen-Art duerfen alle Zeilen und Spalten von dieser Art sein
+    const maxPerType = types.length >= 2 ? Math.max(3, n) : 2 * n;
+    const typesOk = list => { const c = {}; for (const t of list) c[typeOf(t)] = (c[typeOf(t)] || 0) + 1; return Object.values(c).every(v => v <= maxPerType); };
     const shuffled = l => [...l].sort(() => Math.random() - .5);
-    for (let attempt = 0; attempt < 600; attempt++) {
-      // Zeilen zufaellig, dann nur Spalten, die mit ALLEN Zeilen genug Anime haben
-      const rows = shuffled(all).slice(0, n);
-      if (!typesOk(rows)) continue;
-      const okCols = shuffled(all.filter(c => !rows.includes(c) && rows.every(r => fits(r, c))));
-      const cols = [];
-      for (const c of okCols) { if (cols.length === n) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
-      if (cols.length < n) continue;
-      const cand = rows.map(r => cols.map(c => pool.filter(a => r.test(a) && c.test(a))));
-      return {rows, cols, cand};
+    const themesAll = themes(pool, lang).filter(th => types.includes(typeOf(th)));
+    // Zwei Durchgaenge: erst streng (jedes Feld mind. n*n Anime, wie bisher: sicher und schnell gefunden),
+    // dann locker (nur so viele, wie die "nie festfahren"-Regel wirklich braucht, z. B. bei Buchstabe x Jahreszeit)
+    for (const minPair of [n * n, 2]) {
+      const all = themesAll.filter(th => pool.filter(th.test).length >= Math.max(n, minPair));
+      for (let attempt = 0; attempt < 300; attempt++) {
+        // Zeilen zufaellig, dann nur Spalten, die mit ALLEN Zeilen genug Anime haben
+        const rows = shuffled(all).slice(0, n);
+        if (rows.length < n || !typesOk(rows)) continue;
+        const okCols = shuffled(all.filter(c => !rows.includes(c) && rows.every(r => count(r, c) >= minPair)));
+        const cols = [];
+        for (const c of okCols) { if (cols.length === n) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
+        if (cols.length < n) continue;
+        const cand = rows.map(r => cols.map(c => pool.filter(a => r.test(a) && c.test(a))));
+        if (!safe(cand)) continue;
+        return {rows, cols, cand};
+      }
     }
     return null;
   }
@@ -1705,10 +1744,14 @@ const BG = (() => {
     const lang = $("mLang").value, only = $("mOnly").value, n = +$("bgSize").value || 3;
     let pool = DB.anime.slice(0, Math.max(50, +$("mPool").value || 500));
     if (only) pool = pool.filter(a => a.genres.includes(only) || a.demographics.includes(only));
-    const g = generate(n, pool, lang);
+    const types = chosenTypes();
+    const g = types.length ? generate(n, pool, lang, types) : null;
     ["offline", "modes", "connect", "more"].forEach(id => $(id).classList.add("hide"));
     $("bingo").classList.remove("hide");
-    if (!g) { st = null; $("bgGrid").innerHTML = ""; say2(t("bgNoGrid"), "bad"); return; }
+    if (!g) { st = null; $("bgGrid").innerHTML = "";
+      // Arten mit nur einem Wert pro Anime (Buchstabe, Jahreszeit ...) koennen nicht allein ein Raster bilden
+      const single = types.length === 1 && ["d", "s", "src", "dec", "sea", "l"].includes(types[0]);
+      say2(!types.length ? t("bgNoThemes") : single ? t("bgNoGridOne", t("th_" + types[0])) : t("bgNoGrid"), "bad"); return; }
     // Wer anfaengt, wechselt jede Runde
     const first = st ? 1 - st.first : 0;
     st = {n, lang, mode: n >= 5 ? "most" : "line", ...g, cells: Array.from({length: n}, () => Array(n).fill(null)),
