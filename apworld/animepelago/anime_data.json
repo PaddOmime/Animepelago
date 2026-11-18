@@ -121,6 +121,12 @@
     "studio": "WIT STUDIO"
    },
    "popularity": 1080169,
+   "cat_all": {
+    "studio": [
+     "WIT STUDIO",
+     "MAPPA"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "S",
@@ -236,6 +242,12 @@
     "studio": "bones"
    },
    "popularity": 891566,
+   "cat_all": {
+    "studio": [
+     "bones",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "B",
@@ -291,6 +303,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 781354,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "O",
     "romaji": "O",
@@ -859,6 +877,12 @@
     "studio": "CloverWorks"
    },
    "popularity": 584417,
+   "cat_all": {
+    "studio": [
+     "CloverWorks",
+     "WIT STUDIO"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -942,6 +966,12 @@
     "studio": "WIT STUDIO"
    },
    "popularity": 561276,
+   "cat_all": {
+    "studio": [
+     "WIT STUDIO",
+     "MAPPA"
+    ]
+   },
    "letter": {
     "english": "V",
     "romaji": "V",
@@ -1135,6 +1165,13 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 539202,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "Studio DEEN",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "N",
@@ -1162,6 +1199,12 @@
     "studio": "Studio Pierrot"
    },
    "popularity": 538211,
+   "cat_all": {
+    "studio": [
+     "Studio Pierrot",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "B",
     "romaji": "B",
@@ -1191,6 +1234,12 @@
     "studio": "Studio DEEN"
    },
    "popularity": 529524,
+   "cat_all": {
+    "studio": [
+     "Studio DEEN",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "K",
     "romaji": "K",
@@ -1246,6 +1295,12 @@
     "studio": "TRIGGER"
    },
    "popularity": 510827,
+   "cat_all": {
+    "studio": [
+     "TRIGGER",
+     "CloverWorks"
+    ]
+   },
    "letter": {
     "english": "D",
     "romaji": "D",
@@ -1575,6 +1630,12 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 468389,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "B",
     "romaji": "A",
@@ -2039,6 +2100,12 @@
     "studio": "WHITE FOX"
    },
    "popularity": 402354,
+   "cat_all": {
+    "studio": [
+     "WHITE FOX",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "H",
@@ -2150,6 +2217,12 @@
     "studio": "Brain's Base"
    },
    "popularity": 390832,
+   "cat_all": {
+    "studio": [
+     "Brain's Base",
+     "feel."
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "Y",
@@ -2206,6 +2279,15 @@
     "studio": "Satelight"
    },
    "popularity": 387446,
+   "cat_all": {
+    "studio": [
+     "Satelight",
+     "A-1 Pictures",
+     "Other",
+     "CloverWorks",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -2259,6 +2341,12 @@
     "studio": "MAPPA"
    },
    "popularity": 382317,
+   "cat_all": {
+    "studio": [
+     "MAPPA",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "D",
     "romaji": "D",
@@ -2340,6 +2428,12 @@
     "studio": "J.C.STAFF"
    },
    "popularity": 367538,
+   "cat_all": {
+    "studio": [
+     "J.C.STAFF",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "S",
@@ -2392,6 +2486,12 @@
     "studio": "Production I.G"
    },
    "popularity": 362570,
+   "cat_all": {
+    "studio": [
+     "Production I.G",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "P",
     "romaji": "P",
@@ -2502,6 +2602,12 @@
     "studio": "ufotable"
    },
    "popularity": 353715,
+   "cat_all": {
+    "studio": [
+     "ufotable",
+     "A-1 Pictures"
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -2586,6 +2692,12 @@
     "studio": "OLM"
    },
    "popularity": 345689,
+   "cat_all": {
+    "studio": [
+     "OLM",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "K",
@@ -2920,6 +3032,12 @@
     "studio": "Brain's Base"
    },
    "popularity": 323825,
+   "cat_all": {
+    "studio": [
+     "Brain's Base",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "F",
@@ -3059,6 +3177,12 @@
     "studio": "WHITE FOX"
    },
    "popularity": 309343,
+   "cat_all": {
+    "studio": [
+     "WHITE FOX",
+     "LIDENFILMS"
+    ]
+   },
    "letter": {
     "english": "G",
     "romaji": "G",
@@ -3166,6 +3290,12 @@
     "studio": "Sunrise"
    },
    "popularity": 302086,
+   "cat_all": {
+    "studio": [
+     "Sunrise",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "G",
     "romaji": "G",
@@ -3220,6 +3350,12 @@
     "studio": "Brain's Base"
    },
    "popularity": 298575,
+   "cat_all": {
+    "studio": [
+     "Brain's Base",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "D",
     "romaji": "D",
@@ -3709,6 +3845,12 @@
     "studio": "Other"
    },
    "popularity": 272918,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "OLM"
+    ]
+   },
    "letter": {
     "english": "D",
     "romaji": "I",
@@ -3870,6 +4012,12 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 265514,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "CloverWorks"
+    ]
+   },
    "letter": {
     "english": "B",
     "romaji": "K",
@@ -3955,6 +4103,13 @@
     "studio": "MADHOUSE"
    },
    "popularity": 264650,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "8-bit",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "M",
@@ -4229,6 +4384,12 @@
     "studio": "Other"
    },
    "popularity": 252351,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "D",
     "romaji": "D",
@@ -4308,6 +4469,12 @@
     "studio": "SILVER LINK."
    },
    "popularity": 251251,
+   "cat_all": {
+    "studio": [
+     "SILVER LINK.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "C",
     "romaji": "R",
@@ -4363,6 +4530,12 @@
     "studio": "WIT STUDIO"
    },
    "popularity": 250337,
+   "cat_all": {
+    "studio": [
+     "WIT STUDIO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "M",
@@ -4555,6 +4728,12 @@
     "studio": "Satelight"
    },
    "popularity": 242000,
+   "cat_all": {
+    "studio": [
+     "Satelight",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "L",
     "romaji": "L",
@@ -4747,6 +4926,12 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 236375,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "M",
@@ -4773,6 +4958,12 @@
     "studio": "WHITE FOX"
    },
    "popularity": 236091,
+   "cat_all": {
+    "studio": [
+     "WHITE FOX",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "A",
@@ -5469,6 +5660,12 @@
     "studio": "SILVER LINK."
    },
    "popularity": 210190,
+   "cat_all": {
+    "studio": [
+     "SILVER LINK.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "S",
@@ -5652,6 +5849,12 @@
     "studio": "david production"
    },
    "popularity": 204605,
+   "cat_all": {
+    "studio": [
+     "david production",
+     "LIDENFILMS"
+    ]
+   },
    "letter": {
     "english": "C",
     "romaji": "H",
@@ -5979,6 +6182,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 196945,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "W",
     "romaji": "O",
@@ -6195,6 +6404,12 @@
     "studio": "Studio DEEN"
    },
    "popularity": 192441,
+   "cat_all": {
+    "studio": [
+     "Studio DEEN",
+     "SILVER LINK."
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -6542,6 +6757,12 @@
     "studio": "Other"
    },
    "popularity": 184915,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Brain's Base"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "O",
@@ -6809,6 +7030,12 @@
     "studio": "Studio DEEN"
    },
    "popularity": 180985,
+   "cat_all": {
+    "studio": [
+     "Studio DEEN",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "W",
     "romaji": "H",
@@ -6889,6 +7116,12 @@
     "studio": "Other"
    },
    "popularity": 179564,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "T",
@@ -7104,6 +7337,12 @@
     "studio": "TMS Entertainment"
    },
    "popularity": 174571,
+   "cat_all": {
+    "studio": [
+     "TMS Entertainment",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "K",
     "romaji": "K",
@@ -7132,6 +7371,12 @@
     "studio": "Lerche"
    },
    "popularity": 174036,
+   "cat_all": {
+    "studio": [
+     "Lerche",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "M",
@@ -7268,6 +7513,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 171768,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "MAPPA"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "T",
@@ -7345,6 +7596,12 @@
     "studio": "Other"
    },
    "popularity": 169947,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "A-1 Pictures"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -7448,6 +7705,12 @@
     "studio": "Other"
    },
    "popularity": 168857,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "8-bit"
+    ]
+   },
    "letter": {
     "english": "L",
     "romaji": "Y",
@@ -7846,6 +8109,12 @@
     "studio": "Other"
    },
    "popularity": 160039,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "I",
     "romaji": "I",
@@ -8294,6 +8563,12 @@
     "studio": "OLM"
    },
    "popularity": 153990,
+   "cat_all": {
+    "studio": [
+     "OLM",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "O",
     "romaji": "O",
@@ -8593,6 +8868,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 149166,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "MAPPA"
+    ]
+   },
    "letter": {
     "english": "H",
     "romaji": "H",
@@ -8645,6 +8926,12 @@
     "studio": "Other"
    },
    "popularity": 148702,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "A-1 Pictures"
+    ]
+   },
    "letter": {
     "english": "O",
     "romaji": "O",
@@ -8752,6 +9039,12 @@
     "studio": "8-bit"
    },
    "popularity": 148029,
+   "cat_all": {
+    "studio": [
+     "8-bit",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "G",
@@ -9024,6 +9317,12 @@
     "studio": "TMS Entertainment"
    },
    "popularity": 144295,
+   "cat_all": {
+    "studio": [
+     "TMS Entertainment",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -9184,6 +9483,12 @@
     "studio": "Other"
    },
    "popularity": 142363,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Brain's Base"
+    ]
+   },
    "letter": {
     "english": "G",
     "romaji": "G",
@@ -10492,6 +10797,12 @@
     "studio": "Brain's Base"
    },
    "popularity": 129955,
+   "cat_all": {
+    "studio": [
+     "Brain's Base",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "N",
     "romaji": "N",
@@ -11303,6 +11614,12 @@
     "studio": "Other"
    },
    "popularity": 122211,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "WIT STUDIO"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "H",
@@ -11331,6 +11648,12 @@
     "studio": "Satelight"
    },
    "popularity": 122146,
+   "cat_all": {
+    "studio": [
+     "Satelight",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "W",
     "romaji": "S",
@@ -11438,6 +11761,12 @@
     "studio": "feel."
    },
    "popularity": 120569,
+   "cat_all": {
+    "studio": [
+     "feel.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "D",
     "romaji": "D",
@@ -11654,6 +11983,12 @@
     "studio": "SILVER LINK."
    },
    "popularity": 116937,
+   "cat_all": {
+    "studio": [
+     "SILVER LINK.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "S",
@@ -11964,6 +12299,12 @@
     "studio": "SILVER LINK."
    },
    "popularity": 115051,
+   "cat_all": {
+    "studio": [
+     "SILVER LINK.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "O",
     "romaji": "K",
@@ -12569,6 +12910,12 @@
     "studio": "Other"
    },
    "popularity": 110756,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "OLM"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "S",
@@ -13106,6 +13453,12 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 105098,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "A",
@@ -14255,6 +14608,13 @@
     "studio": "GONZO"
    },
    "popularity": 99573,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Kyoto Animation",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -14334,6 +14694,12 @@
     "studio": "Satelight"
    },
    "popularity": 99457,
+   "cat_all": {
+    "studio": [
+     "Satelight",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -14737,6 +15103,12 @@
     "studio": "Other"
    },
    "popularity": 97725,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "MAPPA"
+    ]
+   },
    "letter": {
     "english": "K",
     "romaji": "S",
@@ -14874,6 +15246,12 @@
     "studio": "Production I.G"
    },
    "popularity": 96498,
+   "cat_all": {
+    "studio": [
+     "Production I.G",
+     "TMS Entertainment"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "A",
@@ -15090,6 +15468,12 @@
     "studio": "Other"
    },
    "popularity": 94887,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "SILVER LINK."
+    ]
+   },
    "letter": {
     "english": "H",
     "romaji": "D",
@@ -15221,6 +15605,12 @@
     "studio": "P.A.WORKS"
    },
    "popularity": 93897,
+   "cat_all": {
+    "studio": [
+     "P.A.WORKS",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "U",
     "romaji": "U",
@@ -15615,6 +16005,12 @@
     "studio": "Other"
    },
    "popularity": 91559,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "R",
     "romaji": "R",
@@ -15824,6 +16220,12 @@
     "studio": "Doga Kobo"
    },
    "popularity": 89867,
+   "cat_all": {
+    "studio": [
+     "Doga Kobo",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "Y",
     "romaji": "Y",
@@ -16264,6 +16666,12 @@
     "studio": "feel."
    },
    "popularity": 88292,
+   "cat_all": {
+    "studio": [
+     "feel.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "K",
@@ -17814,6 +18222,12 @@
     "studio": "SILVER LINK."
    },
    "popularity": 80853,
+   "cat_all": {
+    "studio": [
+     "SILVER LINK.",
+     "OLM"
+    ]
+   },
    "letter": {
     "english": "R",
     "romaji": "I",
@@ -18661,6 +19075,12 @@
     "studio": "diomedéa"
    },
    "popularity": 76551,
+   "cat_all": {
+    "studio": [
+     "diomedéa",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "B",
@@ -19164,6 +19584,12 @@
     "studio": "Sunrise"
    },
    "popularity": 74964,
+   "cat_all": {
+    "studio": [
+     "Sunrise",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "K",
@@ -19679,6 +20105,12 @@
     "studio": "J.C.STAFF"
    },
    "popularity": 73095,
+   "cat_all": {
+    "studio": [
+     "J.C.STAFF",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "T",
@@ -20060,6 +20492,12 @@
     "studio": "bones"
    },
    "popularity": 71655,
+   "cat_all": {
+    "studio": [
+     "bones",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "T",
@@ -20581,6 +21019,12 @@
     "studio": "WHITE FOX"
    },
    "popularity": 70303,
+   "cat_all": {
+    "studio": [
+     "WHITE FOX",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "I",
     "romaji": "G",
@@ -20902,6 +21346,12 @@
     "studio": "Other"
    },
    "popularity": 68772,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "H",
     "romaji": "K",
@@ -21162,6 +21612,12 @@
     "studio": "CloverWorks"
    },
    "popularity": 67795,
+   "cat_all": {
+    "studio": [
+     "CloverWorks",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "I",
     "romaji": "G",
@@ -21266,6 +21722,13 @@
     "studio": "Production I.G"
    },
    "popularity": 67417,
+   "cat_all": {
+    "studio": [
+     "Production I.G",
+     "MADHOUSE",
+     "OLM"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "D",
@@ -22345,6 +22808,12 @@
     "studio": "GONZO"
    },
    "popularity": 63561,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "S",
@@ -22765,6 +23234,12 @@
     "studio": "GONZO"
    },
    "popularity": 62455,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -22972,6 +23447,12 @@
     "studio": "Studio Pierrot"
    },
    "popularity": 61894,
+   "cat_all": {
+    "studio": [
+     "Studio Pierrot",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "K",
     "romaji": "K",
@@ -23476,6 +23957,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 60374,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "O",
@@ -24628,6 +25115,12 @@
     "studio": "Other"
    },
    "popularity": 57217,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "MADHOUSE"
+    ]
+   },
    "letter": {
     "english": "V",
     "romaji": "V",
@@ -25101,6 +25594,12 @@
     "studio": "Sunrise"
    },
    "popularity": 55814,
+   "cat_all": {
+    "studio": [
+     "Sunrise",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "C",
     "romaji": "C",
@@ -25826,6 +26325,12 @@
     "studio": "diomedéa"
    },
    "popularity": 53950,
+   "cat_all": {
+    "studio": [
+     "diomedéa",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "K",
     "romaji": "K",
@@ -26143,6 +26648,12 @@
     "studio": "GONZO"
    },
    "popularity": 52637,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "K",
     "romaji": "K",
@@ -26457,6 +26968,12 @@
     "studio": "Other"
    },
    "popularity": 52263,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "P.A.WORKS"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "F",
@@ -26773,6 +27290,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 51577,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "SILVER LINK."
+    ]
+   },
    "letter": {
     "english": "C",
     "romaji": "C",
@@ -26961,6 +27484,12 @@
     "studio": "Sunrise"
    },
    "popularity": 50980,
+   "cat_all": {
+    "studio": [
+     "Sunrise",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "T",
@@ -27147,6 +27676,12 @@
     "studio": "Other"
    },
    "popularity": 50299,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "SILVER LINK."
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "S",
@@ -27461,6 +27996,12 @@
     "studio": "Lerche"
    },
    "popularity": 49836,
+   "cat_all": {
+    "studio": [
+     "Lerche",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "M",
@@ -27836,6 +28377,12 @@
     "studio": "LIDENFILMS"
    },
    "popularity": 49256,
+   "cat_all": {
+    "studio": [
+     "LIDENFILMS",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "O",
     "romaji": "U",
@@ -28049,6 +28596,12 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 49004,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "MAPPA"
+    ]
+   },
    "letter": {
     "english": "G",
     "romaji": "G",
@@ -28285,6 +28838,12 @@
     "studio": "Satelight"
    },
    "popularity": 47783,
+   "cat_all": {
+    "studio": [
+     "Satelight",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -28764,6 +29323,12 @@
     "studio": "Production I.G"
    },
    "popularity": 46712,
+   "cat_all": {
+    "studio": [
+     "Production I.G",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -29303,6 +29868,12 @@
     "studio": "LIDENFILMS"
    },
    "popularity": 45351,
+   "cat_all": {
+    "studio": [
+     "LIDENFILMS",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "T",
@@ -29438,6 +30009,12 @@
     "studio": "GONZO"
    },
    "popularity": 45040,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "#",
     "romaji": "#",
@@ -29650,6 +30227,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 44712,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "B",
     "romaji": "B",
@@ -30052,6 +30635,12 @@
     "studio": "MADHOUSE"
    },
    "popularity": 43931,
+   "cat_all": {
+    "studio": [
+     "MADHOUSE",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "G",
     "romaji": "G",
@@ -30496,6 +31085,12 @@
     "studio": "Other"
    },
    "popularity": 42607,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "H",
     "romaji": "H",
@@ -30549,6 +31144,12 @@
     "studio": "Other"
    },
    "popularity": 42568,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Production I.G"
+    ]
+   },
    "letter": {
     "english": "G",
     "romaji": "G",
@@ -30622,6 +31223,12 @@
     "studio": "Studio DEEN"
    },
    "popularity": 42444,
+   "cat_all": {
+    "studio": [
+     "Studio DEEN",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -30702,6 +31309,12 @@
     "studio": "Other"
    },
    "popularity": 42306,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "I",
     "romaji": "B",
@@ -31043,6 +31656,15 @@
     "studio": "Other"
    },
    "popularity": 41682,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "TRIGGER",
+     "Production I.G",
+     "david production",
+     "WIT STUDIO"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -31150,6 +31772,12 @@
     "studio": "Studio Pierrot"
    },
    "popularity": 41623,
+   "cat_all": {
+    "studio": [
+     "Studio Pierrot",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "O",
     "romaji": "O",
@@ -31467,6 +32095,13 @@
     "studio": "GONZO"
    },
    "popularity": 41099,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other",
+     "david production"
+    ]
+   },
    "letter": {
     "english": "S",
     "romaji": "S",
@@ -31921,6 +32556,12 @@
     "studio": "Other"
    },
    "popularity": 40544,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "R",
     "romaji": "R",
@@ -31999,6 +32640,12 @@
     "studio": "A-1 Pictures"
    },
    "popularity": 40384,
+   "cat_all": {
+    "studio": [
+     "A-1 Pictures",
+     "CloverWorks"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "G",
@@ -32261,6 +32908,12 @@
     "studio": "Studio DEEN"
    },
    "popularity": 39998,
+   "cat_all": {
+    "studio": [
+     "Studio DEEN",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "D",
@@ -33568,6 +34221,12 @@
     "studio": "Other"
    },
    "popularity": 37433,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "feel."
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "M",
@@ -33887,6 +34546,12 @@
     "studio": "Other"
    },
    "popularity": 37084,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "A-1 Pictures"
+    ]
+   },
    "letter": {
     "english": "P",
     "romaji": "P",
@@ -34098,6 +34763,12 @@
     "studio": "OLM"
    },
    "popularity": 36754,
+   "cat_all": {
+    "studio": [
+     "OLM",
+     "WHITE FOX"
+    ]
+   },
    "letter": {
     "english": "U",
     "romaji": "U",
@@ -35444,6 +36115,12 @@
     "studio": "GONZO"
    },
    "popularity": 34758,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "B",
     "romaji": "B",
@@ -36130,6 +36807,12 @@
     "studio": "SILVER LINK."
    },
    "popularity": 33630,
+   "cat_all": {
+    "studio": [
+     "SILVER LINK.",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "L",
     "romaji": "L",
@@ -36158,6 +36841,12 @@
     "studio": "Toei Animation"
    },
    "popularity": 33605,
+   "cat_all": {
+    "studio": [
+     "Toei Animation",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "H",
@@ -36312,6 +37001,12 @@
     "studio": "Other"
    },
    "popularity": 33292,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "TMS Entertainment"
+    ]
+   },
    "letter": {
     "english": "L",
     "romaji": "L",
@@ -36392,6 +37087,12 @@
     "studio": "J.C.STAFF"
    },
    "popularity": 33231,
+   "cat_all": {
+    "studio": [
+     "J.C.STAFF",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "B",
     "romaji": "I",
@@ -36652,6 +37353,12 @@
     "studio": "GONZO"
    },
    "popularity": 32829,
+   "cat_all": {
+    "studio": [
+     "GONZO",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "A",
     "romaji": "K",
@@ -36731,6 +37438,12 @@
     "studio": "Satelight"
    },
    "popularity": 32799,
+   "cat_all": {
+    "studio": [
+     "Satelight",
+     "Other"
+    ]
+   },
    "letter": {
     "english": "U",
     "romaji": "U",
@@ -36785,6 +37498,12 @@
     "studio": "Other"
    },
    "popularity": 32586,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "Satelight"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "C",
@@ -37000,6 +37719,12 @@
     "studio": "Other"
    },
    "popularity": 32401,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "J.C.STAFF"
+    ]
+   },
    "letter": {
     "english": "T",
     "romaji": "S",
@@ -37346,6 +38071,12 @@
     "studio": "WIT STUDIO"
    },
    "popularity": 31617,
+   "cat_all": {
+    "studio": [
+     "WIT STUDIO",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "H",
     "romaji": "H",
@@ -37603,6 +38334,12 @@
     "studio": "Studio Pierrot"
    },
    "popularity": 31387,
+   "cat_all": {
+    "studio": [
+     "Studio Pierrot",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "U",
     "romaji": "U",
@@ -38775,6 +39512,12 @@
     "studio": "Other"
    },
    "popularity": 29812,
+   "cat_all": {
+    "studio": [
+     "Other",
+     "A-1 Pictures"
+    ]
+   },
    "letter": {
     "english": "M",
     "romaji": "M",
