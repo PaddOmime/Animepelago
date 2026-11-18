@@ -478,6 +478,9 @@ const EXTRA = [["year","Year",600], ["source","Source",700], ["season","Season",
 const EXTRA_BY = Object.fromEntries(EXTRA.map(e => [e.key, e]));
 // Wert eines Anime in einer Zusatz-Kategorie (aus slot_data; offline erzeugt die Engine dieselben Daten)
 const extraOf = (a, key) => G.slotData?.extra_values?.[a.id]?.[key] ?? null;
+// Alle Werte, mit denen der Anime offen ist (Studio: jedes Hauptstudio, z. B. AoT: WIT STUDIO oder MAPPA)
+const extraVals = (a, key) => { const many = G.slotData?.extra_any?.[a.id]?.[key];
+  if (Array.isArray(many) && many.length) return many; const v = extraOf(a, key); return v == null ? [] : [v]; };
 // Emojis nur fuer die Chips oben (freigeschaltete Items). Item-Namen in Archipelago bleiben ohne.
 const EMOJI = {Action:"💥", Adventure:"🧭", Comedy:"😂", Drama:"🎭", Ecchi:"😳", Fantasy:"🧙", Horror:"👻", "Mahou Shoujo":"🪄",
   Mecha:"🤖", Music:"🎵", Mystery:"🔍", Psychological:"🧠", Romance:"💕", "Sci-Fi":"🚀", "Slice of Life":"🍵", Sports:"⚽",
@@ -563,6 +566,9 @@ function cleanSlotData(sd){
   c.extra_unlocks = pick(sd.extra_unlocks, EXTRA.map(e => e.key));
   c.start_extra = Object.create(null);
   for (const k of c.extra_unlocks) c.start_extra[k] = pick(sd.start_extra?.[k], EXTRA_BY[k].values);
+  c.extra_any = perId(sd.extra_any, v => { if (!v || typeof v !== "object") return null; const o = {};
+    for (const k of c.extra_unlocks) if (Array.isArray(v[k])) { const l = v[k].filter(x => EXTRA_BY[k].values.includes(x)); if (l.length) o[k] = l; }
+    return o; });
   c.extra_values = perId(sd.extra_values, v => { if (!v || typeof v !== "object") return null; const o = {};
     for (const k of c.extra_unlocks) if (EXTRA_BY[k].values.includes(v[k])) o[k] = v[k];
     return o; });
@@ -918,7 +924,7 @@ function canGuess(a, o){
   const sd = G.slotData, ag = genresOf(a), gs = ag.filter(g => o.genres.has(g) && !o.blocked.has(g));
   const genreOk = !ag.length || (sd.genre_rule === "all" ? gs.length === ag.length : gs.length >= genresNeeded(ag.length, sd.genre_step));
   const letterOk = o.letters.has(sd.letters[a.id]) && !o.blockedLetters.has(sd.letters[a.id]);
-  const extraOk = activeExtras().every(e => { const v = extraOf(a, e.key); return v == null || (o.extra[e.key].has(v) && !o.blockedExtra[e.key].has(v)); });
+  const extraOk = activeExtras().every(e => { const vs = extraVals(a, e.key); return !vs.length || vs.some(v => o.extra[e.key].has(v) && !o.blockedExtra[e.key].has(v)); });
   return extraOk && (!usesGenres(sd) || genreOk) && (!usesLetters(sd) || letterOk);
 }
 function needs(a, o){
@@ -931,7 +937,8 @@ function needs(a, o){
       : need > 1 ? t("nOf", need - have, miss.join(", ")) : miss.join(t("or")));
   }
   if (usesLetters(sd) && (!o.letters.has(sd.letters[a.id]) || o.blockedLetters.has(sd.letters[a.id]))) parts.push(t("letterN", sd.letters[a.id]));
-  for (const e of activeExtras()) { const v = extraOf(a, e.key); if (v != null && (!o.extra[e.key].has(v) || o.blockedExtra[e.key].has(v))) parts.push(`${t("cat_" + e.key)} ${v}`); }
+  for (const e of activeExtras()) { const vs = extraVals(a, e.key);
+    if (vs.length && !vs.some(v => o.extra[e.key].has(v) && !o.blockedExtra[e.key].has(v))) parts.push(`${t("cat_" + e.key)} ${vs.join(t("or"))}`); }
   return parts.join(" + ");
 }
 
@@ -1100,7 +1107,7 @@ function render(){
     return left ? `<span class="blocked">${l} ${left}s</span>` : `<span class="${o.letters.has(l) ? "have" : "miss"}">${l}</span>`; }).join("");
   // Zusatz-Kategorien: nur Werte, die in dieser Welt vorkommen
   $("extrarows").innerHTML = activeExtras().map(e => {
-    const used = new Set(G.anime.map(a => extraOf(a, e.key)).filter(v => v != null));
+    const used = new Set(G.anime.flatMap(a => extraVals(a, e.key)));
     // Studio "Other" bekommt kein Kisten-Emoji (das gehoert zur Vorlage "Other")
     const ve = v => e.key === "studio" ? "" : em(v);
     return `<div><b>${CAT_EMOJI[e.key]} ${t("cat_" + e.key)}:</b> <span class="chips">${e.values.filter(v => used.has(v))
@@ -1170,9 +1177,9 @@ function unlockTable(a, o){
   if (usesLetters(sd) && o.letters.has(sd.letters[a.id]))
     rows.push(`<div><b>🔤 ${t("letters")}</b> <span class="chips">${chip(esc(sd.letters[a.id]), o.blockedLetters.has(sd.letters[a.id]) ? "blocked" : "have")}</span></div>`);
   for (const e of activeExtras()) {
-    const v = extraOf(a, e.key);
-    if (v != null && o.extra[e.key].has(v))
-      rows.push(`<div><b>${CAT_EMOJI[e.key]} ${t("cat_" + e.key)}:</b> <span class="chips">${chip((e.key === "studio" ? "" : em(v)) + esc(v), o.blockedExtra[e.key].has(v) ? "blocked" : "have")}</span></div>`);
+    const vs = extraVals(a, e.key).filter(v => o.extra[e.key].has(v));
+    if (vs.length)
+      rows.push(`<div><b>${CAT_EMOJI[e.key]} ${t("cat_" + e.key)}:</b> <span class="chips">${vs.map(v => chip((e.key === "studio" ? "" : em(v)) + esc(v), o.blockedExtra[e.key].has(v) ? "blocked" : "have")).join("")}</span></div>`);
   }
   return `<div class="unlocks"><div class="mute">${t("yourItems")}</div>${rows.join("") || `<div class="mute">${t("noneYet")}</div>`}</div>`;
 }
@@ -1330,10 +1337,16 @@ const OFFLINE = (() => {
       if (ag.length && !(sd.genre_rule === "all" ? ag.every(g => own.g.has(g)) : ag.filter(g => own.g.has(g)).length >= genresNeeded(ag.length, sd.genre_step || 0))) return false;
     }
     for (const c of cats) {
-      const v = c === "letter" ? sd.letters[id] : sd.extra_values[id][c];
-      if (v != null && !(c === "letter" ? own.l : own.x[c]).has(v)) return false;
+      const vs = xv(sd, id, c);
+      if (vs.length && !vs.some(v => (c === "letter" ? own.l : own.x[c]).has(v))) return false;
     }
     return true;
+  }
+  // Werte eines Anime in einer Kategorie (Studio: alle Hauptstudios, eins davon reicht; wie in der APWorld)
+  function xv(sd, id, c){
+    if (c === "letter") return sd.letters[id] == null ? [] : [sd.letters[id]];
+    const many = sd.extra_any?.[id]?.[c]; if (many?.length) return many;
+    const v = sd.extra_values[id][c]; return v == null ? [] : [v];
   }
   const singleCats = sd => [...(usesLetters(sd) ? ["letter"] : []), ...sd.extra_unlocks];
   // Wie viele noch nicht erratene Anime sind mit diesem Stand offen?
@@ -1372,6 +1385,15 @@ const OFFLINE = (() => {
       unlock_mode: useG && useL ? "both" : useG ? "genres" : useL ? "letters" : "none", title_language: lang, letter_language: lang === "japanese" ? "romaji" : lang,
       genre_rule: o.rule, genre_step: o.rule === "any" ? (o.step ?? 6) : 0, demographics: o.demo && o.rule === "any", only_genres: o.only ? [o.only] : [], letters, death_link: false,
       extra_unlocks: extras, extra_values: Object.fromEntries(sel.map(a => [a.id, Object.fromEntries(extras.map(k => [k, a.c[EXTRA_BY[k].index] ?? null]))]))};
+    // Studio: alle Hauptstudios zaehlen (wie extra_any der APWorld). Unbekannte Studios gehoeren zu "Other".
+    if (extras.includes("studio")) {
+      sd.extra_any = {};
+      for (const a of sel) {
+        const first = sd.extra_values[a.id].studio, vals = first == null ? [] : [first];
+        for (const name of a.s || []) { const v = EXTRA_BY.studio.values.includes(name) ? name : "Other"; if (!vals.includes(v)) vals.push(v); }
+        if (vals.length > 1) sd.extra_any[a.id] = {studio: vals};
+      }
+    }
     const gen = a => (sd.demographics ? [...a.genres, ...a.demographics] : a.genres).filter(g => !(sd.only_genres || []).includes(g));
     const start = emptyOwn(), none = new Set();
     if (!useG) GENRES.forEach(g => start.g.add(g));  // ohne Genre-Modus zaehlen Genres nicht
@@ -1426,7 +1448,7 @@ const OFFLINE = (() => {
     let items = [];
     if (useG) items.push(...GENRES.filter(g => sel.some(a => gen(a).includes(g)) && !start.g.has(g)).map(g => unlockId("genre", g)));
     for (const c of cats) {
-      const vals = new Set(sel.map(a => c === "letter" ? letters[a.id] : sd.extra_values[a.id][c]).filter(v => v != null));
+      const vals = new Set(sel.flatMap(a => xv(sd, a.id, c)));
       for (const v of vals) if (!(c === "letter" ? start.l : start.x[c]).has(v)) items.push(unlockId(c, v));
     }
     const slots = count + sd.milestones.length;

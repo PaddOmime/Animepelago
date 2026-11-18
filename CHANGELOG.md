@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.1.2 (in progress)
+- **Unlock by Studio:** every main studio of an anime counts now, not only the one of season 1 (e.g. *Attack on Titan* opens with WIT STUDIO **or** MAPPA).
+- **Logos:** the logo of the first season's series is preferred (e.g. *My Hero Academia* no longer shows a spin-off logo). Own logo picks are possible in `corrections.json`.
+- Main studios are now known for all anime (26 newer studios were missing).
 - **Clow Cards:** a collectible filler. Depending on the world size up to 53 of them (like the original deck) are in the pool; the client shows *Clow Cards x/N* and celebrates when you have them all. No gameplay effect.
 - **13 more joke filler items** (42 in total): *Nico Nico Nii*, *Moon Prism Power, Make Up!*, *Tuxedo Mask's Top Hat*, *Yowai mo*, *Omae wa mou shindeiru*, *Nani?!*, *Hisashiburi da na, Mugiwara*, *ORA ORA ORA*, *MUDA MUDA MUDA*, *Daisukiiiiii*, *The One Piece is REAL!*, *Have a Plus Ultra Day*, *Clow Card*.
 - **1470 anime** (up from 978), 1429 of them with logo silhouettes. The web client already uses the new list; it also works with 0.1.1 worlds.

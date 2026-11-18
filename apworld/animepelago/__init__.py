@@ -236,7 +236,7 @@ class AnimepelagoWorld(World):
         self.used_genres = sorted({g for a in self.selected for g in a["genres"]}, key=GENRES.index) \
             if self.use_genres else []
         # Benutzte Werte je Einzelwert-Kategorie (nur die, die bei den gewaehlten Anime vorkommen)
-        self.used_single = {c: sorted({v for a in self.selected if (v := self.value_of(a, c)) is not None})
+        self.used_single = {c: sorted({v for a in self.selected for v in self.values_of(a, c)})
                             for c in self.single_cats}
 
     def _setup_goal(self) -> None:
@@ -314,6 +314,15 @@ class AnimepelagoWorld(World):
         """Wert eines Anime in einer Einzelwert-Kategorie (None = unbekannt, zaehlt dann nicht)."""
         return self.letter_of(anime) if cat == "letter" else (anime.get("cat") or {}).get(cat)
 
+    def values_of(self, anime: dict, cat: str) -> list:
+        """Alle Werte, mit denen ein Anime in dieser Kategorie offen ist. Meist genau einer; beim Studio jedes
+        Hauptstudio aller Staffeln (AoT: WIT STUDIO oder MAPPA). Leere Liste = Kategorie zaehlt nicht."""
+        many = ((anime.get("cat_all") or {}).get(cat)) if cat != "letter" else None
+        if many:
+            return list(many)
+        value = self.value_of(anime, cat)
+        return [] if value is None else [value]
+
     def single_item(self, cat: str, value: str) -> str:
         return letter_item(value) if cat == "letter" else extra_item(cat, value)
 
@@ -333,8 +342,8 @@ class AnimepelagoWorld(World):
         if self.use_genres and not self._genres_ok(anime, genres):
             return False
         for cat in self.single_cats if cats is None else cats:
-            value = self.value_of(anime, cat)
-            if value is not None and value not in single[cat]:
+            values = self.values_of(anime, cat)
+            if values and not any(v in single[cat] for v in values):
                 return False
         return True
 
@@ -459,15 +468,24 @@ class AnimepelagoWorld(World):
         for a in self.selected:
             location = self.get_location(a["name"])
             genres = [genre_item(g) for g in a["genres"]] if self.use_genres else []
-            # Einzelwerte (Buchstabe, Jahr, ...): man braucht jeweils genau dieses Item
-            singles = [self.single_item(c, v) for c in self.single_cats if (v := self.value_of(a, c)) is not None]
+            # Einzelwerte (Buchstabe, Jahr, ...): man braucht jeweils genau dieses Item.
+            # Hat ein Anime mehrere moegliche Werte (Studio), reicht eins davon ("any").
+            singles, any_of = [], []
+            for c in self.single_cats:
+                items = [self.single_item(c, v) for v in self.values_of(a, c)]
+                if len(items) == 1:
+                    singles += items
+                elif items:
+                    any_of.append(items)
             if not genres:
-                rule = lambda state, s=singles: state.has_all(s, player)
+                rule = lambda state, s=singles, o=any_of: state.has_all(s, player) and all(state.has_any(x, player) for x in o)
             elif self.any_rule:
                 need = self.genres_needed(a)
-                rule = lambda state, g=genres, s=singles, n=need: state.has_all(s, player) and state.has_from_list(g, player, n)
+                rule = lambda state, g=genres, s=singles, o=any_of, n=need: (state.has_all(s, player)
+                    and all(state.has_any(x, player) for x in o) and state.has_from_list(g, player, n))
             else:
-                rule = lambda state, g=genres, s=singles: state.has_all(s, player) and state.has_all(g, player)
+                rule = lambda state, g=genres, s=singles, o=any_of: (state.has_all(s, player)
+                    and all(state.has_any(x, player) for x in o) and state.has_all(g, player))
             set_rule(location, rule)
 
         # Schnelle Logik fuer Meilensteine und Ziel: Vorher pro Anime festhalten, welche Items er braucht.
@@ -490,7 +508,10 @@ class AnimepelagoWorld(World):
         self._table = []
         names = set()
         for a in self.selected:
-            singles = frozenset(self.single_item(c, v) for c in self.single_cats if (v := self.value_of(a, c)) is not None)
+            singles = frozenset(self.single_item(c, vals[0]) for c in self.single_cats
+                                if len(vals := self.values_of(a, c)) == 1)
+            groups = tuple(frozenset(self.single_item(c, v) for v in vals) for c in self.single_cats
+                           if len(vals := self.values_of(a, c)) > 1)
             genres = tuple(genre_item(g) for g in a["genres"]) if self.use_genres else ()
             if not genres:
                 need = 0
@@ -498,8 +519,10 @@ class AnimepelagoWorld(World):
                 need = self.genres_needed(a)
             else:
                 need = len(genres)
-            self._table.append((singles, genres, need, tuple(a["genres"])))
+            self._table.append((singles, groups, genres, need, tuple(a["genres"])))
             names |= singles
+            for g in groups:
+                names |= g
             names.update(genres)
         self._unlock_names = tuple(sorted(names))
         self._cache: dict[frozenset, tuple[int, bool]] = {}
@@ -512,8 +535,10 @@ class AnimepelagoWorld(World):
             return hit
         count = 0
         per_genre: dict[str, int] = {}
-        for singles, genres, need, raw_genres in self._table:
+        for singles, groups, genres, need, raw_genres in self._table:
             if singles and not singles <= owned:
+                continue
+            if groups and not all(g & owned for g in groups):  # z. B. eines der Studios
                 continue
             if need and sum(g in owned for g in genres) < need:
                 continue
@@ -560,6 +585,9 @@ class AnimepelagoWorld(World):
             "extra_unlocks": self.extras,
             "start_extra": {c: sorted(self.start_single[c]) for c in self.extras},
             "extra_values": {str(a["id"]): {c: self.value_of(a, c) for c in self.extras} for a in self.selected},
+            # Anime mit mehreren erlaubten Werten (Studio): alle Werte, eins davon reicht
+            "extra_any": {str(a["id"]): {c: v for c in self.extras if len(v := self.values_of(a, c)) > 1}
+                          for a in self.selected if any(len(self.values_of(a, c)) > 1 for c in self.extras)},
             # Anfangsbuchstabe jedes Anime im Spiel, damit der Client dieselbe Zuordnung nutzt
             "letters": {str(a["id"]): self.letter_of(a) for a in self.selected},
             "death_link": bool(self.options.death_link.value),
