@@ -17,7 +17,7 @@ from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
 
 from .data import ANIME, ANIME_BY_ID, DATA_VERSION, DEMOGRAPHICS, GENRES, HAS_CATEGORY, HAS_DEMOGRAPHICS, LETTERS
-from .Items import (EXODIA_PIECES, EXTRA_CATEGORIES, FILLER_ITEM, FLAVOR_FILLERS, GAME, ITEMS, AnimepelagoItem, extra_item,
+from .Items import (CLOW_CARD, CLOW_CARD_MAX, EXODIA_PIECES, EXTRA_CATEGORIES, FILLER_ITEM, FLAVOR_FILLERS, GAME, ITEMS, AnimepelagoItem, extra_item,
                     genre_item, item_name_groups, item_name_to_id, letter_item)
 from .Locations import (LOCATION_ID_OFFSET, MILESTONES, AnimepelagoLocation, location_name_groups,
                         location_name_to_id, milestone_name)
@@ -438,8 +438,13 @@ class AnimepelagoWorld(World):
             pool += [self.create_item(name) for _ in range(take)]
             free -= take
 
+        # Clow Cards zum Sammeln (ohne Wirkung): etwa ein Drittel der freien Plaetze, hoechstens 53 wie im Original
+        self.clow_cards = min(CLOW_CARD_MAX, free // 3)
+        pool += [self.create_item(CLOW_CARD) for _ in range(self.clow_cards)]
+        free -= self.clow_cards
         # Rest: meist "Filler Episode", etwa jedes vierte Mal ein Spass-Fueller (AYAYA!, Waifu ...) ohne Wirkung
-        pool += [self.create_item(self.random.choice(FLAVOR_FILLERS) if self.random.random() < 0.25 else FILLER_ITEM)
+        random_flavor = [f for f in FLAVOR_FILLERS if f != CLOW_CARD]
+        pool += [self.create_item(self.random.choice(random_flavor) if self.random.random() < 0.25 else FILLER_ITEM)
                  for _ in range(free)]
         self.multiworld.itempool += pool
         # Fuer den Client: wie viele davon wirklich im Spiel sind (alle gefunden -> Spezial-Perk)
@@ -564,4 +569,5 @@ class AnimepelagoWorld(World):
             "dragon_balls": self.perk_counts["Dragon Ball"],
             "geass": self.perk_counts["Geass"],
             "stand_arrows": self.perk_counts["Stand Arrow"],
+            "clow_cards": getattr(self, "clow_cards", 0),  # Sammel-Karten ohne Wirkung (Anzeige x/N)
         }

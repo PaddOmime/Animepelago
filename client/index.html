@@ -340,7 +340,7 @@ const TXT = {
     stats:"Guessed {0} of {1} · Goal: {2}", goalExodia:"collect all 5 Exodia pieces ({0}/5)", goalAnime:"{0} anime",
     win:"Goal reached! 🎉", correct:"Correct: {0}", already:"Already guessed: {0}", locked:"{0} is still locked. Needed: {1}",
     notIn:"That anime is not in your game.", unknown:"Unknown title.", need:"Needs: {0}", or:" or ", and:" and ",
-    perkSukuna:"Sukuna's Finger {0}/{1}", perkDragon:"Dragon Balls {0}/{1}", perkArrow:"Stand Arrow: {0} available ({1}/{2} found)", useArrow:"Use Stand Arrow ({0} left)", arrowUsed:"Stand Arrow: everything about anime #{0} was revealed.", perkGeass:"Geass: {0} available ({1}/{2} found)", useGeass:"Use Geass ({0} left)", domain:"Domain Expansion", domainUsed:"Domain Expansion used",
+    perkSukuna:"Sukuna's Finger {0}/{1}", perkDragon:"Dragon Balls {0}/{1}", perkClow:"Clow Cards {0}/{1}", clowAll:"🃏 All {0} Clow Cards collected! The Seal is released!", perkArrow:"Stand Arrow: {0} available ({1}/{2} found)", useArrow:"Use Stand Arrow ({0} left)", arrowUsed:"Stand Arrow: everything about anime #{0} was revealed.", perkGeass:"Geass: {0} available ({1}/{2} found)", useGeass:"Use Geass ({0} left)", domain:"Domain Expansion", domainUsed:"Domain Expansion used",
     domainAsk:"Domain Expansion: open any anime and press 'Claim' to count it as guessed.", claim:"Claim",
     wishAsk:"All Dragon Balls! Choose a genre:", wishBtn:"Wish", wished:"Wish granted: {0}",
     hint:"For anime #{0} it was revealed: {1}", kira:"Kira's Hand! {0} is locked for 1 minute.", kiraName:"Kira's Hand", queuedN:"{0} trap(s) waiting", trapQueued:"{0} is waiting: your last free unlock is never locked. It strikes as soon as you have a second one.", deathRecv:"DeathLink from {0}: {1} is locked for 1 minute.",
@@ -389,7 +389,7 @@ const TXT = {
     stats:"{0} von {1} erraten · Ziel: {2}", goalExodia:"alle 5 Exodia-Teile sammeln ({0}/5)", goalAnime:"{0} Anime",
     win:"Ziel erreicht! 🎉", correct:"Richtig: {0}", already:"Schon erraten: {0}", locked:"{0} ist noch gesperrt. Es fehlt: {1}",
     notIn:"Dieser Anime ist nicht in deinem Spiel.", unknown:"Unbekannter Titel.", need:"Braucht: {0}", or:" oder ", and:" und ",
-    perkSukuna:"Sukunas Finger {0}/{1}", perkDragon:"Dragon Balls {0}/{1}", perkArrow:"Stand Arrow: {0} verfügbar ({1}/{2} gefunden)", useArrow:"Stand Arrow einsetzen (noch {0})", arrowUsed:"Stand Arrow: Alles über Anime #{0} wurde aufgedeckt.", perkGeass:"Geass: {0} verfügbar ({1}/{2} gefunden)", useGeass:"Geass einsetzen (noch {0})", domain:"Domain Expansion", domainUsed:"Domain Expansion benutzt",
+    perkSukuna:"Sukunas Finger {0}/{1}", perkDragon:"Dragon Balls {0}/{1}", perkClow:"Clow Cards {0}/{1}", clowAll:"🃏 Alle {0} Clow Cards gesammelt! Das Siegel ist gelöst!", perkArrow:"Stand Arrow: {0} verfügbar ({1}/{2} gefunden)", useArrow:"Stand Arrow einsetzen (noch {0})", arrowUsed:"Stand Arrow: Alles über Anime #{0} wurde aufgedeckt.", perkGeass:"Geass: {0} verfügbar ({1}/{2} gefunden)", useGeass:"Geass einsetzen (noch {0})", domain:"Domain Expansion", domainUsed:"Domain Expansion benutzt",
     domainAsk:"Domain Expansion: Öffne einen Anime und drücke „Nehmen“, er zählt dann als erraten.", claim:"Nehmen",
     wishAsk:"Alle Dragon Balls! Wähle ein Genre:", wishBtn:"Wünschen", wished:"Wunsch erfüllt: {0}",
     hint:"Für Anime #{0} wurde aufgedeckt: {1}", kira:"Kiras Hand! {0} ist 1 Minute gesperrt.", kiraName:"Kiras Hand", queuedN:"{0} Falle(n) warten", trapQueued:"{0} wartet: Dein letztes freies Item wird nie gesperrt. Sie schlägt zu, sobald du ein zweites hast.", deathRecv:"DeathLink von {0}: {1} ist 1 Minute gesperrt.",
@@ -467,6 +467,8 @@ const ITEM = 7417000000, GENRES = ["Action","Adventure","Comedy","Drama","Ecchi"
   "Shounen","Shoujo","Seinen","Josei","Kids"];  // die letzten 5 = Zielgruppen (Include Demographics)
 const DEMOGRAPHICS = GENRES.slice(18);
 const LETTERS = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ", "#"];
+// Clow Card: Spass-Fueller Nr. 342 (Platz 42 in FLAVOR / FLAVOR_FILLERS), den man sammeln kann
+const CLOW = ITEM+342;
 const SUKUNA = ITEM+100, DRAGON = ITEM+101, GEASS = ITEM+102, ARROW = ITEM+103, SENZU = ITEM+104, TIMELEAP = ITEM+105,
   TRUCK = ITEM+202, FILLER = ITEM+203, TSUNDERE = ITEM+204, KIRA = ITEM+200, DEATHNOTE = ITEM+201, EXODIA = [0,1,2,3,4].map(i => ITEM+400+i);
 const MILESTONE = 7419000000;
@@ -568,6 +570,7 @@ function cleanSlotData(sd){
   c.trap_link = sd.trap_link === true;
   c.death_link = sd.death_link === true;
   for (const k of ["sukuna_fingers","dragon_balls","geass","stand_arrows"]) c[k] = num(sd[k], 0, 1000);
+  c.clow_cards = num(sd.clow_cards, 0, 53);
   return c;
 }
 
@@ -746,6 +749,10 @@ function processItems(){
   for (let i = st.done; i < G.items.length; i++) {
     const id = G.items[i].item, from = playerName(G.items[i].player);
     if (id === SUKUNA) { const h = makeHint(i); if (h) { st.hints.push(h); log(t("hint", G.number.get(h.id), hintText(h))); } }
+    // Alle Clow Cards beisammen: nur eine Erfolgsmeldung (keine Wirkung)
+    if (id === CLOW && G.slotData.clow_cards && G.items.slice(0, i + 1).filter(x => x.item === CLOW).length === G.slotData.clow_cards) {
+      log(t("clowAll", G.slotData.clow_cards)); sfx("win");
+    }
     if (TRAPS[id]) { hitByTrap(TRAPS[id]); sendTrapLink(TRAPS[id]); }
     else if (id - ITEM < 100 || (id - ITEM >= 500 && id - ITEM < 1000)) sfx("item");
     if (id === DEATHNOTE && G.slotData.death_link) {
@@ -1104,6 +1111,7 @@ function render(){
   if (sd.sukuna_fingers) perks.push(`<span class="${domainReady() ? "have" : ""}">☝️ ${t("perkSukuna", count(SUKUNA), sd.sukuna_fingers)}${G.state?.domainUsed ? " · " + t("domainUsed") : ""}</span>`);
   if (sd.stand_arrows) perks.push(`<span class="${arrowsLeft() > 0 ? "perk" : ""}">🏹 ${t("perkArrow", arrowsLeft(), count(ARROW), sd.stand_arrows)}</span>`);
   if (sd.geass) perks.push(`<span class="${geassLeft() > 0 ? "perk" : ""}">👁️ ${t("perkGeass", geassLeft(), count(GEASS), sd.geass)}</span>`);
+  if (sd.clow_cards) perks.push(`<span class="${count(CLOW) >= sd.clow_cards ? "have" : ""}">🃏 ${t("perkClow", count(CLOW), sd.clow_cards)}</span>`);
   if (sd.dragon_balls) perks.push(`<span class="${dragonReady() ? "have" : ""}">🐉 ${t("perkDragon", count(DRAGON), sd.dragon_balls)}${G.state?.wish ? " · " + esc(G.state.wish) : ""}</span>`);
   if (count(SENZU)) perks.push(`<button type="button" id="senzuBtn" class="${senzuLeft() && anyTrapActive() ? "perk" : ""}" ${senzuLeft() && anyTrapActive() ? "" : "disabled"}>🫘 ${t("perkSenzu", senzuLeft())}</button>`);
   if (count(TIMELEAP)) perks.push(`<span class="${leapsLeft() ? "perk" : ""}">⏪ ${t("perkLeap", leapsLeft())}</span>`);
@@ -1447,8 +1455,11 @@ const OFFLINE = (() => {
     add(DEATHNOTE, 1);
     if (o.traps) { add(KIRA, 5); add(TRUCK, 3); add(FILLER, 3); add(TSUNDERE, 3); }
     if (o.goalType !== "exodia") EXODIA.forEach(id => add(id, 1));
-    // Rest: meist "Filler Episode" (300), etwa jedes vierte Mal ein Spass-Fueller ohne Wirkung (301-314)
-    while (free > 0) { items.push(Math.random() < .25 ? ITEM + 301 + Math.floor(Math.random() * FLAVOR.length) : ITEM + 300); free--; }
+    // Clow Cards zum Sammeln: etwa ein Drittel der freien Plaetze, hoechstens 53 (wie in der APWorld)
+    sd.clow_cards = add(CLOW, Math.min(53, Math.floor(free / 3)));
+    // Rest: meist "Filler Episode" (300), etwa jedes vierte Mal ein anderer Spass-Fueller ohne Wirkung
+    const randomFlavor = FLAVOR.map((n, i) => ITEM + 301 + i).filter(id => id !== CLOW);
+    while (free > 0) { items.push(Math.random() < .25 ? randomFlavor[Math.floor(Math.random() * randomFlavor.length)] : ITEM + 300); free--; }
     S = {seed: Math.random().toString(36).slice(2), sd, pool: shuffle(items), items: [], checked: [], store: {},
          time: 0, finished: null, opts: {...o, count, pool: pool.length}};
     save();
@@ -1543,7 +1554,7 @@ function renderScores(){
       + `<td>${num(e.helps, 0, 1e6)}</td><td>${esc(e.mode)}</td><td>${esc(e.date)}</td></tr>`).join("") + `</table>`;
 }
 // Spass-Fueller ohne Wirkung (gleiche Reihenfolge wie FLAVOR_FILLERS in Items.py, Nummern 301 ff.)
-const FLAVOR = ["AYAYA!", "Ara Ara", "Nya!", "Gum-Gum Fruit", "Flame-Flame Fruit", "Usopp's Slingshot", "Nami's Clima-Tact", "Waifu", "Zangetsu", "Hogyoku", "Cursed Technique Lapse: Blue", "Cursed Technique Reversal: Red", "Hollow Purple", "Philosopher's Stone", "Husbando", "Straw Hat", "Sogeking's Mask", "Naruto's Headband", "Gojo's Blindfold", "Tanjiro's Hanafuda Earrings", "Inosuke's Boar Mask", "Saitama's Gloves", "Survey Corps Cloak", "3D Maneuver Gear", "Den Den Mushi", "Going Merry", "Thousand Sunny", "NerveGear", "My name is Sogeking! Born on Sniper Island, 100 shots, 100 hits!", "Nico Nico Nii", "Moonstone", "Tuxedo Mask's Top Hat", "Yowai mo", "Omae wa mou shindeiru", "Nani?!", "Hisashiburi da na, Mugiwara", "ORA ORA ORA", "MUDA MUDA MUDA", "Daisukiiiiii", "The One Piece is REAL!", "Have a Plus Ultra Day", "Clow Card"];
+const FLAVOR = ["AYAYA!", "Ara Ara", "Nya!", "Gum-Gum Fruit", "Flame-Flame Fruit", "Usopp's Slingshot", "Nami's Clima-Tact", "Waifu", "Zangetsu", "Hogyoku", "Cursed Technique Lapse: Blue", "Cursed Technique Reversal: Red", "Hollow Purple", "Philosopher's Stone", "Husbando", "Straw Hat", "Sogeking's Mask", "Naruto's Headband", "Gojo's Blindfold", "Tanjiro's Hanafuda Earrings", "Inosuke's Boar Mask", "Saitama's Gloves", "Survey Corps Cloak", "3D Maneuver Gear", "Den Den Mushi", "Going Merry", "Thousand Sunny", "NerveGear", "My name is Sogeking! Born on Sniper Island, 100 shots, 100 hits!", "Nico Nico Nii", "Moon Prism Power, Make Up!", "Tuxedo Mask's Top Hat", "Yowai mo", "Omae wa mou shindeiru", "Nani?!", "Hisashiburi da na, Mugiwara", "ORA ORA ORA", "MUDA MUDA MUDA", "Daisukiiiiii", "The One Piece is REAL!", "Have a Plus Ultra Day", "Clow Card"];
 function itemName(id){
   const o = id - ITEM;
   if (o >= 301 && o < 301 + FLAVOR.length) return FLAVOR[o - 301];

@@ -1,7 +1,8 @@
 # Changelog
 
 ## 0.1.2 (in progress)
-- **13 more joke filler items** (42 in total): *Nico Nico Nii*, *Moonstone*, *Tuxedo Mask's Top Hat*, *Yowai mo*, *Omae wa mou shindeiru*, *Nani?!*, *Hisashiburi da na, Mugiwara*, *ORA ORA ORA*, *MUDA MUDA MUDA*, *Daisukiiiiii*, *The One Piece is REAL!*, *Have a Plus Ultra Day*, *Clow Card*.
+- **Clow Cards:** a collectible filler. Depending on the world size up to 53 of them (like the original deck) are in the pool; the client shows *Clow Cards x/N* and celebrates when you have them all. No gameplay effect.
+- **13 more joke filler items** (42 in total): *Nico Nico Nii*, *Moon Prism Power, Make Up!*, *Tuxedo Mask's Top Hat*, *Yowai mo*, *Omae wa mou shindeiru*, *Nani?!*, *Hisashiburi da na, Mugiwara*, *ORA ORA ORA*, *MUDA MUDA MUDA*, *Daisukiiiiii*, *The One Piece is REAL!*, *Have a Plus Ultra Day*, *Clow Card*.
 - **1470 anime** (up from 978), 1429 of them with logo silhouettes. The web client already uses the new list; it also works with 0.1.1 worlds.
 
 ## 0.1.1 (Beta)

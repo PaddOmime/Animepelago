@@ -99,7 +99,7 @@ FLAVOR_FILLERS = [
     "NerveGear",
     "My name is Sogeking! Born on Sniper Island, 100 shots, 100 hits!",
     "Nico Nico Nii",
-    "Moonstone",
+    "Moon Prism Power, Make Up!",
     "Tuxedo Mask's Top Hat",
     "Yowai mo",
     "Omae wa mou shindeiru",
@@ -112,6 +112,9 @@ FLAVOR_FILLERS = [
     "Have a Plus Ultra Day",
     "Clow Card",
 ]
+# Die Clow Card ist ein Sammel-Fueller: Je nach Weltgroesse bis zu 53 Stueck (wie im Original)
+CLOW_CARD = "Clow Card"
+CLOW_CARD_MAX = 53
 for _i, _name in enumerate(FLAVOR_FILLERS):
     ITEMS[_name] = (ITEM_ID_OFFSET + 301 + _i, ItemClassification.filler, 0)
 
