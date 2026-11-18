@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.2 (in progress)
+- **New interface languages (beta):** Español, Français, Italiano and 日本語, in addition to English and Deutsch. The client picks your browser language automatically. Translations were pre-translated with DeepL and corrected by hand; item names stay in English. Corrections are welcome!
 - **Unlock by Studio:** every main studio of an anime counts now, not only the one of season 1 (e.g. *Attack on Titan* opens with WIT STUDIO **or** MAPPA).
 - **Logos:** the logo of the first season's series is preferred (e.g. *My Hero Academia* no longer shows a spin-off logo). Own logo picks are possible in `corrections.json`.
 - Main studios are now known for all anime (26 newer studios were missing).
