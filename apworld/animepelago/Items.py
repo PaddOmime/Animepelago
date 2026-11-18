@@ -98,6 +98,19 @@ FLAVOR_FILLERS = [
     "Thousand Sunny",
     "NerveGear",
     "My name is Sogeking! Born on Sniper Island, 100 shots, 100 hits!",
+    "Nico Nico Nii",
+    "Moonstone",
+    "Tuxedo Mask's Top Hat",
+    "Yowai mo",
+    "Omae wa mou shindeiru",
+    "Nani?!",
+    "Hisashiburi da na, Mugiwara",
+    "ORA ORA ORA",
+    "MUDA MUDA MUDA",
+    "Daisukiiiiii",
+    "The One Piece is REAL!",
+    "Have a Plus Ultra Day",
+    "Clow Card",
 ]
 for _i, _name in enumerate(FLAVOR_FILLERS):
     ITEMS[_name] = (ITEM_ID_OFFSET + 301 + _i, ItemClassification.filler, 0)
