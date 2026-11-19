@@ -59,7 +59,7 @@ class OnlyGenres(OptionSet):
     With several, an anime needs at least one of them. Empty = all anime.
     Genres then do not unlock anything at all (there are no genre items): you unlock anime only by
     letters and/or the Unlock by Year/Source/Season/Studio options. If none of these is on, letters are used.
-    Anime Pool then counts only anime of these genres. If there are fewer than Anime Count, Anime Count is lowered."""
+    Only anime of these genres are picked. If there are fewer than Anime Count, Anime Count is lowered."""
     display_name = "Only Genres"
     valid_keys = frozenset(GENRES)
     default = frozenset()
@@ -106,7 +106,8 @@ class UnlockBySeason(Toggle):
 
 
 class UnlockByStudio(Toggle):
-    """Also need the main studio of the first part, e.g. "Studio: MADHOUSE". Smaller studios share "Studio: Other"."""
+    """Also need a studio of the anime, e.g. "Studio: MADHOUSE". If several studios made it (Attack on Titan:
+    WIT STUDIO and MAPPA), any one of them is enough. Smaller studios share "Studio: Other"."""
     display_name = "Unlock by Studio"
 
 

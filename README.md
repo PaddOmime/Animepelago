@@ -5,7 +5,7 @@
 Guess anime to send checks to your friends. Their games send you genres, letters and perks that unlock more anime to guess.
 
 ### ▶ [Play now in your browser](https://paddomime.github.io/Animepelago/client/)
-Archipelago mode, offline mode and mini games (Hangman, Anime Bingo). No install needed.
+Archipelago mode, offline mode and mini games (Hangman, Anime Bingo, Top 100). No install needed.
 
 > 🇩🇪 Deutsche Anleitung: siehe [unten](#deutsch)
 
@@ -52,7 +52,7 @@ Archipelago mode, offline mode and mini games (Hangman, Anime Bingo). No install
 
 ### Offline mode
 
-No Archipelago server at hand? Open the web client, choose **Offline**, pick your settings and play alone. Every guessed anime gives you an item from the same pool, and your progress is saved in your browser. There is also **🪢 Hangman**: guess the title letter by letter, every mistake reveals a clue.
+No Archipelago server at hand? Open the web client, choose **Offline**, pick your settings and play alone. Every guessed anime gives you an item from the same pool, and your progress is saved in your browser. Under **🎮 More** there are mini games: **🪢 Hangman** (guess the title letter by letter, every mistake reveals a clue), **🎯 Anime Bingo** for two players, and **🏆 Top 100**: name the 100 best-rated anime on AniList, of all time or per genre.
 
 ### Tracker
 
@@ -107,7 +107,7 @@ The code is licensed under the [MIT License](LICENSE). Data from third parties k
 Errate Anime, um Checks an deine Mitspieler zu schicken. Ihre Spiele schicken dir Genres, Buchstaben und Perks, die weitere Anime freischalten.
 
 ### ▶ [Jetzt im Browser spielen](https://paddomime.github.io/Animepelago/client/)
-Archipelago-Modus, Offline-Modus und Minispiele (Galgenmännchen, Anime-Bingo). Keine Installation nötig.
+Archipelago-Modus, Offline-Modus und Minispiele (Galgenmännchen, Anime-Bingo, Top 100). Keine Installation nötig.
 
 ### So funktioniert es
 

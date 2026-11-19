@@ -115,12 +115,12 @@ Animepelago:
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 10
-    # Maximum value is 1470
+    # Maximum value is 1930
     50: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
-    random-range-10-1470: 0 # random value between 10 and 1470
+    random-range-10-1930: 0 # random value between 10 and 1930
 
   anime_goal:
     # How many anime you need to guess to win (only with Goal: anime).
@@ -128,19 +128,19 @@ Animepelago:
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 1
-    # Maximum value is 1470
+    # Maximum value is 1930
     40: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
-    random-range-1-1470: 0 # random value between 1 and 1470
+    random-range-1-1930: 0 # random value between 1 and 1930
 
   only_genres:
     # Play only with anime of these genres or target audiences, e.g. ["Romance"] or ["Shounen"].
     # With several, an anime needs at least one of them. Empty = all anime.
     # Genres then do not unlock anything at all (there are no genre items): you unlock anime only by
     # letters and/or the Unlock by Year/Source/Season/Studio options. If none of these is on, letters are used.
-    # Anime Pool then counts only anime of these genres. If there are fewer than Anime Count, Anime Count is lowered.
+    # Only anime of these genres are picked. If there are fewer than Anime Count, Anime Count is lowered.
     []
 
   only_genres_start_anime:
@@ -185,7 +185,8 @@ Animepelago:
     'true': 0
 
   unlock_by_studio:
-    # Also need the main studio of the first part, e.g. "Studio: MADHOUSE". Smaller studios share "Studio: Other".
+    # Also need a studio of the anime, e.g. "Studio: MADHOUSE". If several studios made it (Attack on Titan:
+    # WIT STUDIO and MAPPA), any one of them is enough. Smaller studios share "Studio: Other".
     'false': 50
     'true': 0
 

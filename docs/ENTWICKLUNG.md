@@ -26,13 +26,14 @@ Anime-Ratespiel mit Archipelago-Anbindung.
 ## Taeglicher Gebrauch (Ordner `offline/skripts`)
 
 - `anime_holen.bat`  fragt, wie viele weitere beliebte Anime geholt werden sollen, und baut danach alles neu
+- `top_holen.bat`    holt die 100 bestbewerteten Anime (insgesamt und je Genre) fuer das Minispiel "Top 100" und baut neu
 - `update.bat`       fragt alle gespeicherten Anime neu ab (Folgen, Beliebtheit, neue Staffeln, Zielgruppen) und baut neu
 - `bauen.bat`        baut alles aus den gespeicherten Daten neu, ohne AniList zu fragen (inkl. Wikidata-Titel)
 - `vorlage.bat`      erzeugt die YAML-Vorlage mit deinem Archipelago und kopiert sie nach `apworld/` und `client/`
                      (vorher die neue `.apworld` nach `custom_worlds` kopieren)
 - danach `client/index.html` neu laden
 
-`anime_holen.bat` und `update.bat` nie gleichzeitig laufen lassen. Welche Anime im Spiel sind, steht in `offline/raw/seeds.json`.
+`anime_holen.bat`, `top_holen.bat` und `update.bat` nie gleichzeitig laufen lassen. Welche Anime im Spiel sind, steht in `offline/raw/seeds.json`.
 
 ## Titelsprachen
 
