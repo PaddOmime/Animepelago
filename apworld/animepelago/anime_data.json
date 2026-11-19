@@ -701,6 +701,7 @@
     "Comedy",
     "Drama",
     "Fantasy",
+    "Romance",
     "Supernatural"
    ],
    "demographics": [
@@ -3270,6 +3271,7 @@
    "genres": [
     "Comedy",
     "Drama",
+    "Fantasy",
     "Romance",
     "Slice of Life",
     "Supernatural"
@@ -3282,6 +3284,12 @@
     "studio": "Kyoto Animation"
    },
    "popularity": 306947,
+   "cat_all": {
+    "studio": [
+     "Kyoto Animation",
+     "Toei Animation"
+    ]
+   },
    "letter": {
     "english": "C",
     "romaji": "C",
@@ -4004,6 +4012,12 @@
     "studio": "ufotable"
    },
    "popularity": 270270,
+   "cat_all": {
+    "studio": [
+     "ufotable",
+     "Studio DEEN"
+    ]
+   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -4851,7 +4865,9 @@
    "name": "Orange",
    "genres": [
     "Drama",
+    "Psychological",
     "Romance",
+    "Sci-Fi",
     "Supernatural"
    ],
    "demographics": [
@@ -5224,6 +5240,7 @@
    "genres": [
     "Action",
     "Adventure",
+    "Comedy",
     "Fantasy"
    ],
    "demographics": [
@@ -6538,19 +6555,11 @@
    "name": "Fate/stay night",
    "genres": [
     "Action",
-    "Comedy",
-    "Drama",
-    "Ecchi",
     "Fantasy",
-    "Mahou Shoujo",
-    "Psychological",
     "Romance",
     "Supernatural"
    ],
-   "demographics": [
-    "Shounen",
-    "Seinen"
-   ],
+   "demographics": [],
    "cat": {
     "year": "2005-2009",
     "source": "Visual Novel",
@@ -6558,12 +6567,6 @@
     "studio": "Studio DEEN"
    },
    "popularity": 192518,
-   "cat_all": {
-    "studio": [
-     "Studio DEEN",
-     "SILVER LINK."
-    ]
-   },
    "letter": {
     "english": "F",
     "romaji": "F",
@@ -9381,36 +9384,6 @@
    }
   },
   {
-   "id": 16870,
-   "name": "The Last: Naruto the Movie",
-   "genres": [
-    "Action",
-    "Adventure",
-    "Drama",
-    "Fantasy",
-    "Romance",
-    "Supernatural"
-   ],
-   "demographics": [
-    "Shounen"
-   ],
-   "cat": {
-    "year": "2014",
-    "source": "Original",
-    "season": "Fall",
-    "studio": "Studio Pierrot"
-   },
-   "popularity": 146077,
-   "letter": {
-    "english": "T",
-    "romaji": "T",
-    "german": "T",
-    "spanish": "T",
-    "french": "N",
-    "italian": "T"
-   }
-  },
-  {
    "id": 114121,
    "name": "The Daily Life of the Immortal King",
    "genres": [
@@ -11034,7 +11007,7 @@
   },
   {
    "id": 4081,
-   "name": "Natsume's Book of Friends Season 1",
+   "name": "Natsume's Book of Friends",
    "genres": [
     "Drama",
     "Fantasy",
@@ -14782,33 +14755,6 @@
     "english": "B",
     "romaji": "K",
     "german": "K",
-    "spanish": "B",
-    "french": "B",
-    "italian": "B"
-   }
-  },
-  {
-   "id": 21220,
-   "name": "Boruto: Naruto the Movie",
-   "genres": [
-    "Action",
-    "Adventure",
-    "Comedy"
-   ],
-   "demographics": [
-    "Shounen"
-   ],
-   "cat": {
-    "year": "2015",
-    "source": "Manga",
-    "season": "Summer",
-    "studio": "Studio Pierrot"
-   },
-   "popularity": 100163,
-   "letter": {
-    "english": "B",
-    "romaji": "B",
-    "german": "B",
     "spanish": "B",
     "french": "B",
     "italian": "B"
@@ -19598,32 +19544,6 @@
    }
   },
   {
-   "id": 15039,
-   "name": "Anohana the Movie: The Flower We Saw That Day",
-   "genres": [
-    "Drama",
-    "Romance",
-    "Slice of Life",
-    "Supernatural"
-   ],
-   "demographics": [],
-   "cat": {
-    "year": "2013",
-    "source": "Original",
-    "season": "Summer",
-    "studio": "A-1 Pictures"
-   },
-   "popularity": 75899,
-   "letter": {
-    "english": "A",
-    "romaji": "A",
-    "german": "A",
-    "spanish": "A",
-    "french": "A",
-    "italian": "A"
-   }
-  },
-  {
    "id": 126047,
    "name": "Battle Game in 5 Seconds",
    "genres": [
@@ -19970,32 +19890,6 @@
     "spanish": "F",
     "french": "F",
     "italian": "F"
-   }
-  },
-  {
-   "id": 13667,
-   "name": "Road to Ninja: Naruto the Movie",
-   "genres": [
-    "Action",
-    "Adventure"
-   ],
-   "demographics": [
-    "Shounen"
-   ],
-   "cat": {
-    "year": "2012",
-    "source": "Manga",
-    "season": "Summer",
-    "studio": "Studio Pierrot"
-   },
-   "popularity": 74776,
-   "letter": {
-    "english": "R",
-    "romaji": "R",
-    "german": "R",
-    "spanish": "R",
-    "french": "N",
-    "italian": "N"
    }
   },
   {
@@ -20756,6 +20650,38 @@
     "spanish": "T",
     "french": "T",
     "italian": "T"
+   }
+  },
+  {
+   "id": 14829,
+   "name": "Fate/kaleid liner Prisma☆Illya",
+   "genres": [
+    "Action",
+    "Comedy",
+    "Drama",
+    "Ecchi",
+    "Fantasy",
+    "Mahou Shoujo",
+    "Psychological"
+   ],
+   "demographics": [
+    "Shounen",
+    "Seinen"
+   ],
+   "cat": {
+    "year": "2013",
+    "source": "Manga",
+    "season": "Summer",
+    "studio": "SILVER LINK."
+   },
+   "popularity": 72098,
+   "letter": {
+    "english": "F",
+    "romaji": "F",
+    "german": "F",
+    "spanish": "F",
+    "french": "F",
+    "italian": "G"
    }
   },
   {
@@ -25961,32 +25887,6 @@
    }
   },
   {
-   "id": 6922,
-   "name": "Fate/stay night: Unlimited Blade Works (Movie)",
-   "genres": [
-    "Action",
-    "Drama",
-    "Fantasy",
-    "Supernatural"
-   ],
-   "demographics": [],
-   "cat": {
-    "year": "2010",
-    "source": "Visual Novel",
-    "season": "Winter",
-    "studio": "Studio DEEN"
-   },
-   "popularity": 56056,
-   "letter": {
-    "english": "F",
-    "romaji": "F",
-    "german": "F",
-    "spanish": "F",
-    "french": "F",
-    "italian": "F"
-   }
-  },
-  {
    "id": 155418,
    "name": "The Great Cleric",
    "genres": [
@@ -26227,7 +26127,7 @@
   },
   {
    "id": 100891,
-   "name": "KENGAN ASHURA Part I",
+   "name": "KENGAN ASHURA",
    "genres": [
     "Action",
     "Sports"
@@ -26585,34 +26485,6 @@
     "spanish": "Y",
     "french": "A",
     "italian": "A"
-   }
-  },
-  {
-   "id": 4107,
-   "name": "Gurren Lagann The Movie: Childhood's End",
-   "genres": [
-    "Action",
-    "Comedy",
-    "Drama",
-    "Mecha",
-    "Romance",
-    "Sci-Fi"
-   ],
-   "demographics": [],
-   "cat": {
-    "year": "2005-2009",
-    "source": "Original",
-    "season": "Fall",
-    "studio": "Other"
-   },
-   "popularity": 54442,
-   "letter": {
-    "english": "G",
-    "romaji": "T",
-    "german": "G",
-    "spanish": "G",
-    "french": "G",
-    "italian": "G"
    }
   },
   {
@@ -32629,35 +32501,6 @@
    }
   },
   {
-   "id": 97669,
-   "name": "Orange: Future",
-   "genres": [
-    "Drama",
-    "Psychological",
-    "Romance",
-    "Sci-Fi",
-    "Supernatural"
-   ],
-   "demographics": [
-    "Shoujo"
-   ],
-   "cat": {
-    "year": "2016",
-    "source": "Manga",
-    "season": "Fall",
-    "studio": "Other"
-   },
-   "popularity": 41252,
-   "letter": {
-    "english": "O",
-    "romaji": "O",
-    "german": "O",
-    "spanish": "O",
-    "french": "O",
-    "italian": "O"
-   }
-  },
-  {
    "id": 3667,
    "name": "Strike Witches",
    "genres": [
@@ -33363,33 +33206,6 @@
     "spanish": "B",
     "french": "B",
     "italian": "B"
-   }
-  },
-  {
-   "id": 7472,
-   "name": "Gintama - The Movie",
-   "genres": [
-    "Action",
-    "Comedy",
-    "Sci-Fi"
-   ],
-   "demographics": [
-    "Shounen"
-   ],
-   "cat": {
-    "year": "2010",
-    "source": "Manga",
-    "season": "Spring",
-    "studio": "Sunrise"
-   },
-   "popularity": 40244,
-   "letter": {
-    "english": "G",
-    "romaji": "G",
-    "german": "G",
-    "spanish": "G",
-    "french": "G",
-    "italian": "G"
    }
   },
   {
@@ -37107,32 +36923,6 @@
    }
   },
   {
-   "id": 19021,
-   "name": "Love, Chunibyo & Other Delusions: Rikka Version",
-   "genres": [
-    "Comedy",
-    "Drama",
-    "Romance",
-    "Slice of Life"
-   ],
-   "demographics": [],
-   "cat": {
-    "year": "2013",
-    "source": "Light Novel",
-    "season": "Fall",
-    "studio": "Kyoto Animation"
-   },
-   "popularity": 34386,
-   "letter": {
-    "english": "L",
-    "romaji": "T",
-    "german": "L",
-    "spanish": "L",
-    "french": "L",
-    "italian": "L"
-   }
-  },
-  {
    "id": 132532,
    "name": "Deaimon: Recipe for Happiness",
    "genres": [
@@ -38265,31 +38055,6 @@
     "spanish": "T",
     "french": "T",
     "italian": "F"
-   }
-  },
-  {
-   "id": 1723,
-   "name": "Clannad: The Motion Picture",
-   "genres": [
-    "Drama",
-    "Fantasy",
-    "Romance"
-   ],
-   "demographics": [],
-   "cat": {
-    "year": "2005-2009",
-    "source": "Visual Novel",
-    "season": "Summer",
-    "studio": "Toei Animation"
-   },
-   "popularity": 32560,
-   "letter": {
-    "english": "C",
-    "romaji": "C",
-    "german": "C",
-    "spanish": "C",
-    "french": "C",
-    "italian": "C"
    }
   },
   {
@@ -42080,7 +41845,7 @@
   },
   {
    "id": 627,
-   "name": "Major S1",
+   "name": "Major",
    "genres": [
     "Comedy",
     "Drama",
@@ -47977,34 +47742,6 @@
    }
   },
   {
-   "id": 197474,
-   "name": "Gintama the Movie 2026: Yoshiwara in Flames",
-   "genres": [
-    "Action",
-    "Comedy",
-    "Drama",
-    "Sci-Fi"
-   ],
-   "demographics": [
-    "Shounen"
-   ],
-   "cat": {
-    "year": "2026",
-    "source": "Manga",
-    "season": "Winter",
-    "studio": "Other"
-   },
-   "popularity": 7266,
-   "letter": {
-    "english": "G",
-    "romaji": "S",
-    "german": "G",
-    "spanish": "G",
-    "french": "G",
-    "italian": "G"
-   }
-  },
-  {
    "id": 4188,
    "name": "Mahou Sensei Negima! Shiroki Tsubasa ALA ALBA",
    "genres": [
@@ -49652,7 +49389,7 @@
   },
   {
    "id": 102464,
-   "name": "Fights Break Sphere S1",
+   "name": "Fights Break Sphere",
    "genres": [
     "Action",
     "Adventure",

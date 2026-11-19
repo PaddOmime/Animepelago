@@ -1,15 +1,18 @@
 # Changelog
 
-## 0.1.3 (in progress)
-- **Canon check for specials:** all 631 open movies, OVAs and specials were reviewed by hand. Only canon parts count towards their anime (e.g. *Demon Slayer: Mugen Train*, *Dragon Ball Super: Broly*); non-canon movies, recaps and short extras do not (they are still listed in the overview). 356 more parts count now, with about 1,900 more accepted titles.
-- **Dragon Ball** is split into five anime: *Dragon Ball*, *Z*, *GT*, *Super* (with *Battle of Gods* and *Resurrection 'F'*) and *DAIMA*. *Dragon Ball Z Kai* is left out as a recut.
-- **Berserk** (1997) now includes the Golden Age Arc movies and *Berserk* (2016/2017); the *Memorial Edition* recut is left out. Every studio counts for Unlock by Studio.
-- *Kizumonogatari* belongs to the *Monogatari Series*, *Conqueror of Shamballa* to *Fullmetal Alchemist* (2003), *Cyberpunk: Edgerunners 2* to *Cyberpunk: Edgerunners* ("Cyberpunk" is accepted now).
-- Series names before a subtitle with a dash are accepted too (e.g. *Code Geass: Akito the Exiled*, *Kaiji*, *Garden of Sinners*).
-- The name, logo and cover of an anime always come from its first series (not from an earlier movie or OVA).
-- **New mini game 🏆 Top 100** (under 🎮 More): name the 100 best-rated anime on AniList, of all time or for one genre. Every anime counts once (its best-rated part); progress and best time are kept in your browser.
-- **1930 anime** (up from 1470 in 0.1.2): the 100 best-rated anime of all time and of every genre are in now, including classic OVA works such as *Legend of the Galactic Heroes*, *Hellsing Ultimate*, *Gunbuster* and *Giant Robo*. 1772 of them with logo silhouettes.
-- Anime without a TV series take their name from their first OVA series, otherwise from their first movie (e.g. *Legend of the Galactic Heroes*, *Mobile Police Patlabor*).
+## 0.1.3 (Beta)
+- **New mini game 🏆 Top 100** (under 🎮 More): name the 100 best-rated anime on AniList, of all time or for one of 18 genres. Every anime counts once (its best-rated part); with timer, best time, "give up" and saved progress.
+- **1920 anime** (up from 1470): the 100 best-rated anime of all time and of every genre are in now, including classic OVA works such as *Legend of the Galactic Heroes*, *Hellsing Ultimate*, *Gunbuster* and *Giant Robo*.
+- **Canon check for movies, OVAs and specials:** about 1,200 entries were reviewed by hand. Only canon parts count towards their anime (e.g. *Demon Slayer: Mugen Train*, *Dragon Ball Super: Broly*, *The Last: Naruto the Movie*); non-canon movies, recaps and short extras do not, but are still listed in the overview.
+- **Franchise fixes:**
+  - *Dragon Ball* is split into five anime: *Dragon Ball*, *Z*, *GT*, *Super* (with *Battle of Gods* and *Resurrection 'F'*) and *DAIMA*; *Dragon Ball Z Kai* is left out as a recut.
+  - *Berserk* (1997) includes the Golden Age Arc movies and *Berserk* (2016/2017); the *Memorial Edition* recut is left out.
+  - *Fate/kaleid liner Prisma☆Illya* is its own anime now; the 2010 *Unlimited Blade Works* movie belongs to the ufotable series.
+  - Movies that were separate anime now belong to their series: *Gintama*, *Gurren Lagann*, *Anohana*, *Clannad*, *Orange*, *Love, Chunibyo & Other Delusions*, *Naruto Shippuden* (*The Last*, *Road to Ninja*), *Boruto*.
+  - *Kizumonogatari* belongs to the *Monogatari Series*, *Conqueror of Shamballa* to *Fullmetal Alchemist* (2003), *Cyberpunk: Edgerunners 2* to *Cyberpunk: Edgerunners*.
+- **Better names:** "Season 1", "Part I" and "S1" are gone from anime names (e.g. *Natsume's Book of Friends*). Short names count as answers too: "Cyberpunk", "86", "Eighty Six", series names before a dash subtitle (*Code Geass: Akito the Exiled*, *Kaiji*). "Dragon Ball" and "Dragon Ball Z" no longer solve two anime at once.
+- Anime without a TV series take their name, logo and cover from their first OVA series, otherwise from their first movie (e.g. *Legend of the Galactic Heroes*, *Mobile Police Patlabor*).
+- Option texts in the YAML updated (Unlock by Studio: any studio of the anime counts).
 
 ## 0.1.2 (Beta)
 - **New interface languages (beta):** Español, Français, Italiano and 日本語, in addition to English and Deutsch. The client picks your browser language automatically. Translations were pre-translated with DeepL and corrected by hand; item names stay in English. Corrections are welcome!
