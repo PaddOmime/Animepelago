@@ -4,7 +4,9 @@ Gemerkte Wuensche und Vorschlaege. Erledigtes wandert in den CHANGELOG.
 
 ## Fuer 1.0 (wichtig)
 - [x] TMDB-Logo und Hinweis im Client (0.1.4)
-- [ ] Echte Multiworld-Tests mit mehreren Spielern (Items, Neuverbinden, Hinweise, Release/Collect)
+- [x] Erster echter Multiworld-Test (Persona 5 Royal, Banjo-Tooie, SM64, Animepelago): lief fluessig, Release/Collect ok
+- [x] Option: eingesammelte (Collect) Anime zaehlen fuers Ziel, an/aus (0.1.4)
+- [ ] Weitere Multiworld-Tests: Neuverbinden mitten im Spiel, Hinweise
 - [ ] Automatisch neu verbinden, wenn die Verbindung zum Server abbricht
 - [ ] Tests in der APWorld (Archipelago-Testsystem)
 

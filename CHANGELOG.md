@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.4 (in progress)
+- **Collect option:** when another player collects their items from your anime, those anime are marked 📦. A new switch while connected decides whether they count towards your goal (on by default, the fastest way through) or whether only anime you guessed yourself count; then the 📦 anime stay guessable.
 - A leading "The" no longer counts for the letter: *The Promised Neverland* is a P anime (Letter clue, Unlock by Letter, Bingo). "T" had 263 anime, now about 100.
 - Titles also count without "The" (e.g. "Promised Neverland", "Apothecary Diaries").
 - *Time of Eve: The Movie* belongs to *Time of Eve*; *The Garden of Sinners* has its proper name.
