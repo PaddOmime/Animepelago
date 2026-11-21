@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4 (in progress)
+- A leading "The" no longer counts for the letter: *The Promised Neverland* is a P anime (Letter clue, Unlock by Letter, Bingo). "T" had 263 anime, now about 100.
+- Titles also count without "The" (e.g. "Promised Neverland", "Apothecary Diaries").
+- *Time of Eve: The Movie* belongs to *Time of Eve*; *The Garden of Sinners* has its proper name.
+- The client shows the TMDB logo next to the data credits at the bottom of the page, as TMDB asks for (logo silhouettes come from TMDB).
+
 ## 0.1.3 (Beta)
 - **New mini game 🏆 Top 100** (under 🎮 More): name the 100 best-rated anime on AniList, of all time or for one of 18 genres. Every anime counts once (its best-rated part); with timer, best time, "give up" and saved progress.
 - **1920 anime** (up from 1470): the 100 best-rated anime of all time and of every genre are in now, including classic OVA works such as *Legend of the Galactic Heroes*, *Hellsing Ultimate*, *Gunbuster* and *Giant Robo*.
