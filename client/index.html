@@ -2851,7 +2851,8 @@ const DLE = (() => {
   const yearTxt = y => !y ? t("dlNone") : y === "Before 2000" ? t("before2000") : y;
   // Anfangsbuchstabe (wie im Bingo: fuehrendes "The" zaehlt nicht, Zahlen/Zeichen = "#") und Wortanzahl des angezeigten Titels
   const letterOf = (a, lang) => { for (const ch of titleOf(a, lang).replace(/^\s*the\s+/i, "").normalize("NFKD")) { if (/\p{M}/u.test(ch)) continue; const c = ch.toUpperCase(); return c >= "A" && c <= "Z" ? c : "#"; } return "#"; };
-  const wordsOf = (a, lang) => titleOf(a, lang).split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length;
+  // Woerter: getrennt durch Leerzeichen und Zeichen wie ☆ × ・ / : ; (Lucky☆Star = 2, Fate/Zero = 2); Apostroph, Bindestrich und Punkt bleiben im Wort (JoJo's, Kaguya-sama, Dr.)
+  const wordsOf = (a, lang) => titleOf(a, lang).split(/[^\p{L}\p{N}'’.\-]+/u).filter(w => /[\p{L}\p{N}]/u.test(w)).length;
   // Mengen vergleichen: gleich (g), teilweise gleich (y), nichts gemeinsam (r)
   const setCmp = (x, y) => { const A = new Set(x), B = new Set(y);
     if (A.size === B.size && [...A].every(v => B.has(v))) return "g"; return [...A].some(v => B.has(v)) ? "y" : "r"; };
