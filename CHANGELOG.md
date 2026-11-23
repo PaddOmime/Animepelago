@@ -1,7 +1,33 @@
 # Changelog
 
-## 0.1.4 (in progress)
-- **Collect option:** when another player collects their items from your anime, those anime are marked 📦. A new switch while connected decides whether they count towards your goal (on by default, the fastest way through) or whether only anime you guessed yourself count; then the 📦 anime stay guessable.
+## 0.2.0
+
+### Archipelago
+- **Auto-reconnect:** if the connection to the Archipelago server drops during a game, the client reconnects by itself (after 2, 4, 8, 15, then every 30 seconds; at once when the internet is back). The game stays open, guessing pauses meanwhile, and anything that was not sent yet (progress, checks) is sent after reconnecting. A bar shows the status, with "Reconnect now" and "Stop".
+- **Collect option:** when another player collects their items from your anime, those anime are marked 📦. A switch while connected decides whether they count towards your goal (on by default, the fastest way through) or whether only anime you guessed yourself count; then the 📦 anime stay guessable.
+- **Twitch integration – chat guesses along:** the 🟣 button at the top. Enter your channel name (no login needed – the page only reads the chat). Correct answers from chat for unlocked anime count like your own and show who guessed them (💬 on the tile, "Chat MVPs"). Modes: automatic or suggestions you accept. Spam protection (one guess per viewer every few seconds), optional `!rate`/`!guess` prefix. The on/off switch keeps the setup, "Remove" deletes it; a notice appears if the channel can't be found or the connection drops. Agree with your multiworld whether chat help is OK.
+
+### Profiles, routes and achievements
+- **Profiles:** the new 👤 button at the top. Create one or more profiles on this device; your first profile takes over the records you already have. Offline games and all mini games give XP and unlock achievements – over 200 of them, some secret. Bingo counts for your profile when your profile name is one of the players.
+- **Archipelago counts too:** playing Archipelago always counts as a play day (daily streaks). If your profile has chosen a route, Archipelago games also give XP and achievements (guessed anime, perks, traps, reaching your goal – new achievements "Multiworld Hero" and "Archipelago Veteran"). Chat guesses from Twitch give no XP.
+- **Choose your route:** 7 routes with 10 ranks each, from level 1 to 100 – 1 Saiyan, 2 Pirate, 3 Ninja, 4 Soul Reaper, 5 Hero, 6 Jujutsu Sorcerer, 7 Demon Slayer. All XP go into the route you picked. When a route is maxed you choose the next one, or press "Chronological" to take the lowest-numbered route that isn't maxed yet. Every unlocked rank can be shown as your title.
+- **Leaderboards per game** in the profile window: offline wins (anime per minute), Hangman (streak), Bingo (wins by player name), Bingo Time Attack (time per board) and Top 100 (best time per list).
+- **Backup:** save the profile as a file or copy it as a code, and load it again (also on another device). The format is described in docs/PROFIL_FORMAT.md, so a later server with real accounts could take it over.
+
+### Bingo
+- **2–6 sides:** choose how many players or teams play, each with its own name, colour and symbol (✕ ◯ △ □ ☆ ◇). Enter team members (comma-separated) to make a side a team – inside a team the players take turns.
+- **Scoreboard:** every side always shows its fields and wins in a clear box above the grid (before, the field count only appeared small in 5×5/6×7); the side whose turn it is is highlighted; teams also show each player's fields.
+- **Time Attack:** alone or together as a team (great on Discord), in any size: fill the **whole** board as fast as possible. Just type an anime – it goes into the selected field or automatically into a free field where it fits. Wrong answers cost 10 seconds. Only complete boards count; best times are saved per player/team name and per board.
+- **Seed mode & editor:** every board has a **board code** – share it and others get exactly the same board (great for comparing Time Attack times). Save boards, and build your own in the new editor ("🔑 Bingo seed & editor" under More): pick the category of every row and column, see live how many anime fit each field, let the rest fill at random, then play versus or Time Attack. The editor warns about fields without answers and boards where you can get stuck.
+- **🔥 Risk Bingo:** a hidden mode – it only appears for a profile with the achievement "Playing with Fire" (fill a bingo board of 5×5 or larger completely while your profile is active). Guests never see it. Huge boards from 7×7 to 10×10: every field has at least 1–3 answers (your choice) and the whole board can be filled – but one anime in the wrong field can lock you out. Fields with only 1–5 answers left show a 🔥 with the number (more flames appear as anime are used). The game spots dead ends at once. For every 10 anime you enter you earn one clear: Time Attack +5:00 per clear; versus only your own fields and it costs your turn.
+- **New category: single years** (🗓️ 2010–2026, own checkbox). Years and decades never cross on a board (no "2010s × 2013"): if both appear, they are all rows or all columns.
+- **Letter pairs:** a letter category is now randomly a single letter or a pair like "🔤 J / K" (title starts with one of the two). Every pair contains a rare letter (E, J, O, U, V, Y, Z, Q, X …) plus a fitting partner, so rare letters finally show up too. Letters and letter pairs never cross on a board.
+
+### Party games (preview)
+- New page `party.html` ("🎉 Party games" under More). The host opens a room and shares the show view (e.g. in Discord); everyone joins with the room code on their phone or a second window and answers in secret – answers are revealed at the same time. Player bar with names, colours, who has answered and points. Games: **Blind Ranking** (place anime on spots 1–N without knowing what comes next, then compare with AniList popularity) and **Higher or Lower** (more popular / newer?). Online rooms need a free Firebase database (see docs/FIREBASE_EINRICHTEN.md); until then the page runs in test mode on one device.
+
+### Other
+- **Colorblind mode:** the 👁 button at the top switches right/wrong from green/red to blue/orange (Okabe-Ito colours) and adds symbols: crossed-out missing chips and a dashed border on guessable anime. The choice is remembered.
 - A leading "The" no longer counts for the letter: *The Promised Neverland* is a P anime (Letter clue, Unlock by Letter, Bingo). "T" had 263 anime, now about 100.
 - Titles also count without "The" (e.g. "Promised Neverland", "Apothecary Diaries").
 - *Time of Eve: The Movie* belongs to *Time of Eve*; *The Garden of Sinners* has its proper name.

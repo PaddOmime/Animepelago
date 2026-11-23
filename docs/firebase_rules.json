@@ -1,0 +1,26 @@
+{
+  "rules": {
+    "rooms": {
+      "$code": {
+        ".read": "$code.matches(/^[A-HJ-NP-Z2-9]{5}$/)",
+        ".write": "$code.matches(/^[A-HJ-NP-Z2-9]{5}$/) && (!data.exists() || data.child('created').val() > now - 21600000 || newData.child('created').val() > now - 60000)",
+        ".validate": "newData.hasChildren(['created', 'v'])",
+        "created": { ".validate": "newData.isNumber() && newData.val() <= now" },
+        "v": { ".validate": "newData.isNumber()" },
+        "host": { ".validate": "newData.isString() && newData.val().length <= 20" },
+        "game": { ".validate": "newData.isString() && newData.val().length <= 8000" },
+        "players": {
+          "$pid": {
+            ".validate": "$pid.matches(/^p[a-z0-9]{8}$/) && newData.hasChildren(['name', 'color'])",
+            "name": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 20" },
+            "color": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 7" },
+            "joined": { ".validate": "newData.isNumber()" },
+            "ans": { ".validate": "newData.isString() && newData.val().length <= 2000" },
+            "$other": { ".validate": false }
+          }
+        },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

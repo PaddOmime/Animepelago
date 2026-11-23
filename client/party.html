@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Sicherheit: nur eigene Skripte; Bilder nur von TMDB; Verbindungen nur zur eigenen Seite und zur Firebase-Datenbank -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://image.tmdb.org; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Animepelago Party</title>
+<style>
+:root{--bg:#f6f6f4;--fg:#1d1d1f;--mute:#6b6b70;--card:#fff;--line:#d9d9de;--ok:#1f8a4c;--bad:#b3261e;--warn:#c2570c;--accent:#3355cc;--grey:#e4e4e8;
+  --c0:#2f6fd6;--c1:#d9480f;--c2:#8e44ad;--c3:#1f8a4c;--c4:#c2185b;--c5:#00838f;--c6:#9a6a00;--c7:#555}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--fg:#ececef;--mute:#9a9aa2;--card:#1f1f23;--line:#34343a;--ok:#4cc27e;--bad:#ff6b60;--warn:#ff9a4d;--accent:#7d97ff;--grey:#2a2a2f;
+  --c0:#6fa3ff;--c1:#ff8a4d;--c2:#c08bff;--c3:#4cc27e;--c4:#ff6fa8;--c5:#4dd0e1;--c6:#f0c040;--c7:#bbb}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:0 0 12px}
+.hide{display:none!important}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--mute);margin-bottom:8px}
+input,select,button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+input,label select{width:100%}
+label>span:first-child{display:block;margin-bottom:2px}
+button{cursor:pointer}
+button.main{background:var(--accent);color:#fff;border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 160px}
+.mute{color:var(--mute)}.good{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+#topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+a{color:var(--accent)}
+/* Spielerleiste: fuer jeden Spieler eine Karte in seiner Farbe */
+#bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.pl{border:3px solid var(--line);border-radius:10px;padding:6px 10px;min-width:0}
+.pl .nm{font-weight:700;font-size:17px;overflow-wrap:anywhere}
+.pl .st{font-size:13px;color:var(--mute)}
+.pl .pts{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.pl.now{box-shadow:0 0 0 3px var(--accent) inset}
+.code{font:800 34px/1 ui-monospace,monospace;letter-spacing:4px}
+/* Show-Ansicht: gross fuer den Stream */
+.big .anime{font-size:30px;font-weight:800;text-align:center;margin:10px 0}
+.anime img{display:block;max-height:110px;max-width:70%;margin:6px auto;object-fit:contain}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.col{border:2px solid var(--line);border-radius:10px;padding:6px}
+.col ol{margin:0;padding-left:26px}
+.col li{padding:2px 0;overflow-wrap:anywhere;font-size:14px}
+.col li.new{font-weight:800}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.slots button{padding:12px 6px;font-size:15px;text-align:left;overflow:hidden}
+.slots button b{display:block;font-size:20px}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center}
+.vs .card{border:2px solid var(--line);border-radius:12px;padding:12px;min-height:120px}
+.vs .val{font-size:26px;font-weight:800}
+.hol button{font-size:24px;padding:14px 22px}
+.pick{font-size:28px}
+</style>
+</head>
+<body>
+<main>
+<div id="topbar">
+  <h1>🎉 Animepelago Party</h1>
+  <span><a href="index.html" data-t="back"></a> · <select id="uilang" aria-label="Language"><option value="de">Deutsch</option><option value="en">English</option></select></span>
+</div>
+
+<!-- Start: Raum erstellen (Show-Ansicht) oder beitreten (Controller) -->
+<section id="start" class="box">
+  <p class="mute" data-t="intro" style="margin-top:0"></p>
+  <div class="row">
+    <label><span data-t="yourName"></span><input id="name" maxlength="20" autocomplete="off"></label>
+    <label style="flex:0 1 160px"><span data-t="roomCode"></span><input id="code" maxlength="5" autocomplete="off" style="text-transform:uppercase"></label>
+    <button type="button" id="join" class="main" style="flex:0 0 auto" data-t="join"></button>
+  </div>
+  <div class="row" style="margin-top:6px">
+    <button type="button" id="host" style="flex:0 0 auto" data-t="host"></button>
+    <span class="mute" style="font-size:13px" data-t="hostInfo"></span>
+  </div>
+  <div class="row hide" id="reopenRow" style="margin-top:6px"><button type="button" id="reopen" style="flex:0 0 auto"></button></div>
+  <p id="netInfo" class="mute" style="font-size:12px;margin:8px 0 0"></p>
+  <div id="startMsg"></div>
+</section>
+
+<!-- Show-Ansicht (im Discord teilen) -->
+<section id="show" class="hide">
+  <div class="box">
+    <div class="row" style="align-items:center">
+      <div style="flex:0 0 auto"><div class="mute" data-t="roomCode"></div><div class="code" id="showCode"></div></div>
+      <div id="showHead" style="flex:1 1 300px"></div>
+      <button type="button" id="leaveShow" style="flex:0 0 auto" data-t="leave"></button>
+    </div>
+    <div id="bar"></div>
+  </div>
+  <div class="box" id="lobby">
+    <div class="row">
+      <label><span data-t="game"></span><select id="gameSel"><option value="blind" data-t="g_blind"></option><option value="hol" data-t="g_hol"></option></select></label>
+      <label><span data-t="pool"></span><input id="pool" type="number" min="20" value="300"></label>
+      <label><span data-t="rounds"></span><select id="rounds"><option>5</option><option selected>10</option><option>15</option></select></label>
+      <label><span data-t="lang"></span><select id="tlang"><option value="english">English</option><option value="romaji">Romaji</option><option value="german">Deutsch</option></select></label>
+    </div>
+    <p class="mute" id="gameInfo" style="font-size:13px"></p>
+    <button type="button" id="startGame" class="main" data-t="startGame"></button>
+    <span id="lobbyMsg" class="warn"></span>
+  </div>
+  <div class="box big hide" id="stage"></div>
+</section>
+
+<!-- Controller (jeder Spieler, am Handy oder im zweiten Fenster) -->
+<section id="ctrl" class="hide">
+  <div class="box">
+    <div class="row" style="align-items:center">
+      <div style="flex:1 1 auto"><b id="meName"></b> <span class="mute" id="meRoom"></span></div>
+      <button type="button" id="leaveCtrl" style="flex:0 0 auto" data-t="leave"></button>
+    </div>
+  </div>
+  <div class="box" id="pad"></div>
+</section>
+<p class="mute" style="font-size:12px" data-t="privacy"></p>
+</main>
+<script src="game_data.js"></script>
+<script>
+"use strict";
+// ---------- Einstellungen ----------
+// Firebase Realtime Database (kostenloser Spark-Tarif). Leer = nur "dieses Geraet" (mehrere Fenster, zum Testen).
+// Nur die Adresse der Datenbank wird gebraucht (z. B. "https://animepelago-party-default-rtdb.europe-west1.firebasedatabase.app").
+// Sie ist oeffentlich; geschuetzt wird die Datenbank durch die Regeln in docs/firebase_rules.json.
+const FIREBASE_DB = "https://animepelago-party-default-rtdb.europe-west1.firebasedatabase.app";
+
+// ---------- Texte ----------
+const TXT = {
+  en: {back:"← Animepelago", intro:"Party games for streams: the host opens a room and shares this window in Discord (show view). Everyone (the host too) joins on their phone or a second window with the room code and answers there in secret.",
+    yourName:"Your name", roomCode:"Room code", join:"Join", host:"📺 Open a room (show view)", hostInfo:"For the screen you share. To play along yourself, also join on your phone.",
+    netOnline:"Online rooms (Firebase) – works across the internet.", netLocal:"Test mode: rooms only work on this device (several windows). Online rooms are not set up yet.",
+    leave:"Leave", game:"Game", g_blind:"📊 Blind Ranking", g_hol:"⬆️⬇️ Higher or Lower", pool:"Anime from the top N", rounds:"Rounds", lang:"Titles in", startGame:"Start",
+    needPlayers:"Waiting for players …", info_blind:"One anime after another is revealed. Everyone places it on a free spot 1–N without knowing what comes next. Then all picks are revealed at once. At the end: who is closest to the AniList popularity order?",
+    info_hol:"Is the second anime more popular / newer than the first? Everyone picks ⬆️ or ⬇️ in secret, then it is revealed. 1 point per correct pick.",
+    waiting:"Waiting for the host …", joined:"{0} joined", answered:"✓ answered", thinking:"… thinking", round:"Round {0}/{1}", reveal:"Reveal", next:"Next", allIn:"Everyone has answered!",
+    yourPick:"Your pick: {0}", pickSlot:"Pick a free spot for:", nameNeeded:"Please enter a name.", codeNeeded:"Please enter the 5-letter room code.", noRoom:"Room {0} not found (or expired).",
+    final:"🏁 Result", closest:"Closest to AniList: {0}", dist:"{0} off", pts:"{0} pts", more:"more popular", newer:"newer", qPop:"Which is MORE POPULAR on AniList?", qYear:"Which is NEWER?",
+    higher:"⬆️ More", lower:"⬇️ Less", newerBtn:"⬆️ Newer", olderBtn:"⬇️ Older", same:"Same year – everyone gets the point!", rank:"#{0} popular", year:"{0}", over:"Back to the lobby", correct:"✓", wrong:"✕",
+    privacy:"Online rooms store only names, answers and the game state of a round in Firebase (Google); rooms expire after 6 hours. Names you enter are visible to everyone in the room.", connErr:"Connection problem – trying again …", kicked:"The room was closed.", hostLeft:"Host", reopen:"📺 Reopen room {0}"},
+  de: {back:"← Animepelago", intro:"Party-Spiele für Streams: Der Gastgeber öffnet einen Raum und teilt dieses Fenster im Discord (Show-Ansicht). Alle (auch der Gastgeber) treten am Handy oder in einem zweiten Fenster mit dem Raum-Code bei und antworten dort geheim.",
+    yourName:"Dein Name", roomCode:"Raum-Code", join:"Beitreten", host:"📺 Raum öffnen (Show-Ansicht)", hostInfo:"Für den Bildschirm, den du teilst. Willst du selbst mitspielen, tritt zusätzlich am Handy bei.",
+    netOnline:"Online-Räume (Firebase) – funktioniert übers Internet.", netLocal:"Testmodus: Räume funktionieren nur auf diesem Gerät (mehrere Fenster). Online-Räume sind noch nicht eingerichtet.",
+    leave:"Verlassen", game:"Spiel", g_blind:"📊 Blind Ranking", g_hol:"⬆️⬇️ Higher or Lower", pool:"Anime aus den Top N", rounds:"Runden", lang:"Titel auf", startGame:"Starten",
+    needPlayers:"Warte auf Spieler …", info_blind:"Nacheinander wird je ein Anime aufgedeckt. Jeder setzt ihn auf einen freien Platz 1–N, ohne zu wissen, was noch kommt. Dann werden alle Plätze gleichzeitig aufgedeckt. Am Ende: Wer liegt am nächsten an der AniList-Beliebtheit?",
+    info_hol:"Ist der zweite Anime beliebter / neuer als der erste? Jeder tippt geheim ⬆️ oder ⬇️, dann wird aufgedeckt. 1 Punkt pro richtigem Tipp.",
+    waiting:"Warte auf den Gastgeber …", joined:"{0} ist beigetreten", answered:"✓ abgegeben", thinking:"… überlegt", round:"Runde {0}/{1}", reveal:"Aufdecken", next:"Weiter", allIn:"Alle haben abgegeben!",
+    yourPick:"Deine Wahl: {0}", pickSlot:"Wähle einen freien Platz für:", nameNeeded:"Bitte einen Namen eingeben.", codeNeeded:"Bitte den 5-stelligen Raum-Code eingeben.", noRoom:"Raum {0} nicht gefunden (oder abgelaufen).",
+    final:"🏁 Ergebnis", closest:"Am nächsten an AniList: {0}", dist:"{0} daneben", pts:"{0} Pkt.", more:"beliebter", newer:"neuer", qPop:"Welcher ist BELIEBTER auf AniList?", qYear:"Welcher ist NEUER?",
+    higher:"⬆️ Mehr", lower:"⬇️ Weniger", newerBtn:"⬆️ Neuer", olderBtn:"⬇️ Älter", same:"Gleiches Jahr – alle bekommen den Punkt!", rank:"Platz {0} der Beliebtheit", year:"{0}", over:"Zurück zur Lobby", correct:"✓", wrong:"✕",
+    privacy:"Online-Räume speichern nur Namen, Antworten und den Spielstand einer Runde bei Firebase (Google); Räume laufen nach 6 Stunden ab. Eingegebene Namen sehen alle im Raum.", connErr:"Verbindungsproblem – versuche es weiter …", kicked:"Der Raum wurde geschlossen.", hostLeft:"Gastgeber", reopen:"📺 Raum {0} wieder öffnen"},
+};
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let lang = ["de", "en"].includes(store.get("ap_uilang")) ? store.get("ap_uilang") : (navigator.language || "").startsWith("de") ? "de" : "en";
+const t = (k, ...a) => (TXT[lang][k] ?? TXT.en[k] ?? k).replace(/\{(\d)\}/g, (_, i) => a[i]);
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num = (v, lo, hi, d = lo) => Number.isFinite(+v) ? Math.min(hi, Math.max(lo, Math.floor(+v))) : d;
+function applyLang(){ document.documentElement.lang = lang; $("uilang").value = lang;
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t(el.dataset.t));
+  $("netInfo").textContent = t(FIREBASE_DB ? "netOnline" : "netLocal"); if (APP.role) APP.draw(); }
+
+// ---------- Spieldatei entpacken (wie in index.html) ----------
+const SALT = "animepelago1:";
+function unhide(data, id){
+  const key = new TextEncoder().encode(SALT + id), raw = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+  return new TextDecoder().decode(raw.map((b, i) => b ^ key[i % key.length]));
+}
+const DB = window.ANIMEPELAGO_DB;
+for (const a of DB.anime) {
+  a.titles = Object.fromEntries(Object.entries(a.t).map(([l, v]) => [l, unhide(v, a.id)]));
+  a.logo = typeof a.l === "string" && /^\/[A-Za-z0-9_-]+\.(png|svg|jpg|webp)$/.test(a.l) ? "https://image.tmdb.org/t/p/w300" + a.l : null;
+  a.year = /^\d{4}$/.test((a.c || [])[0]) ? +a.c[0] : null;
+}
+const BY_ID = new Map(DB.anime.map(a => [a.id, a]));
+const RANK = new Map(DB.anime.map((a, i) => [a.id, i + 1]));  // Beliebtheit: Spieldatei ist danach sortiert
+const titleOf = (a, l) => { const T = a.titles, en = T.english || T.romaji || T.native; return l === "romaji" ? (T.romaji || en) : (T[l] || en); };
+
+// ---------- Verbindung: ein Raum = ein kleiner Datenbaum ----------
+// Raum: {created, v:1, host, game: "<JSON-Text>", players: {pid: {name, color, ans: "<JSON-Text>"}}}
+// Zwei Wege mit derselben Bedienung:
+//  - FirebaseNet: Firebase Realtime Database ueber REST (Schreiben per fetch, Lesen live per EventSource)
+//  - LocalNet: nur dieses Geraet (BroadcastChannel + localStorage), zum Testen mit mehreren Fenstern
+const CODE_ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const codeOk = c => new RegExp(`^[${CODE_ABC}]{5}$`).test(c);
+const newCode = () => Array.from(crypto.getRandomValues(new Uint8Array(5)), b => CODE_ABC[b % CODE_ABC.length]).join("");
+const newPid = () => "p" + Array.from(crypto.getRandomValues(new Uint8Array(8)), b => (b % 36).toString(36)).join("");
+function setPath(tree, path, value){
+  const keys = path.split("/").filter(Boolean); if (!keys.length) return value;
+  const root = tree && typeof tree === "object" ? tree : {}; let o = root;
+  for (const k of keys.slice(0, -1)) { if (!o[k] || typeof o[k] !== "object") o[k] = {}; o = o[k]; }
+  if (value == null) delete o[keys.at(-1)]; else o[keys.at(-1)] = value;
+  return root;
+}
+// Der ganze Raum wird mit jeder Aenderung an alle Fenster geschickt (localStorage gleicht zwischen Tabs nur verzoegert ab)
+class LocalNet {
+  constructor(code){ this.code = code; this.key = "ap_party_room_" + code; this.ch = new BroadcastChannel("ap_party_" + code); this.cb = null; this.tree = this.read();
+    this.ch.onmessage = ev => { this.tree = ev.data; this.cb && this.cb(this.tree); }; }
+  read(){ try { return JSON.parse(localStorage.getItem(this.key) || "null"); } catch(e) { return null; } }
+  async put(path, value){ const tree = setPath(structuredClone(this.tree ?? this.read()), path, value);
+    if (path === "" && value != null) tree.created = Date.now();
+    this.tree = tree; try { localStorage.setItem(this.key, JSON.stringify(tree)); } catch(e) {}
+    this.ch.postMessage(tree); this.cb && this.cb(tree); return true; }
+  async exists(){ const r = this.read(); return !!(r && r.created > Date.now() - 6 * 3600e3); }
+  listen(cb){ this.cb = cb; cb(this.tree); }
+  close(){ this.ch.close(); this.cb = null; }
+}
+class FirebaseNet {
+  constructor(code){ this.code = code; this.base = FIREBASE_DB.replace(/\/+$/, "") + "/rooms/" + code; this.tree = null; this.es = null; this.cb = null; }
+  url(path){ return this.base + (path ? "/" + path : "") + ".json"; }
+  async put(path, value){
+    if (path === "" && value != null) value = {...value, created: {".sv": "timestamp"}};
+    for (let i = 0; i < 3; i++) {
+      try { const r = await fetch(this.url(path), {method: "PUT", body: JSON.stringify(value)}); if (r.ok) return true; if (r.status < 500) return false; } catch(e) {}
+      await new Promise(res => setTimeout(res, 800 * (i + 1)));
+    }
+    return false;
+  }
+  async exists(){ try { const r = await fetch(this.url("created")); return r.ok && (await r.json()) > Date.now() - 6 * 3600e3; } catch(e) { return false; } }
+  listen(cb){
+    this.cb = cb; this.es = new EventSource(this.url(""));
+    const apply = (ev, merge) => { let m; try { m = JSON.parse(ev.data); } catch(e) { return; }
+      if (!m || typeof m.path !== "string") return;
+      if (merge && m.data && typeof m.data === "object") for (const [k, v] of Object.entries(m.data)) this.tree = setPath(this.tree, m.path + "/" + k, v);
+      else this.tree = m.path === "/" ? m.data : setPath(this.tree, m.path, m.data);
+      this.cb && this.cb(this.tree); };
+    this.es.addEventListener("put", ev => apply(ev, false));
+    this.es.addEventListener("patch", ev => apply(ev, true));
+    this.es.addEventListener("cancel", () => APP.netError());
+    this.es.onerror = () => APP.netError();
+  }
+  close(){ if (this.es) this.es.close(); this.es = null; this.cb = null; }
+}
+const Net = FIREBASE_DB ? FirebaseNet : LocalNet;
+
+// ---------- Spiel-Logik (der Gastgeber rechnet, alle anderen zeigen nur an) ----------
+const parse = s => { try { const v = JSON.parse(s); return v && typeof v === "object" ? v : null; } catch(e) { return null; } };
+const shuffle = l => { for (let i = l.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [l[i], l[j]] = [l[j], l[i]]; } return l; };
+const cleanName = s => String(s ?? "").replace(/[\u0000-\u001f\u007f-\u009f]/g, "").replace(/\s+/g, " ").trim().slice(0, 20);
+// Antworten: Runde (0-29) -> Platz 1-30 oder "up"/"down"
+const cleanAns = a => { const out = {}; if (!a || typeof a !== "object") return out;
+  for (const [r, v] of Object.entries(a).slice(0, 31)) { const k = num(r, 0, 29, -1); if (k < 0) continue;
+    if (v === "up" || v === "down") out[k] = v; else if (Number.isInteger(v) && v >= 1 && v <= 30) out[k] = v; }
+  return out; };
+const GAMES = {
+  // Blind Ranking: N Anime nacheinander, jeder legt sie auf freie Plaetze 1..N
+  blind: {
+    setup(o){ const n = o.rounds, pool = DB.anime.slice(0, Math.max(n * 3, o.pool));
+      return {type: "blind", n, items: shuffle(pool.map(a => a.id)).slice(0, n), round: 0, phase: "pick", lang: o.lang}; },
+    // Antwort eines Spielers fuer die aktuelle Runde: Platz 1..N, noch frei
+    valid(g, ans, v){ const used = Object.entries(ans || {}).filter(([r]) => +r !== g.round).map(([, p]) => p); return Number.isInteger(v) && v >= 1 && v <= g.n && !used.includes(v); },
+    // Am Ende: Abstand zur AniList-Beliebtheit (Summe |Platz - richtiger Platz|), kleiner = besser
+    score(g, ans){ const order = [...g.items].sort((a, b) => RANK.get(a) - RANK.get(b));
+      return g.items.reduce((s, id, r) => s + (ans && ans[r] ? Math.abs(ans[r] - (order.indexOf(id) + 1)) : g.n), 0); },
+  },
+  // Higher or Lower: Paare; Frage: beliebter oder neuer?
+  hol: {
+    setup(o){ const pool = shuffle(DB.anime.slice(0, Math.max(o.rounds * 3, o.pool)).filter(a => a.year).map(a => a.id)).slice(0, o.rounds + 1);
+      return {type: "hol", n: o.rounds, items: pool, q: pool.slice(1).map(() => Math.random() < .5 ? "pop" : "year"), round: 0, phase: "pick", lang: o.lang}; },
+    valid(g, ans, v){ return v === "up" || v === "down"; },
+    truth(g, r){ const a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]);
+      if (g.q[r] === "pop") return RANK.get(b.id) < RANK.get(a.id) ? "up" : "down";
+      return b.year === a.year ? "both" : b.year > a.year ? "up" : "down"; },
+    score(g, ans){ let s = 0; for (let r = 0; r <= Math.min(g.round, g.n - 1); r++) { if (g.phase === "pick" && r === g.round) break;
+      const tr = this.truth(g, r); if (ans && (tr === "both" || ans[r] === tr)) s++; } return s; },
+  },
+};
+
+// ---------- App ----------
+const APP = {
+  role: null, code: null, pid: null, name: "", net: null, room: null, lastErr: 0,
+  // Sicherheit: Spielstand aus der Datenbank pruefen (jemand mit dem Raum-Code koennte Unsinn hineinschreiben)
+  game(){ const g = parse(this.room?.game); if (!g || !GAMES[g.type]) return null;
+    const n = num(g.n, 1, 30, 0), items = Array.isArray(g.items) ? g.items.filter(id => BY_ID.has(id)).slice(0, 31) : [];
+    if (!n || items.length < (g.type === "hol" ? n + 1 : n)) return null;
+    const q = g.type === "hol" ? (Array.isArray(g.q) ? g.q : []).slice(0, n).map(x => x === "pop" ? "pop" : "year") : undefined;
+    if (q && q.length < n) return null;
+    return {type: g.type, n, items, q, round: num(g.round, 0, n - 1, 0), phase: ["pick", "reveal", "end"].includes(g.phase) ? g.phase : "pick",
+            lang: ["english", "romaji", "german"].includes(g.lang) ? g.lang : "english"}; },
+  players(){ const p = this.room?.players; if (!p || typeof p !== "object") return [];
+    return Object.entries(p).filter(([id, v]) => /^p[a-z0-9]{8}$/.test(id) && v && typeof v === "object").slice(0, 12)
+      .map(([id, v]) => ({id, name: cleanName(v.name) || "?", color: num(v.color, 0, 7), ans: cleanAns(parse(v.ans)), joined: num(v.joined, 0, 1e13)}))
+      .sort((a, b) => a.joined - b.joined); },
+  async open(role, code){
+    this.role = role; this.code = code; this.net = new Net(code);
+    $("start").classList.add("hide"); $(role === "show" ? "show" : "ctrl").classList.remove("hide");
+    this.net.listen(r => { this.room = r; if (r === null && this.role === "ctrl" && this.seen) { this.leave(t("kicked")); return; } if (r) this.seen = true; this.draw(); });
+  },
+  async host(){
+    let code = newCode(); for (let i = 0; i < 5 && await new Net(code).exists(); i++) code = newCode();
+    const net = new Net(code);
+    const ok = await net.put("", {v: 1, host: "show", game: "", players: {}});
+    if (!ok) { $("startMsg").textContent = t("connErr"); $("startMsg").className = "bad"; return; }
+    store.set("ap_party_show", code); this.open("show", code);
+  },
+  async join(){
+    const name = cleanName($("name").value), code = $("code").value.trim().toUpperCase();
+    if (!name) return this.msg(t("nameNeeded")); if (!codeOk(code)) return this.msg(t("codeNeeded"));
+    if (!await new Net(code).exists()) return this.msg(t("noRoom", code));
+    store.set("ap_party_name", name);
+    // Spieler-ID je Fenster (sessionStorage): so kann man mit mehreren Fenstern testen und nach Neuladen weiterspielen
+    let pid; try { pid = sessionStorage.getItem("ap_party_pid_" + code); } catch(e) {}
+    if (!/^p[a-z0-9]{8}$/.test(pid || "")) { pid = newPid(); try { sessionStorage.setItem("ap_party_pid_" + code, pid); } catch(e) {} }
+    this.pid = pid; this.name = name;
+    // Einmal den Raum lesen: freie Farbe suchen; war dieses Fenster schon drin (Neuladen), bleiben die Antworten erhalten
+    const net = new Net(code), snap = await new Promise(r => net.listen(r)); net.close();
+    const players = (snap && snap.players) || {};
+    if (players[pid]) await new Net(code).put(`players/${pid}/name`, name);
+    else {
+      const taken = new Set(Object.values(players).map(p => num(p?.color, 0, 7)));
+      let color = 0; while (taken.has(color) && color < 7) color++;
+      await new Net(code).put(`players/${pid}`, {name, color, joined: Date.now(), ans: "{}"});
+    }
+    this.open("ctrl", code);
+  },
+  msg(s){ $("startMsg").textContent = s; $("startMsg").className = "bad"; },
+  leave(why){ if (this.net) this.net.close(); this.net = null; this.role = null; this.room = null; this.seen = false;
+    ["show", "ctrl"].forEach(id => $(id).classList.add("hide")); $("start").classList.remove("hide"); $("startMsg").textContent = why || ""; },
+  netError(){ const now = Date.now(); if (now - this.lastErr > 5000) { this.lastErr = now; console.warn("Netz"); } },
+  // ---- Gastgeber-Aktionen ----
+  setGame(g){ return this.net.put("game", JSON.stringify(g)); },
+  async startGame(){
+    if (!this.players().length) { $("lobbyMsg").textContent = t("needPlayers"); return; }
+    $("lobbyMsg").textContent = "";
+    const o = {rounds: num($("rounds").value, 3, 30, 10), pool: num($("pool").value, 20, DB.anime.length, 300), lang: $("tlang").value};
+    const g = GAMES[$("gameSel").value].setup(o);
+    // Antworten aller Spieler zuruecksetzen
+    for (const p of this.players()) await this.net.put(`players/${p.id}/ans`, "{}");
+    await this.setGame(g);
+  },
+  async reveal(){ const g = this.game(); if (!g || g.phase !== "pick") return; g.phase = "reveal"; await this.setGame(g); },
+  async next(){ const g = this.game(); if (!g) return;
+    if (g.round + 1 >= g.n) g.phase = "end"; else { g.round++; g.phase = "pick"; }
+    await this.setGame(g); },
+  async lobby(){ await this.net.put("game", ""); },
+  // ---- Spieler-Aktion ----
+  async answer(v){ const g = this.game(), me = this.players().find(p => p.id === this.pid); if (!g || g.phase !== "pick" || !me) return;
+    if (!GAMES[g.type].valid(g, me.ans, v)) return;
+    const ans = {...me.ans, [g.round]: v}; await this.net.put(`players/${this.pid}/ans`, JSON.stringify(ans)); },
+  // ---- Anzeige ----
+  draw(){ if (this.role === "show") this.drawShow(); else if (this.role === "ctrl") this.drawCtrl(); },
+  drawBar(g){
+    const ps = this.players();
+    $("bar").innerHTML = ps.map(p => {
+      const done = g && g.phase === "pick" && p.ans[g.round] != null;
+      const st = !g ? "" : g.phase === "pick" ? (done ? t("answered") : t("thinking")) : "";
+      const sc = g ? GAMES[g.type].score(g, p.ans) : null;
+      return `<div class="pl" style="border-color:var(--c${p.color})"><div class="nm" style="color:var(--c${p.color})">${esc(p.name)}</div>`
+        + (g ? `<div class="pts">${esc(g.type === "blind" ? (g.phase === "end" ? t("dist", sc) : "") : t("pts", sc))}</div>` : "")
+        + `<div class="st">${esc(st || "")}</div></div>`;
+    }).join("") || `<p class="mute">${esc(t("needPlayers"))}</p>`;
+  },
+  drawShow(){
+    const g = this.game(), ps = this.players();
+    $("showCode").textContent = this.code;
+    $("lobby").classList.toggle("hide", !!g); $("stage").classList.toggle("hide", !g);
+    $("gameInfo").textContent = t("info_" + $("gameSel").value);
+    this.drawBar(g);
+    if (!g) { $("showHead").innerHTML = ""; return; }
+    const L = g.lang, allIn = ps.length && ps.every(p => p.ans[g.round] != null);
+    $("showHead").innerHTML = `<b>${esc(t("g_" + g.type))}</b> · ${esc(g.phase === "end" ? t("final") : t("round", g.round + 1, g.n))}`;
+    let h = "";
+    const pic = a => a.logo ? `<img src="${esc(a.logo)}" alt="">` : "";
+    if (g.type === "blind") {
+      const cur = BY_ID.get(g.items[g.round]);
+      if (g.phase !== "end") h += `<div class="anime">${pic(cur)}${esc(titleOf(cur, L))}</div>`;
+      // Spalten je Spieler: Plaetze 1..N; in der Pick-Phase ist die aktuelle Runde verdeckt
+      h += `<div class="cols">` + ps.map(p => {
+        const slot = Array(g.n).fill(null);
+        g.items.forEach((id, r) => { const v = p.ans[r]; if (v && (r < g.round || g.phase !== "pick")) slot[v - 1] = {id, r}; });
+        return `<div class="col" style="border-color:var(--c${p.color})"><b style="color:var(--c${p.color})">${esc(p.name)}</b><ol>`
+          + slot.map(s => `<li class="${s && s.r === g.round && g.phase === "reveal" ? "new" : ""}">${s ? esc(titleOf(BY_ID.get(s.id), L)) : "<span class='mute'>–</span>"}</li>`).join("") + `</ol></div>`;
+      }).join("") + `</div>`;
+      if (g.phase === "end") {
+        const order = [...g.items].sort((a, b) => RANK.get(a) - RANK.get(b));
+        const best = ps.map(p => [p, GAMES.blind.score(g, p.ans)]).sort((a, b) => a[1] - b[1]);
+        h += `<h3>${esc(t("closest", best.length ? best[0][0].name : "–"))}</h3><div class="col"><b>AniList</b><ol>${order.map(id => `<li>${esc(titleOf(BY_ID.get(id), L))}</li>`).join("")}</ol></div>`;
+      }
+    } else {
+      const r = Math.min(g.round, g.n - 1), a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]), q = g.q[r];
+      const val = x => q === "pop" ? t("rank", RANK.get(x.id)) : t("year", x.year);
+      const shown = g.phase !== "pick";
+      h += `<p style="text-align:center;font-size:20px;font-weight:700">${esc(t(q === "pop" ? "qPop" : "qYear"))}</p>
+        <div class="vs"><div class="card">${pic(a)}<div>${esc(titleOf(a, L))}</div><div class="val">${esc(val(a))}</div></div><div class="pick">VS</div>
+        <div class="card">${pic(b)}<div>${esc(titleOf(b, L))}</div><div class="val">${shown ? esc(val(b)) : "?"}</div></div></div>`;
+      if (shown) { const tr = GAMES.hol.truth(g, r);
+        h += `<p style="text-align:center;font-size:18px">${tr === "both" ? esc(t("same")) : ""}</p><div class="cols">` + ps.map(p => { const v = p.ans[r], ok = tr === "both" || v === tr;
+          return `<div class="col" style="border-color:var(--c${p.color});text-align:center"><b style="color:var(--c${p.color})">${esc(p.name)}</b><div class="pick">${v === "up" ? "⬆️" : v === "down" ? "⬇️" : "–"} ${ok ? "✅" : "❌"}</div></div>`; }).join("") + `</div>`; }
+      if (g.phase === "end") { const best = ps.map(p => [p, GAMES.hol.score(g, p.ans)]).sort((x, y) => y[1] - x[1]);
+        h += `<h3>${esc(t("final"))}: ${best.map(([p, s]) => esc(p.name) + " " + s).join(" · ")}</h3>`; }
+    }
+    // Knoepfe des Gastgebers
+    h += `<div class="row" style="margin-top:12px">`
+      + (g.phase === "pick" ? `<button type="button" class="${allIn ? "main" : ""}" id="bReveal" style="flex:0 0 auto">${esc(t("reveal"))}</button>${allIn ? `<span class="good">${esc(t("allIn"))}</span>` : ""}` : "")
+      + (g.phase === "reveal" ? `<button type="button" class="main" id="bNext" style="flex:0 0 auto">${esc(t("next"))}</button>` : "")
+      + (g.phase === "end" ? `<button type="button" class="main" id="bLobby" style="flex:0 0 auto">${esc(t("over"))}</button>` : "") + `</div>`;
+    $("stage").innerHTML = h;
+    if ($("bReveal")) $("bReveal").onclick = () => this.reveal();
+    if ($("bNext")) $("bNext").onclick = () => this.next();
+    if ($("bLobby")) $("bLobby").onclick = () => this.lobby();
+  },
+  drawCtrl(){
+    const g = this.game(), me = this.players().find(p => p.id === this.pid);
+    $("meName").textContent = me ? me.name : this.name; $("meName").style.color = me ? `var(--c${me.color})` : "";
+    $("meRoom").textContent = "· " + t("roomCode") + " " + this.code;
+    const pad = $("pad");
+    if (!g || !me) { pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
+    const L = g.lang, mine = me.ans[g.round];
+    if (g.phase === "end") { pad.innerHTML = `<h3>${esc(t("final"))}</h3><p>${esc(g.type === "blind" ? t("dist", GAMES.blind.score(g, me.ans)) : t("pts", GAMES.hol.score(g, me.ans)))}</p>`; return; }
+    if (g.phase === "reveal") { pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
+    let h = `<div class="mute">${esc(t("round", g.round + 1, g.n))}</div>`;
+    if (g.type === "blind") {
+      const cur = BY_ID.get(g.items[g.round]);
+      h += `<p>${esc(t("pickSlot"))}</p><div class="anime" style="font-size:22px;font-weight:800">${esc(titleOf(cur, L))}</div><div class="slots">`;
+      for (let s = 1; s <= g.n; s++) {
+        const r = Object.entries(me.ans).find(([rr, v]) => v === s && +rr !== g.round);
+        h += `<button type="button" data-s="${s}" ${r ? "disabled" : ""} class="${mine === s ? "main" : ""}"><b>${s}</b>${r ? esc(titleOf(BY_ID.get(g.items[+r[0]]), L)) : ""}</button>`;
+      }
+      h += `</div>`;
+    } else {
+      const r = g.round, a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]), q = g.q[r];
+      h += `<p><b>${esc(t(q === "pop" ? "qPop" : "qYear"))}</b></p><p>${esc(titleOf(a, L))} (${esc(q === "pop" ? t("rank", RANK.get(a.id)) : a.year)})<br>vs. <b>${esc(titleOf(b, L))}</b></p>
+        <div class="row hol"><button type="button" data-v="up" class="${mine === "up" ? "main" : ""}">${esc(t(q === "pop" ? "higher" : "newerBtn"))}</button>
+        <button type="button" data-v="down" class="${mine === "down" ? "main" : ""}">${esc(t(q === "pop" ? "lower" : "olderBtn"))}</button></div>`;
+    }
+    if (mine != null) h += `<p class="good">${esc(t("answered"))}</p>`;
+    pad.innerHTML = h;
+    pad.querySelectorAll("[data-s]").forEach(x => x.onclick = () => this.answer(+x.dataset.s));
+    pad.querySelectorAll("[data-v]").forEach(x => x.onclick = () => this.answer(x.dataset.v));
+  },
+};
+$("host").onclick = () => APP.host();
+$("join").onclick = () => APP.join();
+$("code").addEventListener("keydown", e => { if (e.key === "Enter") APP.join(); });
+$("startGame").onclick = () => APP.startGame();
+$("gameSel").onchange = () => APP.draw();
+$("leaveShow").onclick = async () => { if (APP.net) await APP.net.put("", null); APP.leave(); };
+$("leaveCtrl").onclick = async () => { if (APP.net && APP.pid) await APP.net.put(`players/${APP.pid}`, null); APP.leave(); };
+$("uilang").onchange = e => { lang = e.target.value; store.set("ap_uilang", lang); applyLang(); };
+$("name").value = store.get("ap_party_name") || "";
+// Code aus der Adresse (party.html#ABCDE) vorausfuellen
+if (codeOk(location.hash.slice(1).toUpperCase())) $("code").value = location.hash.slice(1).toUpperCase();
+applyLang();
+// Show-Ansicht nach Neuladen (z. B. in OBS) wieder oeffnen, solange der Raum noch lebt
+(async () => { const c = store.get("ap_party_show"); if (!codeOk(c || "") || !await new Net(c).exists()) return;
+  $("reopen").textContent = t("reopen", c); $("reopenRow").classList.remove("hide"); $("reopen").onclick = () => APP.open("show", c); })();
+</script>
+</body>
+</html>
