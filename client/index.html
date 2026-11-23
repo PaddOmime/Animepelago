@@ -177,6 +177,15 @@ dialog li.no{color:var(--mute)}
 .dlt td.g{background:#2e8b57}.dlt td.y{background:#c9a227;color:#1d1d1f}.dlt td.r{background:#b3413a}
 .cb .dlt td.g{background:#0072b2}.cb .dlt td.y{background:#e69f00;color:#1d1d1f}.cb .dlt td.r{background:#555}
 .dlt td .ar{font-size:15px;display:block}
+/* Vorschlagsliste unter dem Eingabefeld (Animedle) */
+.acw{position:relative}
+.acl{position:absolute;left:0;right:0;top:100%;z-index:20;max-height:300px;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);margin-top:2px}
+.acl div{padding:7px 10px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.acl div.on,.acl div:hover{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.acl .aci{width:64px;height:30px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:6px;background:color-mix(in srgb,var(--fg) 6%,transparent)}
+.acl img{max-width:60px;max-height:28px;object-fit:contain}
+.acl small{color:var(--mute)}
+.acl b{font-weight:800}
 @media (max-width:500px){.dlt{min-width:680px;border-spacing:3px}.dlt td{font-size:11px;height:48px;padding:4px 3px}}
 /* Fenster: Schliessen-Knopf oben rechts (bleibt beim Scrollen sichtbar) */
 .dlgx{position:sticky;top:0;float:right;z-index:3;font-size:18px;line-height:1;padding:6px 10px;margin:-4px -4px 4px 8px}
@@ -364,7 +373,7 @@ footer span[data-t="credits"]{flex:1 1 260px;min-width:0}
       <button type="button" id="dlBack" style="flex:0 0 auto" data-t="yBack"></button>
     </div>
     <div class="row" style="margin-top:8px">
-      <input id="dlGuess" autocomplete="off" style="flex:4 1 200px">
+      <div class="acw" style="flex:4 1 200px"><input id="dlGuess" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="dlList" aria-expanded="false" style="width:100%"><div id="dlList" class="acl hide" role="listbox"></div></div>
       <button type="button" id="dlSend" class="main" style="flex:0 0 auto" data-t="dlSend"></button>
       <button type="button" id="dlGiveUp" style="flex:0 0 auto" data-t="tpGiveUp"></button>
       <button type="button" id="dlShare" class="hide" style="flex:0 0 auto" data-t="dlShare"></button>
@@ -2910,10 +2919,10 @@ const DLE = (() => {
     $("dlShare").classList.toggle("hide", !(st.over && st.daily));
     $("dlNext").classList.toggle("hide", !(st.over && !st.daily));
   }
-  function guess(){
-    if (!st || st.over || !norm($("dlGuess").value)) return;
-    const {hits} = findAnime($("dlGuess").value, DB.anime, a => a.id === st.a.id);
-    $("dlGuess").value = "";
+  function guess(pick){
+    if (!st || st.over || (!pick && !norm($("dlGuess").value))) return;
+    const {hits} = pick ? {hits: [pick]} : findAnime($("dlGuess").value, DB.anime, a => a.id === st.a.id);
+    $("dlGuess").value = ""; ac.close();
     if (!hits.length) { $("dlMsg").textContent = t("dlUnknown"); $("dlMsg").className = "bad"; sfx("bad"); return; }
     // Mehrere Treffer (z. B. Staffeln mit gleichem Namen): der gesuchte zaehlt, sonst der beliebteste noch nicht geratene
     const a = hits.find(x => x.id === st.a.id) || hits.find(x => !st.guesses.includes(x));
@@ -2945,7 +2954,53 @@ const DLE = (() => {
       if (!ok) { const ta = document.createElement("textarea"); ta.value = text; ta.rows = Math.min(12, lines.length + 3); ta.style.width = "100%"; ta.readOnly = true; $("dlMsg").appendChild(ta); ta.select(); } };
     try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch(e) { done(false); }
   }
-  $("dlSend").onclick = guess; onEnter(["dlGuess"], guess);
+  // ---- Vorschlaege beim Tippen: alle Anime, deren Titel (gewaehlte Sprache, Englisch, Romaji ...) zum Text passt ----
+  // Wie bei Loldle: nur Titel, die so ANFANGEN (ein "The" am Anfang darf fehlen), alphabetisch. Erst der Titel in deiner
+  // Sprache, dann andere Sprachen (z. B. Romaji "Shingeki ..."), dort steht der passende Name klein daneben. Schon geratene fehlen.
+  const ac = (() => {
+    const box = $("dlList"), inp = $("dlGuess"); let items = [], on = -1;
+    const starts = (s, q) => { const n = norm(s); return n.startsWith(q) || (/^\s*the\s/i.test(s) && norm(s.replace(/^\s*the\s+/i, "")).startsWith(q)); };
+    const mark = (s, q) => { const i = s.toLowerCase().indexOf(q.toLowerCase()); return i < 0 || !q ? esc(s) : esc(s.slice(0, i)) + "<b>" + esc(s.slice(i, i + q.length)) + "</b>" + esc(s.slice(i + q.length)); };
+    function close(){ box.classList.add("hide"); box.innerHTML = ""; items = []; on = -1; inp.setAttribute("aria-expanded", "false"); }
+    function show(){
+      const raw = inp.value.trim(), q = norm(raw);
+      if (!st || st.over || !q) return close();
+      const done = new Set(st.guesses.map(a => a.id)), own = [], other = [];
+      for (const a of DB.anime) {
+        if (done.has(a.id)) continue;
+        const nm = titleOf(a, st.lang);
+        if (starts(nm, q)) { own.push({a, nm}); continue; }
+        const alt = Object.values(a.titles).find(s => s && starts(s, q));
+        if (alt) other.push({a, nm, alt});
+      }
+      const abc = (x, y) => x.nm.localeCompare(y.nm, undefined, {sensitivity: "base", numeric: true});
+      const list = [...own.sort(abc), ...other.sort(abc)];
+      items = list.map(x => x.a); on = -1;
+      if (!items.length) return close();
+      const raw2 = raw.replace(/^\s*the\s+/i, "");
+      // Jahr klein dahinter: unterscheidet gleich klingende Titel (z. B. Hunter x Hunter 1999 / 2011)
+      const yr = x => x.a.c?.[0] ? ` <small>(${esc(x.a.c[0] === "Before 2000" ? t("before2000") : x.a.c[0])})</small>` : "";
+      box.innerHTML = list.map((x, i) => `<div role="option" data-i="${i}"><span class="aci">${x.a.logo ? `<img src="${esc(x.a.logo)}" alt="" loading="lazy">` : ""}</span>`
+        + `<span>${x.alt ? esc(x.nm) + ` <small>· ${mark(x.alt, raw2)}</small>` : mark(x.nm, raw2)}${yr(x)}</span></div>`).join("");
+      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
+    }
+    function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length;
+      box.querySelectorAll("div[data-i]").forEach((el, i) => el.classList.toggle("on", i === on));
+      const el = box.querySelector(`div[data-i="${on}"]`); if (el) el.scrollIntoView({block: "nearest"}); }
+    inp.addEventListener("input", show);
+    inp.addEventListener("focus", show);
+    inp.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); if (box.classList.contains("hide")) show(); move(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+      else if (e.key === "Escape") close();
+      else if (e.key === "Enter") { e.preventDefault(); e.stopImmediatePropagation(); guess(on >= 0 ? items[on] : undefined); }
+    });
+    // Klick (auch am Handy): mousedown statt click, damit das Feld den Fokus nicht vorher verliert
+    box.addEventListener("mousedown", e => { const el = e.target.closest("div[data-i]"); if (!el) return; e.preventDefault(); guess(items[+el.dataset.i]); inp.focus(); });
+    inp.addEventListener("blur", () => setTimeout(close, 150));
+    return {close};
+  })();
+  $("dlSend").onclick = () => guess();
   $("dlGiveUp").onclick = () => { if (st && !st.over) finish(false); };
   $("dlShare").onclick = share;
   $("dlNext").onclick = () => start(false);

@@ -26,6 +26,7 @@
 ### Animedle (new)
 - New mini-game under More: guess the anime – every guess shows per hint whether it matches (🟩), is close (🟨) or is different (🟥): genres, demographic, year (with ⬆️/⬇️), season, source, studio, popularity (with ⬆️/⬇️), first letter (with ⬅️/➡️) and number of words in the title (with ⬆️/⬇️).
 - **Daily puzzle:** the same anime for everyone each day (from the 300 most popular), progress survives a reload, daily streak, and a "Share result" button that copies an emoji grid without spoilers (for Discord / chat).
+- **Suggestions while typing** (like Loldle): every anime whose title starts with what you typed, A–Z, with logo and year – in your title language first, then matches from other languages (e.g. romaji). Arrow keys + Enter or a click guesses it.
 - **Endless** mode with the same settings as Hangman (top N, only one genre).
 - 11 new achievements (category Animedle), XP for every solved puzzle (bonus for the daily).
 
