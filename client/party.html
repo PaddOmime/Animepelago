@@ -162,7 +162,8 @@ const TXT = {
     info_bingo_coop:"Fill the whole board together as fast as possible. Every wrong answer costs 10 seconds. Tap a field first to aim for it, otherwise the best free field is picked.",
     playToo:"🎮 Play along (new tab)", bgEnter:"Enter", bgPh:"Anime title …", bgSent:"Sent …", bgOk:"✓ {0}", bgUsedM:"Already on the board.", bgTaken:"Field already taken – too slow!",
     bgNoFit:"{0} doesn't fit a free field.", bgUnknown:"Don't know that anime.", bgWait:"⏳ Wrong – wait {0} s", bgPen:"+10 s", fields:"{0} fields", bgWrong:"{0} wrong",
-    bgWin:"🏆 {0} wins!", bgDraw:"🤝 Draw!", bgDone:"🎉 Board full in {0} ({1} wrong)!", bgEnd:"End game", bgGenFail:"No board found – take more anime (top N) or a smaller board.", bgEnded:"Game ended: {0} of {1} fields."},
+    bgWin:"🏆 {0} wins!", bgDraw:"🤝 Draw!", bgDone:"🎉 Board full in {0} ({1} wrong)!", bgEnd:"End game", bgGenFail:"No board found – take more anime (top N) or a smaller board.", bgEnded:"Game ended: {0} of {1} fields.",
+    stale:"A game is running that this page doesn't know yet – your browser has an old version. Please reload (on PC: Ctrl+F5).", reload:"🔄 Reload"},
   de: {back:"← Animepelago", intro:"Party-Spiele für Streams: Der Gastgeber öffnet einen Raum und teilt dieses Fenster im Discord (Show-Ansicht). Alle (auch der Gastgeber) treten am Handy oder in einem zweiten Fenster mit dem Raum-Code bei und antworten dort geheim.",
     yourName:"Dein Name", roomCode:"Raum-Code", join:"Beitreten", host:"📺 Raum öffnen (Show-Ansicht)", hostInfo:"Für den Bildschirm, den du teilst. Willst du selbst mitspielen, tritt zusätzlich am Handy bei.",
     netOnline:"Online-Räume (Firebase) – funktioniert übers Internet.", netLocal:"Testmodus: Räume funktionieren nur auf diesem Gerät (mehrere Fenster). Online-Räume sind noch nicht eingerichtet.",
@@ -179,7 +180,8 @@ const TXT = {
     info_bingo_coop:"Füllt zusammen das ganze Board so schnell wie möglich. Jede falsche Antwort kostet 10 Sekunden. Tippe vorher auf ein Feld, um es gezielt zu nehmen, sonst wird das beste freie Feld gewählt.",
     playToo:"🎮 Selbst mitspielen (neuer Tab)", bgEnter:"Eintragen", bgPh:"Anime-Titel …", bgSent:"Gesendet …", bgOk:"✓ {0}", bgUsedM:"Schon auf dem Board.", bgTaken:"Feld schon belegt – zu langsam!",
     bgNoFit:"{0} passt in kein freies Feld.", bgUnknown:"Den Anime kenne ich nicht.", bgWait:"⏳ Falsch – warte {0} s", bgPen:"+10 s", fields:"{0} Felder", bgWrong:"{0} falsch",
-    bgWin:"🏆 {0} gewinnt!", bgDraw:"🤝 Unentschieden!", bgDone:"🎉 Board voll in {0} ({1} falsch)!", bgEnd:"Spiel beenden", bgGenFail:"Kein Board gefunden – mehr Anime (Top N) oder ein kleineres Board nehmen.", bgEnded:"Spiel beendet: {0} von {1} Feldern."},
+    bgWin:"🏆 {0} gewinnt!", bgDraw:"🤝 Unentschieden!", bgDone:"🎉 Board voll in {0} ({1} falsch)!", bgEnd:"Spiel beenden", bgGenFail:"Kein Board gefunden – mehr Anime (Top N) oder ein kleineres Board nehmen.", bgEnded:"Spiel beendet: {0} von {1} Feldern.",
+    stale:"Es läuft ein Spiel, das diese Seite noch nicht kennt – dein Browser hat eine alte Version. Bitte neu laden (am PC: Strg+F5).", reload:"🔄 Neu laden"},
 };
 const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let lang = ["de", "en"].includes(store.get("ap_uilang")) ? store.get("ap_uilang") : (navigator.language || "").startsWith("de") ? "de" : "en";
@@ -772,7 +774,10 @@ const APP = {
     $("meName").textContent = me ? me.name : this.name; $("meName").style.color = me ? `var(--c${me.color})` : "";
     $("meRoom").textContent = "· " + t("roomCode") + " " + this.code;
     const pad = $("pad");
-    if (!g || !me) { pad.dataset.bg = ""; pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
+    // Laeuft ein Spiel, das diese Seite nicht kennt (alte Version im Browser-Cache)? Dann zum Neuladen auffordern
+    const stale = !g && typeof this.room?.game === "string" && this.room.game !== "";
+    if (!g || !me) { pad.dataset.bg = ""; pad.innerHTML = stale ? `<p class="warn">${esc(t("stale"))}</p><button type="button" class="main" id="bReload">${esc(t("reload"))}</button>` : `<p class="mute">${esc(t("waiting"))}</p>`;
+      if ($("bReload")) $("bReload").onclick = () => location.reload(); return; }
     if (g.type === "bingo") return this.drawBingoCtrl(g, me);
     pad.dataset.bg = "";
     const L = g.lang, mine = me.ans[g.round];
