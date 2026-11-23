@@ -23,6 +23,12 @@
 - **New category: single years** (🗓️ 2010–2026, own checkbox). Years and decades never cross on a board (no "2010s × 2013"): if both appear, they are all rows or all columns.
 - **Letter pairs:** a letter category is now randomly a single letter or a pair like "🔤 J / K" (title starts with one of the two). Every pair contains a rare letter (E, J, O, U, V, Y, Z, Q, X …) plus a fitting partner, so rare letters finally show up too. Letters and letter pairs never cross on a board.
 
+### Animedle (new)
+- New mini-game under More: guess the anime – every guess shows per hint whether it matches (🟩), is close (🟨) or is different (🟥): genres, demographic, year (with ⬆️/⬇️), season, source, studio, popularity (with ⬆️/⬇️).
+- **Daily puzzle**: the same anime for everyone each day (from the 300 most popular), progress survives a reload, daily streak, and a "Share result" button that copies an emoji grid without spoilers (for Discord / chat).
+- **Endless** mode with the same settings as Hangman (top N, only one genre).
+- 11 new achievements (category Animedle, now 222 in total), XP for every solved puzzle (bonus for the daily).
+
 ### Party games (preview)
 - New page `party.html` ("🎉 Party games" under More). The host opens a room and shares the show view (e.g. in Discord); everyone joins with the room code on their phone or a second window and answers in secret – answers are revealed at the same time. Player bar with names, colours, who has answered and points. Games: **Blind Ranking** (place anime on spots 1–N without knowing what comes next, then compare with AniList popularity) and **Higher or Lower** (more popular / newer?). Plus **Bingo over the distance**: everyone sees the same board (3×3 to 6×6) on their own device – *against each other* (first one to name a fitting anime gets the field; 3×3/4×4 first line wins, from 5×5 most fields; wrong answer = 3 s pause) or *together* (co-op time attack, wrong answer +10 s). Tap a field to aim for it, otherwise the best free field is picked. The show view has a "Play along" link that opens the player view in a new tab. Online rooms need a free Firebase database (see docs/FIREBASE_EINRICHTEN.md); until then the page runs in test mode on one device.
 

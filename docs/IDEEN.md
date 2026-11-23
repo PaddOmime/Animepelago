@@ -62,7 +62,7 @@ verdeckt abgeben, gleichzeitig aufdecken, Punkte). Später: Konten über Firebas
 - [x] Higher or Lower
 - [ ] Anime-Pitch-Generator (Cover/Story zu gewürfeltem Fake-Anime, dann ranken)
 - [ ] Silhouetten-Buzzer
-- [ ] Animedle (eher solo)
+- [x] Animedle (solo, mit Tagesrätsel) – in 0.2.0
 - [ ] Anime-Tabu – verschoben auf 2.0 (mit Charakteren als verbotene Wörter)
 - [ ] Anime-Draft – verschoben auf 2.0 (mit Charakteren)
 

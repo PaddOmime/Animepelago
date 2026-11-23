@@ -1,6 +1,6 @@
 # Erfolge und Ränge (Stand 0.2.0)
 
-Insgesamt **211 Erfolge**. Jeder Erfolg bringt +25 EP. Geheime Erfolge (🤫) zeigen im Spiel „???“, bis sie geschafft sind.
+Insgesamt **222 Erfolge**. Jeder Erfolg bringt +25 EP. Geheime Erfolge (🤫) zeigen im Spiel „???“, bis sie geschafft sind.
 Namen sind Anime-Anspielungen und in allen Sprachen gleich. Diese Liste wird aus dem Client erzeugt (`client/index.html`, Block `PROF`).
 
 **Wofür es EP gibt:** Offline-Spiele, alle Minispiele und – wenn im Profil eine Route gewählt ist – auch Archipelago-Spiele. Ohne gewählte Route zählt Archipelago nur als Spieltag (Serien).
@@ -224,6 +224,22 @@ Level 1–100 pro Route; Ränge ab Level 1, 12, 23, 34, 45, 56, 67, 78, 89, 100.
 | 😰 | Clutch | Löse einen Titel mit nur noch einem Versuch übrig |
 | 🧠 | Galaxy Brain | Löse per ganzem Titel, während mehr als die Hälfte noch verdeckt ist |
 | 💀 | Plot Twist 🤫 | Verliere 10 Galgenmännchen-Runden |
+
+## Animedle (11)
+
+| | Name | Bedingung |
+|---|---|---|
+| 🟩 | First Clue | Löse ein Animedle |
+| 🟩 | Profiler | Löse 10 Animedles |
+| 🟩 | Mastermind | Löse 50 Animedles |
+| 🟩 | Anime Sherlock | Löse 200 Animedles |
+| 📅 | Daily Dose | Löse ein Animedle-Tagesrätsel |
+| 📅 | Daily Routine | Löse 30 Animedle-Tagesrätsel |
+| 🔥 | Habit | Löse das Animedle-Tagesrätsel 3 Tage am Stück |
+| 🔥 | Weekly Ritual | Löse das Animedle-Tagesrätsel 7 Tage am Stück |
+| 🔥 | Devotion | Löse das Animedle-Tagesrätsel 30 Tage am Stück |
+| 🔮 | Psychic | Löse ein Animedle beim ersten Versuch |
+| ⚡ | Quick Thinker | Löse 10 Animedles in höchstens 3 Versuchen |
 
 ## Bingo (22)
 
