@@ -166,6 +166,8 @@ dialog li.no{color:var(--mute)}
 .ach .ai{font-size:20px;line-height:1.2}
 .ach .ad{font-size:11px;color:var(--mute)}
 .filebtn{cursor:pointer}
+/* Fenster: Schliessen-Knopf oben rechts (bleibt beim Scrollen sichtbar) */
+.dlgx{position:sticky;top:0;float:right;z-index:3;font-size:18px;line-height:1;padding:6px 10px;margin:-4px -4px 4px 8px}
 #twDlg{max-width:620px;max-height:88vh;overflow:auto}
 #twBar{margin:6px 0;padding:6px 10px;border:1px solid #9146ff;border-radius:8px;font-size:13px}
 #twBar .twprob{color:var(--warn);font-weight:600}
@@ -466,11 +468,11 @@ footer span[data-t="credits"]{flex:1 1 260px;min-width:0}
     <div id="chat"><input id="say" autocomplete="off"><button type="button" id="sayBtn" data-t="sendChat"></button></div>
   </div>
 </section>
-<dialog id="profDlg"><div id="profBody"></div><button type="button" id="profClose" data-t="close" style="margin-top:10px"></button></dialog>
-<dialog id="routeDlg"><div id="routeBody"></div><button type="button" id="routeLater" data-t="routeLater" style="margin-top:10px"></button></dialog>
-<dialog id="twDlg"><div id="twBody"></div><button type="button" id="twClose" data-t="close" style="margin-top:10px"></button></dialog>
+<dialog id="profDlg"><button type="button" id="profClose" class="dlgx" aria-label="Close">✕</button><div id="profBody"></div></dialog>
+<dialog id="routeDlg"><button type="button" id="routeX" class="dlgx" aria-label="Close">✕</button><div id="routeBody"></div><button type="button" id="routeLater" data-t="routeLater" style="margin-top:10px"></button></dialog>
+<dialog id="twDlg"><button type="button" id="twClose" class="dlgx" aria-label="Close">✕</button><div id="twBody"></div></dialog>
 <div id="toast" class="hide" role="status" aria-live="polite"></div>
-<dialog id="info"><div id="infobody"></div><button type="button" id="closeInfo" data-t="close"></button></dialog>
+<dialog id="info"><button type="button" id="closeInfo" class="dlgx" aria-label="Close">✕</button><div id="infobody"></div></dialog>
 <footer>
   <!-- TMDB verlangt Logo + Hinweis, wenn ihre Daten (hier: Logos) genutzt werden. Das Logo bleibt klein und unauffaellig. -->
   <a href="https://www.themoviedb.org/" target="_blank" rel="noopener" id="tmdbLink"><img src="tmdb_logo.svg" alt="The Movie Database (TMDB)" id="tmdbLogo"></a>
@@ -799,6 +801,15 @@ $("uilang").onchange = e => { lang = e.target.value; store.set("ap_uilang", lang
 // Enter in einem Feld = Knopf druecken
 const onEnter = (ids, fn) => ids.forEach(id => $(id).addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); fn(); } }));
 $("closeInfo").onclick = () => $("info").close();
+// Klick ausserhalb eines Fensters (auf den abgedunkelten Hintergrund) schliesst es
+// (nur wenn auch das Druecken ausserhalb begann - Text markieren und draussen loslassen schliesst nicht)
+let dlgDown = null;
+document.addEventListener("pointerdown", e => { dlgDown = e.target; }, true);
+document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e => {
+  if (e.target !== d || dlgDown !== d) return;
+  const r = d.getBoundingClientRect();
+  if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close();
+}));
 onEnter(["host","port","slot","password"], () => $("go").click());
 $("go").onclick = async () => {
   if (!$("host").value.trim() || !$("slot").value.trim()) { cmsg(t("fillIn"), "bad"); return; }
@@ -2163,9 +2174,10 @@ const PROF = (() => {
   }
   function open(){ delArmed = false; draw(); $("profDlg").showModal(); }
   $("profBtn").onclick = open;
-  $("profClose").onclick = () => { $("profDlg").close(); msg(""); };
+  $("profClose").onclick = () => $("profDlg").close();
+  $("profDlg").addEventListener("close", () => msg(""));
   // Meldung nach dem Neuladen (z. B. "Profil geladen")
-  $("routeLater").onclick = () => $("routeDlg").close();
+  $("routeLater").onclick = $("routeX").onclick = () => $("routeDlg").close();
   if (store.get("ap_routePrompt") && cur()) { try { localStorage.removeItem("ap_routePrompt"); } catch(e) {} setTimeout(() => routePrompt("first"), 300); }
   const after = store.get("ap_profMsg"); if (after) { store.set("ap_profMsg", ""); try { localStorage.removeItem("ap_profMsg"); } catch(e) {} msg(after, "good"); }
   return {pkey, ev, bingo, bingoTA, taBest, head, hasAch: id => !!cur()?.ach?.[id], open, name: () => cur()?.name || "", draw: () => { if ($("profDlg").open) draw(); },
