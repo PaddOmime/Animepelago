@@ -53,6 +53,23 @@ a{color:var(--accent)}
 .vs .val{font-size:26px;font-weight:800}
 .hol button{font-size:24px;padding:14px 22px}
 .pick{font-size:28px}
+/* Party-Bingo: Raster mit Kategorien oben und links */
+.bgw{overflow-x:auto}
+.bgt{border-collapse:separate;border-spacing:4px;margin:0 auto;table-layout:fixed}
+.bgt th{font-size:13px;font-weight:700;padding:4px;overflow-wrap:anywhere;vertical-align:middle;max-width:130px}
+.bgt td{border:2px solid var(--line);border-radius:8px;width:130px;height:62px;text-align:center;font-size:13px;padding:3px;overflow-wrap:anywhere;vertical-align:middle}
+.bgt td.free{cursor:pointer}
+.bgt td.sel{box-shadow:0 0 0 3px var(--accent) inset}
+.bgt td.won{outline:3px dashed var(--fg);outline-offset:2px;font-weight:800}
+.big .bgt td{width:150px;height:74px;font-size:15px}
+#pad .bgt td{width:auto;min-width:56px;height:52px;font-size:11px}
+@media (max-width:500px){#pad .bgt td{min-width:46px;font-size:10px;padding:2px}#pad .bgt{border-spacing:3px}#pad .bgt tr>th:first-child{min-width:54px}}
+#pad .bgt th{font-size:11px;max-width:90px;overflow-wrap:break-word}
+#pad .bgt tr>th:first-child{min-width:68px}
+.bgin{display:flex;gap:8px;margin:10px 0}
+.bgin input{flex:1 1 auto;min-width:0}
+.bglog{font-size:14px;margin:8px 0 0;padding-left:18px}
+.clock{font:800 28px/1 ui-monospace,monospace}
 </style>
 </head>
 <body>
@@ -85,15 +102,18 @@ a{color:var(--accent)}
     <div class="row" style="align-items:center">
       <div style="flex:0 0 auto"><div class="mute" data-t="roomCode"></div><div class="code" id="showCode"></div></div>
       <div id="showHead" style="flex:1 1 300px"></div>
+      <a id="playToo" target="_blank" rel="noopener" style="flex:0 0 auto" data-t="playToo"></a>
       <button type="button" id="leaveShow" style="flex:0 0 auto" data-t="leave"></button>
     </div>
     <div id="bar"></div>
   </div>
   <div class="box" id="lobby">
     <div class="row">
-      <label><span data-t="game"></span><select id="gameSel"><option value="blind" data-t="g_blind"></option><option value="hol" data-t="g_hol"></option></select></label>
+      <label><span data-t="game"></span><select id="gameSel"><option value="blind" data-t="g_blind"></option><option value="hol" data-t="g_hol"></option><option value="bingo" data-t="g_bingo"></option></select></label>
       <label><span data-t="pool"></span><input id="pool" type="number" min="20" value="300"></label>
-      <label><span data-t="rounds"></span><select id="rounds"><option>5</option><option selected>10</option><option>15</option></select></label>
+      <label class="bgOpt"><span data-t="bgMode"></span><select id="bgMode"><option value="vs" data-t="bgVs"></option><option value="coop" data-t="bgCoop"></option></select></label>
+      <label class="bgOpt"><span data-t="bgSize"></span><select id="bgSize"><option value="3">3×3</option><option value="4">4×4</option><option value="5" selected>5×5</option><option value="6">6×6</option></select></label>
+      <label class="notBg"><span data-t="rounds"></span><select id="rounds"><option>5</option><option selected>10</option><option>15</option></select></label>
       <label><span data-t="lang"></span><select id="tlang"><option value="english">English</option><option value="romaji">Romaji</option><option value="german">Deutsch</option></select></label>
     </div>
     <p class="mute" id="gameInfo" style="font-size:13px"></p>
@@ -136,7 +156,13 @@ const TXT = {
     yourPick:"Your pick: {0}", pickSlot:"Pick a free spot for:", nameNeeded:"Please enter a name.", codeNeeded:"Please enter the 5-letter room code.", noRoom:"Room {0} not found (or expired).",
     final:"🏁 Result", closest:"Closest to AniList: {0}", dist:"{0} off", pts:"{0} pts", more:"more popular", newer:"newer", qPop:"Which is MORE POPULAR on AniList?", qYear:"Which is NEWER?",
     higher:"⬆️ More", lower:"⬇️ Less", newerBtn:"⬆️ Newer", olderBtn:"⬇️ Older", same:"Same year – everyone gets the point!", rank:"#{0} popular", year:"{0}", over:"Back to the lobby", correct:"✓", wrong:"✕",
-    privacy:"Online rooms store only names, answers and the game state of a round in Firebase (Google); rooms expire after 6 hours. Names you enter are visible to everyone in the room.", connErr:"Connection problem – trying again …", kicked:"The room was closed.", hostLeft:"Host", reopen:"📺 Reopen room {0}"},
+    privacy:"Online rooms store only names, answers and the game state of a round in Firebase (Google); rooms expire after 6 hours. Names you enter are visible to everyone in the room.", connErr:"Connection problem – trying again …", kicked:"The room was closed.", hostLeft:"Host", reopen:"📺 Reopen room {0}",
+    g_bingo:"🎯 Bingo", bgMode:"Mode", bgVs:"Against each other", bgCoop:"Together (co-op, time attack)", bgSize:"Board",
+    info_bingo_vs:"Everyone sees the same board on their own device. Type an anime that fits row + column – whoever is first gets the field. 3×3/4×4: first full row, column or diagonal wins; from 5×5: most fields when the board is full. Tap a field first to aim for it, otherwise the best free field is picked.",
+    info_bingo_coop:"Fill the whole board together as fast as possible. Every wrong answer costs 10 seconds. Tap a field first to aim for it, otherwise the best free field is picked.",
+    playToo:"🎮 Play along (new tab)", bgEnter:"Enter", bgPh:"Anime title …", bgSent:"Sent …", bgOk:"✓ {0}", bgUsedM:"Already on the board.", bgTaken:"Field already taken – too slow!",
+    bgNoFit:"{0} doesn't fit a free field.", bgUnknown:"Don't know that anime.", bgWait:"⏳ Wrong – wait {0} s", bgPen:"+10 s", fields:"{0} fields", bgWrong:"{0} wrong",
+    bgWin:"🏆 {0} wins!", bgDraw:"🤝 Draw!", bgDone:"🎉 Board full in {0} ({1} wrong)!", bgEnd:"End game", bgGenFail:"No board found – take more anime (top N) or a smaller board.", bgEnded:"Game ended: {0} of {1} fields."},
   de: {back:"← Animepelago", intro:"Party-Spiele für Streams: Der Gastgeber öffnet einen Raum und teilt dieses Fenster im Discord (Show-Ansicht). Alle (auch der Gastgeber) treten am Handy oder in einem zweiten Fenster mit dem Raum-Code bei und antworten dort geheim.",
     yourName:"Dein Name", roomCode:"Raum-Code", join:"Beitreten", host:"📺 Raum öffnen (Show-Ansicht)", hostInfo:"Für den Bildschirm, den du teilst. Willst du selbst mitspielen, tritt zusätzlich am Handy bei.",
     netOnline:"Online-Räume (Firebase) – funktioniert übers Internet.", netLocal:"Testmodus: Räume funktionieren nur auf diesem Gerät (mehrere Fenster). Online-Räume sind noch nicht eingerichtet.",
@@ -147,7 +173,13 @@ const TXT = {
     yourPick:"Deine Wahl: {0}", pickSlot:"Wähle einen freien Platz für:", nameNeeded:"Bitte einen Namen eingeben.", codeNeeded:"Bitte den 5-stelligen Raum-Code eingeben.", noRoom:"Raum {0} nicht gefunden (oder abgelaufen).",
     final:"🏁 Ergebnis", closest:"Am nächsten an AniList: {0}", dist:"{0} daneben", pts:"{0} Pkt.", more:"beliebter", newer:"neuer", qPop:"Welcher ist BELIEBTER auf AniList?", qYear:"Welcher ist NEUER?",
     higher:"⬆️ Mehr", lower:"⬇️ Weniger", newerBtn:"⬆️ Neuer", olderBtn:"⬇️ Älter", same:"Gleiches Jahr – alle bekommen den Punkt!", rank:"Platz {0} der Beliebtheit", year:"{0}", over:"Zurück zur Lobby", correct:"✓", wrong:"✕",
-    privacy:"Online-Räume speichern nur Namen, Antworten und den Spielstand einer Runde bei Firebase (Google); Räume laufen nach 6 Stunden ab. Eingegebene Namen sehen alle im Raum.", connErr:"Verbindungsproblem – versuche es weiter …", kicked:"Der Raum wurde geschlossen.", hostLeft:"Gastgeber", reopen:"📺 Raum {0} wieder öffnen"},
+    privacy:"Online-Räume speichern nur Namen, Antworten und den Spielstand einer Runde bei Firebase (Google); Räume laufen nach 6 Stunden ab. Eingegebene Namen sehen alle im Raum.", connErr:"Verbindungsproblem – versuche es weiter …", kicked:"Der Raum wurde geschlossen.", hostLeft:"Gastgeber", reopen:"📺 Raum {0} wieder öffnen",
+    g_bingo:"🎯 Bingo", bgMode:"Modus", bgVs:"Gegeneinander", bgCoop:"Zusammen (Koop, Time Attack)", bgSize:"Board",
+    info_bingo_vs:"Alle sehen dasselbe Board am eigenen Gerät. Tippe einen Anime, der zu Zeile + Spalte passt – wer zuerst kommt, bekommt das Feld. 3×3/4×4: Wer zuerst eine ganze Zeile, Spalte oder Diagonale hat, gewinnt; ab 5×5: die meisten Felder, wenn das Board voll ist. Tippe vorher auf ein Feld, um es gezielt zu nehmen, sonst wird das beste freie Feld gewählt.",
+    info_bingo_coop:"Füllt zusammen das ganze Board so schnell wie möglich. Jede falsche Antwort kostet 10 Sekunden. Tippe vorher auf ein Feld, um es gezielt zu nehmen, sonst wird das beste freie Feld gewählt.",
+    playToo:"🎮 Selbst mitspielen (neuer Tab)", bgEnter:"Eintragen", bgPh:"Anime-Titel …", bgSent:"Gesendet …", bgOk:"✓ {0}", bgUsedM:"Schon auf dem Board.", bgTaken:"Feld schon belegt – zu langsam!",
+    bgNoFit:"{0} passt in kein freies Feld.", bgUnknown:"Den Anime kenne ich nicht.", bgWait:"⏳ Falsch – warte {0} s", bgPen:"+10 s", fields:"{0} Felder", bgWrong:"{0} falsch",
+    bgWin:"🏆 {0} gewinnt!", bgDraw:"🤝 Unentschieden!", bgDone:"🎉 Board voll in {0} ({1} falsch)!", bgEnd:"Spiel beenden", bgGenFail:"Kein Board gefunden – mehr Anime (Top N) oder ein kleineres Board nehmen.", bgEnded:"Spiel beendet: {0} von {1} Feldern."},
 };
 const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let lang = ["de", "en"].includes(store.get("ap_uilang")) ? store.get("ap_uilang") : (navigator.language || "").startsWith("de") ? "de" : "en";
@@ -170,10 +202,168 @@ for (const a of DB.anime) {
   a.titles = Object.fromEntries(Object.entries(a.t).map(([l, v]) => [l, unhide(v, a.id)]));
   a.logo = typeof a.l === "string" && /^\/[A-Za-z0-9_-]+\.(png|svg|jpg|webp)$/.test(a.l) ? "https://image.tmdb.org/t/p/w300" + a.l : null;
   a.year = /^\d{4}$/.test((a.c || [])[0]) ? +a.c[0] : null;
+  a.title = a.titles.english || a.titles.romaji || a.titles.native;
+  a.keys = new Set(a.k || []); a.c = a.c || []; a.genres = a.g || []; a.demographics = a.d || [];
 }
+const ALL_KEYS = new Set(DB.anime.flatMap(a => a.k || []));
 const BY_ID = new Map(DB.anime.map(a => [a.id, a]));
 const RANK = new Map(DB.anime.map((a, i) => [a.id, i + 1]));  // Beliebtheit: Spieldatei ist danach sortiert
 const titleOf = (a, l) => { const T = a.titles, en = T.english || T.romaji || T.native; return l === "romaji" ? (T.romaji || en) : (T[l] || en); };
+
+
+// ---------- Anime erkennen (Kopie aus index.html: Namen stehen nur als Pruefsumme in der Spieldatei) ----------
+const norm = s => String(s).toLowerCase().normalize("NFKD").replace(/\p{M}/gu,"").replace(/[^\p{L}\p{N}]+/gu,"");
+function cyrb53(str, seed=0){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0);}
+const nameHash = s => { const k = norm(s); return k ? cyrb53(SALT + k).toString(36) : null; };
+function typoKeys(text){
+  const q = norm(text), out = new Set();
+  if (q.length < 5 || q.length > 60) return out;
+  const AB = "abcdefghijklmnopqrstuvwxyz0123456789", add = v => out.add(cyrb53(SALT + v).toString(36));
+  for (let i = 0; i <= q.length; i++) {
+    if (i < q.length) add(q.slice(0, i) + q.slice(i + 1));
+    if (i < q.length - 1) add(q.slice(0, i) + q[i + 1] + q[i] + q.slice(i + 2));
+    for (const c of AB) { add(q.slice(0, i) + c + q.slice(i)); if (i < q.length) add(q.slice(0, i) + c + q.slice(i + 1)); }
+  }
+  return out;
+}
+// Anime finden, deren Namen zur Eingabe passen: erst genau, sonst mit einem Tippfehler (nur wenn eindeutig)
+function findAnime(text, list, prefer){
+  const q = nameHash(text); if (!q) return {hits: [], fuzzy: false, known: false};
+  let hits = list.filter(a => a.keys.has(q));
+  if (hits.length) return {hits, fuzzy: false, known: true};
+  const v = typoKeys(text);
+  hits = list.filter(a => [...a.keys].some(k => v.has(k)));
+  if (hits.length === 1) return {hits, fuzzy: true, known: true};
+  // Mehrdeutiger Tippfehler: wenn genau einer davon passt (z. B. zum Bingo-Feld), zaehlt der
+  if (prefer && hits.filter(prefer).length === 1) return {hits: hits.filter(prefer), fuzzy: true, known: true};
+  return {hits: [], fuzzy: false, known: ALL_KEYS.has(q) || DB.anime.some(a => [...a.keys].some(k => v.has(k)))};
+}
+
+// ---------- Bingo-Kategorien (Kopie aus index.html, BG) ----------
+const GENRES = ["Action","Adventure","Comedy","Drama","Ecchi","Fantasy","Horror","Mahou Shoujo","Mecha",
+  "Music","Mystery","Psychological","Romance","Sci-Fi","Slice of Life","Sports","Supernatural","Thriller",
+  "Shounen","Shoujo","Seinen","Josei","Kids"];
+const DEMOGRAPHICS = GENRES.slice(18);
+const EMOJI = {Action:"💥", Adventure:"🧭", Comedy:"😂", Drama:"🎭", Ecchi:"😳", Fantasy:"🧙", Horror:"👻", "Mahou Shoujo":"🪄",
+  Mecha:"🤖", Music:"🎵", Mystery:"🔍", Psychological:"🧠", Romance:"💕", "Sci-Fi":"🚀", "Slice of Life":"🍵", Sports:"⚽",
+  Supernatural:"✨", Thriller:"🔪", Shounen:"👦", Shoujo:"👧", Seinen:"🧔", Josei:"👩", Kids:"🧸",
+  Winter:"❄️", Spring:"🌸", Summer:"☀️", Fall:"🍂", Manga:"📚", "Light Novel":"📘", Novel:"📖", Original:"💡",
+  "Visual Novel":"🖼️", "Video Game":"🎮", Other:"📦"};
+const em = v => EMOJI[v] ? EMOJI[v] + " " : "";
+const decade = y => !y ? null : y === "Before 2000" ? "<2000" : y.startsWith("200") ? "2000s" : +y < 2020 ? "2010s" : "2020s";
+function themes(pool, lang){
+  const out = [], add = (key, label, test) => out.push({key, label, test});
+  for (const g of GENRES.slice(0, 18)) add("g:" + g, em(g) + g, a => a.genres.includes(g));
+  for (const d of DEMOGRAPHICS) add("d:" + d, em(d) + d, a => a.demographics.includes(d));
+  const studios = {}; pool.forEach(a => (a.s || []).forEach(x => studios[x] = (studios[x] || 0) + 1));
+  for (const x of Object.keys(studios)) add("s:" + x, "🎬 " + x, a => (a.s || []).includes(x));
+  for (const x of ["Manga", "Light Novel", "Novel", "Original", "Visual Novel", "Video Game"]) add("src:" + x, em(x) + x, a => a.c?.[1] === x);
+  for (const x of ["<2000", "2000s", "2010s", "2020s"]) add("dec:" + x, "📅 " + x, a => decade(a.c?.[0]) === x);
+  // Einzelne Jahre (in den Daten ab 2010 einzeln, davor nur Zeitraeume)
+  const years = [...new Set(pool.map(a => a.c?.[0]).filter(y => /^\d{4}$/.test(y || "")))].sort();
+  for (const y of years) add("y:" + y, "🗓️ " + y, a => a.c?.[0] === y);
+  for (const x of ["Winter", "Spring", "Summer", "Fall"]) add("sea:" + x, em(x) + x, a => a.c?.[2] === x);
+  // Buchstaben: haeufige einzeln; seltene nur als Paar mit einem passenden Partner ("J / K"),
+  // so dass beide zusammen 60-160 Anime haben. Welches Paar ein Board bekommt, waehlt generate() zufaellig.
+  const lc = {}; for (const a of pool) { const L = firstLetterOf(a, lang); lc[L] = (lc[L] || 0) + 1; }
+  // Grenzen relativ zur Anime-Auswahl (bei allen 1919 Anime: selten = unter 50, Paar = 60-160 zusammen)
+  const P = pool.length, RARE = P * 0.026, LO = P * 0.031, HI = P * 0.083;
+  const AZ = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], rare = AZ.filter(L => (lc[L] || 0) < RARE), common = AZ.filter(L => (lc[L] || 0) >= RARE);
+  for (const l of common) add("l:" + l, "🔤 " + l, a => firstLetterOf(a, lang) === l);
+  for (const r of rare) for (const c of common) { const n = (lc[r] || 0) + (lc[c] || 0);
+    if ((lc[r] || 0) >= 2 && n >= LO && n <= HI) { const [x, y] = [r, c].sort(); add(`l2:${x}${y}`, `🔤 ${x} / ${y}`, a => { const L = firstLetterOf(a, lang); return L === x || L === y; }); out.at(-1).rareL = r; } }
+  return out;
+}
+function firstLetterOf(a, lang){
+  const T = a.titles, en = T.english || T.romaji || a.title;
+  const tt = lang === "romaji" || lang === "japanese" ? (T.romaji || en) : (T[lang] || en);
+  for (const ch of tt.replace(/^\s*the\s+/i, "").normalize("NFKD")) { if (/\p{M}/u.test(ch)) continue; const c = ch.toUpperCase(); return c >= "A" && c <= "Z" ? c : "#"; }
+  return "#";
+}
+const safe = cand => {
+  const sets = cand.flat().map(l => new Set(l.map(a => a.id)));
+  return sets.every((mine, i) => {
+    if (mine.size < 2) return false;
+    const others = sets.map((o, j) => j === i ? [] : [...o].filter(id => mine.has(id))).filter(l => l.length);
+    if (others.length < mine.size) return true;  // zu wenige andere Felder, um alles wegzunehmen
+    const takenBy = new Map();  // Anime -> welches andere Feld ihn belegt
+    const grab = (k, seen) => {
+      for (const id of others[k]) {
+        if (seen.has(id)) continue; seen.add(id);
+        if (!takenBy.has(id) || grab(takenBy.get(id), seen)) { takenBy.set(id, k); return true; }
+      }
+      return false;
+    };
+    let taken = 0;
+    for (let k = 0; k < others.length && taken < mine.size; k++) if (grab(k, new Set())) taken++;
+    return taken < mine.size;
+  });
+};
+// Jahr und Jahrzehnt duerfen sich nicht kreuzen (sonst "2010s x 2013"): beide nur bei den Zeilen oder beide nur bei den Spalten
+// Ebenso Buchstabe und Buchstaben-Paar (sonst "J / K x K"). Familien: Zeit (Jahr, Jahrzehnt) und Buchstaben (einzeln, Paar)
+const famOf = k => { const ty = (typeof k === "string" ? k : k?.key || "").split(":")[0]; return ty === "y" || ty === "dec" ? "time" : ty === "l" || ty === "l2" ? "let" : null; };
+const isTime = k => famOf(k) === "time";
+const timeClash = (rows, cols) => { const f = new Set(rows.map(famOf).filter(Boolean)); return cols.some(c => f.has(famOf(c))); };
+// Je seltenem Buchstaben nur ein zufaelliges Paar behalten, und etwa so viele Paare wie Einzelbuchstaben:
+// so ist es zufaellig, ob ein Buchstabe oder zwei kommen
+function pickPairs(list){
+  const seen = new Set(), keep = new Set();
+  const pairs = list.filter(x => x.key.startsWith("l2:")).sort(() => Math.random() - .5), singles = list.filter(x => x.key.startsWith("l:")).length;
+  for (const th of pairs) if (!seen.has(th.rareL)) { seen.add(th.rareL); keep.add(th); }   // erst jeder seltene Buchstabe einmal
+  for (const th of pairs) if (keep.size < singles) keep.add(th);                         // dann auffuellen: etwa gleich viele Paare wie Einzelbuchstaben
+  return list.filter(th => !th.key.startsWith("l2:") || keep.has(th));
+}
+// R Zeilen und C Spalten (z. B. 3x3 oder 6x7)
+function generate(R, C, pool, lang, types){
+  const n = Math.max(R, C);
+  const typeOf = th => { const ty = th.key.split(":")[0]; return ty === "l2" ? "l" : ty; };
+  const count = (x, y) => pool.filter(a => x.test(a) && y.test(a)).length;
+  // Bei nur einer Themen-Art duerfen alle Zeilen und Spalten von dieser Art sein
+  const maxPerType = types.length >= 2 ? Math.max(3, n) : 2 * n;
+  const typesOk = list => { const c = {}; for (const t of list) c[typeOf(t)] = (c[typeOf(t)] || 0) + 1; return Object.values(c).every(v => v <= maxPerType); };
+  const shuffled = l => [...l].sort(() => Math.random() - .5);
+  const themesAll = pickPairs(themes(pool, lang).filter(th => types.includes(typeOf(th))));
+  // Zwei Durchgaenge: erst streng (jedes Feld mind. n*n Anime, wie bisher: sicher und schnell gefunden),
+  // dann locker (nur so viele, wie die "nie festfahren"-Regel wirklich braucht, z. B. bei Buchstabe x Jahreszeit)
+  for (const minPair of [R * C, 2]) {
+    const all = themesAll.filter(th => pool.filter(th.test).length >= Math.max(n, minPair));
+    // Grosse Themen (viele Anime) etwas oefter ziehen: dann passen leichter genug Spalten zu allen Zeilen
+    const size = new Map(all.map(th => [th, pool.filter(th.test).length]));
+    const weighted = l => l.map(x => [x, Math.random() ** (1 / Math.sqrt(size.get(x)))]).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+    for (let attempt = 0; attempt < 300; attempt++) {
+      // Zeilen zufaellig, dann nur Spalten, die mit ALLEN Zeilen genug Anime haben
+      const rows = (R * C > 25 ? weighted(all) : shuffled(all)).slice(0, R);
+      if (rows.length < R || !typesOk(rows)) continue;
+      const okCols = shuffled(all.filter(c => !rows.includes(c) && !timeClash(rows, [c]) && rows.every(r => count(r, c) >= minPair)));
+      const cols = [];
+      for (const c of okCols) { if (cols.length === C) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
+      if (cols.length < C) continue;
+      const cand = rows.map(r => cols.map(c => pool.filter(a => r.test(a) && c.test(a))));
+      if (!safe(cand)) continue;
+      return {rows, cols, cand};
+    }
+  }
+  return null;
+}
+// Eine Kategorie aus ihrem Schluessel wieder bauen ("g:Action", "l2:JK", "y:2013" ...): so reicht es, im Raum nur die Schluessel zu speichern
+const BG_TYPES = ["g", "d", "s", "src", "dec", "sea", "y", "l"];
+function themeOf(key, lang){
+  if (typeof key !== "string" || key.length > 60) return null;
+  const i = key.indexOf(":"), ty = key.slice(0, i), v = key.slice(i + 1); if (i < 1 || !v) return null;
+  const T = (label, test) => ({key, label, test});
+  if (ty === "g" && GENRES.slice(0, 18).includes(v)) return T(em(v) + v, a => a.genres.includes(v));
+  if (ty === "d" && DEMOGRAPHICS.includes(v)) return T(em(v) + v, a => a.demographics.includes(v));
+  if (ty === "s") return T("🎬 " + v, a => (a.s || []).includes(v));
+  if (ty === "src" && ["Manga", "Light Novel", "Novel", "Original", "Visual Novel", "Video Game"].includes(v)) return T(em(v) + v, a => a.c?.[1] === v);
+  if (ty === "dec" && ["<2000", "2000s", "2010s", "2020s"].includes(v)) return T("📅 " + v, a => decade(a.c?.[0]) === v);
+  if (ty === "y" && /^\d{4}$/.test(v)) return T("🗓️ " + v, a => a.c?.[0] === v);
+  if (ty === "sea" && ["Winter", "Spring", "Summer", "Fall"].includes(v)) return T(em(v) + v, a => a.c?.[2] === v);
+  if (ty === "l" && /^[A-Z]$/.test(v)) return T("🔤 " + v, a => firstLetterOf(a, lang) === v);
+  if (ty === "l2" && /^[A-Z]{2}$/.test(v)) return T(`🔤 ${v[0]} / ${v[1]}`, a => { const L = firstLetterOf(a, lang); return L === v[0] || L === v[1]; });
+  return null;
+}
 
 // ---------- Verbindung: ein Raum = ein kleiner Datenbaum ----------
 // Raum: {created, v:1, host, game: "<JSON-Text>", players: {pid: {name, color, ans: "<JSON-Text>"}}}
@@ -240,7 +430,10 @@ const cleanName = s => String(s ?? "").replace(/[\u0000-\u001f\u007f-\u009f]/g, 
 const cleanAns = a => { const out = {}; if (!a || typeof a !== "object") return out;
   for (const [r, v] of Object.entries(a).slice(0, 31)) { const k = num(r, 0, 29, -1); if (k < 0) continue;
     if (v === "up" || v === "down") out[k] = v; else if (Number.isInteger(v) && v >= 1 && v <= 30) out[k] = v; }
+  if (Array.isArray(a.b)) out.b = a.b.slice(-20).filter(e => Array.isArray(e) && Number.isInteger(e[0]) && e[0] >= 1 && e[0] <= 1e6
+    && (e[1] === 0 || BY_ID.has(e[1])) && Number.isInteger(e[2]) && e[2] >= -1 && e[2] < 36).map(e => [e[0], e[1], e[2]]);
   return out; };
+const PID_RE = /^p[a-z0-9]{8}$/;
 const GAMES = {
   // Blind Ranking: N Anime nacheinander, jeder legt sie auf freie Plaetze 1..N
   blind: {
@@ -265,11 +458,81 @@ const GAMES = {
   },
 };
 
+// Bingo: ein gemeinsames Board. Spieler schicken "Anime X in Feld Y", der Gastgeber prueft und traegt ein.
+// Spielstand: rows/cols = Kategorie-Schluessel, cells = je Feld 0 oder [AnimeId, SpielerId]
+GAMES.bingo = {
+  setup(o){
+    // Klappt es mit der gewaehlten Auswahl nicht (grosse Boards), mit mehr Anime nochmal versuchen
+    const R = o.size; let b = null;
+    for (const n of [o.pool, o.pool * 2, o.pool * 4, DB.anime.length]) { b = generate(R, R, DB.anime.slice(0, Math.max(R * R * 4, n)), o.lang, BG_TYPES); if (b || n >= DB.anime.length) break; }
+    if (!b) return null;
+    return {type: "bingo", id: Math.random().toString(36).slice(2, 8), n: R, mode: o.mode, lang: o.lang,
+      rows: b.rows.map(x => x.key), cols: b.cols.map(x => x.key), cells: Array(R * R).fill(0), done: {}, wrong: {}, res: {}, log: [],
+      phase: "play", t0: Date.now(), tEnd: 0, win: null};
+  },
+  // Sicherheit: alles pruefen, was aus der Datenbank kommt
+  clean(g){
+    const n = num(g.n, 3, 6, 0); if (!n) return null;
+    const lang = ["english", "romaji", "german"].includes(g.lang) ? g.lang : "english";
+    const rows = (Array.isArray(g.rows) ? g.rows : []).slice(0, n).map(k => themeOf(k, lang)), cols = (Array.isArray(g.cols) ? g.cols : []).slice(0, n).map(k => themeOf(k, lang));
+    if (rows.length < n || cols.length < n || rows.concat(cols).some(x => !x)) return null;
+    const cells = Array.from({length: n * n}, (_, i) => { const c = Array.isArray(g.cells) ? g.cells[i] : 0;
+      return Array.isArray(c) && BY_ID.has(c[0]) && PID_RE.test(c[1]) ? [c[0], c[1]] : 0; });
+    const pmap = (o, f) => Object.fromEntries(Object.entries(o && typeof o === "object" ? o : {}).filter(([k]) => PID_RE.test(k)).slice(0, 12).map(([k, v]) => [k, f(v)]));
+    const CODES = ["ok", "used", "taken", "nofit", "bad"];
+    return {type: "bingo", id: String(g.id || "").replace(/[^a-z0-9]/g, "").slice(0, 8), n, mode: g.mode === "coop" ? "coop" : "vs", lang, rows, cols, cells,
+      done: pmap(g.done, v => num(v, 0, 1e6)), wrong: pmap(g.wrong, v => num(v, 0, 1e4)),
+      res: pmap(g.res, v => Array.isArray(v) ? [num(v[0], 0, 1e6), CODES.includes(v[1]) ? v[1] : "bad", num(v[2], -1, 35, -1), BY_ID.has(v[3]) ? v[3] : 0] : [0, "bad", -1, 0]),
+      log: (Array.isArray(g.log) ? g.log : []).slice(-8).filter(e => Array.isArray(e) && PID_RE.test(e[0]) && BY_ID.has(e[1])).map(e => [e[0], e[1], num(e[2], 0, 35)]),
+      phase: g.phase === "end" ? "end" : "play", t0: num(g.t0, 0, 1e13), tEnd: num(g.tEnd, 0, 1e13),
+      win: g.win && typeof g.win === "object" ? {pid: PID_RE.test(g.win.pid) ? g.win.pid : "", line: (Array.isArray(g.win.line) ? g.win.line : []).slice(0, 6).map(x => num(x, 0, 35))} : null};
+  },
+  // Fuer den Spielstand im Datenbank-Format: Kategorien wieder als Schluessel
+  pack(g){ return {...g, rows: g.rows.map(x => x.key), cols: g.cols.map(x => x.key)}; },
+  fits(g, a, i){ return g.rows[Math.floor(i / g.n)].test(a) && g.cols[i % g.n].test(a); },
+  score(g, ans, pid){ return g.cells.filter(c => c && c[1] === pid).length; },
+  // Ganze Zeile, Spalte oder Diagonale eines Spielers
+  line(g, pid){ const n = g.n, L = [];
+    for (let i = 0; i < n; i++) { L.push([...Array(n)].map((_, j) => i * n + j)); L.push([...Array(n)].map((_, j) => j * n + i)); }
+    L.push([...Array(n)].map((_, j) => j * n + j)); L.push([...Array(n)].map((_, j) => j * n + n - 1 - j));
+    return L.find(l => l.every(i => g.cells[i] && g.cells[i][1] === pid)) || null; },
+  elapsed(g){ const w = Object.values(g.wrong).reduce((s, x) => s + x, 0);
+    return (g.phase === "end" && g.tEnd ? g.tEnd : Date.now()) - g.t0 + (g.mode === "coop" ? w * 10000 : 0); },
+  // Gastgeber: neue Eintraege der Spieler abarbeiten. Gibt true zurueck, wenn sich etwas geaendert hat.
+  apply(g, players){
+    if (g.phase !== "play") return false;
+    let changed = false;
+    for (const p of players) for (const [nr, id, cell] of (p.ans.b || []).filter(e => e[0] > (g.done[p.id] || 0)).sort((x, y) => x[0] - y[0])) {
+      if (g.phase !== "play") break;
+      g.done[p.id] = nr; changed = true;
+      const bad = code => { g.wrong[p.id] = (g.wrong[p.id] || 0) + 1; g.res[p.id] = [nr, code, cell, id || 0]; };
+      if (!id) { bad("bad"); continue; }
+      const a = BY_ID.get(id);
+      if (g.cells.some(c => c && c[0] === id)) { bad("used"); continue; }
+      const free = g.cells.map((c, i) => i).filter(i => !g.cells[i] && (cell < 0 || i === cell) && this.fits(g, a, i));
+      if (!free.length) { const fitsTaken = cell >= 0 ? this.fits(g, a, cell) : g.cells.some((c, i) => this.fits(g, a, i));
+        if (fitsTaken) g.res[p.id] = [nr, "taken", cell, id]; else bad("nofit"); continue; }
+      // Mehrere passende Felder: das mit den wenigsten noch moeglichen Anime (wie Time Attack in index.html)
+      const used = new Set(g.cells.filter(Boolean).map(c => c[0]));
+      const left = i => DB.anime.filter(x => !used.has(x.id) && this.fits(g, x, i)).length;
+      const i = free.length === 1 ? free[0] : free.map(i => [i, left(i)]).sort((x, y) => x[1] - y[1])[0][0];
+      g.cells[i] = [id, p.id]; g.res[p.id] = [nr, "ok", i, id]; g.log = [...g.log, [p.id, id, i]].slice(-8);
+      if (g.mode === "vs" && g.n <= 4) { const l = this.line(g, p.id); if (l) { g.phase = "end"; g.tEnd = Date.now(); g.win = {pid: p.id, line: l}; break; } }
+      if (g.cells.every(Boolean)) { g.phase = "end"; g.tEnd = Date.now();
+        if (g.mode === "vs") { const sc = players.map(q => [q.id, this.score(g, null, q.id)]).sort((x, y) => y[1] - x[1]);
+          g.win = {pid: sc.length && (sc.length === 1 || sc[0][1] > sc[1][1]) ? sc[0][0] : "", line: []}; } }
+    }
+    return changed;
+  },
+};
+const fmtTime = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+
 // ---------- App ----------
 const APP = {
   role: null, code: null, pid: null, name: "", net: null, room: null, lastErr: 0,
   // Sicherheit: Spielstand aus der Datenbank pruefen (jemand mit dem Raum-Code koennte Unsinn hineinschreiben)
   game(){ const g = parse(this.room?.game); if (!g || !GAMES[g.type]) return null;
+    if (g.type === "bingo") return GAMES.bingo.clean(g);
     const n = num(g.n, 1, 30, 0), items = Array.isArray(g.items) ? g.items.filter(id => BY_ID.has(id)).slice(0, 31) : [];
     if (!n || items.length < (g.type === "hol" ? n + 1 : n)) return null;
     const q = g.type === "hol" ? (Array.isArray(g.q) ? g.q : []).slice(0, n).map(x => x === "pop" ? "pop" : "year") : undefined;
@@ -283,7 +546,8 @@ const APP = {
   async open(role, code){
     this.role = role; this.code = code; this.net = new Net(code);
     $("start").classList.add("hide"); $(role === "show" ? "show" : "ctrl").classList.remove("hide");
-    this.net.listen(r => { this.room = r; if (r === null && this.role === "ctrl" && this.seen) { this.leave(t("kicked")); return; } if (r) this.seen = true; this.draw(); });
+    this.net.listen(r => { this.room = r; if (r === null && this.role === "ctrl" && this.seen) { this.leave(t("kicked")); return; } if (r) this.seen = true;
+      if (this.role === "show") this.bingoTick(); this.draw(); });
   },
   async host(){
     let code = newCode(); for (let i = 0; i < 5 && await new Net(code).exists(); i++) code = newCode();
@@ -318,11 +582,23 @@ const APP = {
   netError(){ const now = Date.now(); if (now - this.lastErr > 5000) { this.lastErr = now; console.warn("Netz"); } },
   // ---- Gastgeber-Aktionen ----
   setGame(g){ return this.net.put("game", JSON.stringify(g)); },
+  // Bingo: Der Gastgeber haelt den Spielstand im Speicher (hg), damit nichts doppelt eingetragen wird,
+  // waehrend die eigene Aenderung noch unterwegs ist
+  hg: null,
+  bingoTick(){
+    const g = this.game(); if (!g || g.type !== "bingo") { this.hg = null; return; }
+    if (!this.hg || this.hg.id !== g.id) this.hg = g;
+    if (GAMES.bingo.apply(this.hg, this.players())) this.setGame(GAMES.bingo.pack(this.hg));
+  },
+  async endBingo(){ const g = this.hg; if (!g || g.phase !== "play") return; g.phase = "end"; g.tEnd = Date.now(); g.win = null; await this.setGame(GAMES.bingo.pack(g)); this.draw(); },
   async startGame(){
     if (!this.players().length) { $("lobbyMsg").textContent = t("needPlayers"); return; }
     $("lobbyMsg").textContent = "";
-    const o = {rounds: num($("rounds").value, 3, 30, 10), pool: num($("pool").value, 20, DB.anime.length, 300), lang: $("tlang").value};
+    const o = {rounds: num($("rounds").value, 3, 30, 10), pool: num($("pool").value, 20, DB.anime.length, 300), lang: $("tlang").value,
+      size: num($("bgSize").value, 3, 6, 5), mode: $("bgMode").value === "coop" ? "coop" : "vs"};
     const g = GAMES[$("gameSel").value].setup(o);
+    if (!g) { $("lobbyMsg").textContent = t("bgGenFail"); return; }
+    this.hg = null;
     // Antworten aller Spieler zuruecksetzen
     for (const p of this.players()) await this.net.put(`players/${p.id}/ans`, "{}");
     await this.setGame(g);
@@ -331,7 +607,7 @@ const APP = {
   async next(){ const g = this.game(); if (!g) return;
     if (g.round + 1 >= g.n) g.phase = "end"; else { g.round++; g.phase = "pick"; }
     await this.setGame(g); },
-  async lobby(){ await this.net.put("game", ""); },
+  async lobby(){ this.hg = null; await this.net.put("game", ""); },
   // ---- Spieler-Aktion ----
   async answer(v){ const g = this.game(), me = this.players().find(p => p.id === this.pid); if (!g || g.phase !== "pick" || !me) return;
     if (!GAMES[g.type].valid(g, me.ans, v)) return;
@@ -341,6 +617,9 @@ const APP = {
   drawBar(g){
     const ps = this.players();
     $("bar").innerHTML = ps.map(p => {
+      if (g && g.type === "bingo") { const won = g.win && g.win.pid === p.id;
+        return `<div class="pl" style="border-color:var(--c${p.color})"><div class="nm" style="color:var(--c${p.color})">${won ? "🏆 " : ""}${esc(p.name)}</div>`
+          + `<div class="pts">${esc(t("fields", GAMES.bingo.score(g, null, p.id)))}</div><div class="st">${g.wrong[p.id] ? esc(t("bgWrong", g.wrong[p.id])) : ""}</div></div>`; }
       const done = g && g.phase === "pick" && p.ans[g.round] != null;
       const st = !g ? "" : g.phase === "pick" ? (done ? t("answered") : t("thinking")) : "";
       const sc = g ? GAMES[g.type].score(g, p.ans) : null;
@@ -353,9 +632,14 @@ const APP = {
     const g = this.game(), ps = this.players();
     $("showCode").textContent = this.code;
     $("lobby").classList.toggle("hide", !!g); $("stage").classList.toggle("hide", !g);
-    $("gameInfo").textContent = t("info_" + $("gameSel").value);
+    const isBg = $("gameSel").value === "bingo";
+    $("gameInfo").textContent = t(isBg ? "info_bingo_" + $("bgMode").value : "info_" + $("gameSel").value);
+    document.querySelectorAll(".bgOpt").forEach(x => x.classList.toggle("hide", !isBg));
+    document.querySelectorAll(".notBg").forEach(x => x.classList.toggle("hide", isBg));
+    $("playToo").href = "party.html#" + this.code;
     this.drawBar(g);
     if (!g) { $("showHead").innerHTML = ""; return; }
+    if (g.type === "bingo") return this.drawBingoShow(g, ps);
     const L = g.lang, allIn = ps.length && ps.every(p => p.ans[g.round] != null);
     $("showHead").innerHTML = `<b>${esc(t("g_" + g.type))}</b> · ${esc(g.phase === "end" ? t("final") : t("round", g.round + 1, g.n))}`;
     let h = "";
@@ -398,12 +682,99 @@ const APP = {
     if ($("bNext")) $("bNext").onclick = () => this.next();
     if ($("bLobby")) $("bLobby").onclick = () => this.lobby();
   },
+  // ---- Bingo-Anzeige ----
+  bingoTable(g, ps, sel){
+    const col = pid => (ps.find(p => p.id === pid) || {color: 7}).color, n = g.n, line = new Set(g.win ? g.win.line : []);
+    let h = `<div class="bgw"><table class="bgt"><tr><th></th>${g.cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
+    for (let r = 0; r < n; r++) {
+      h += `<tr><th>${esc(g.rows[r].label)}</th>`;
+      for (let c = 0; c < n; c++) { const i = r * n + c, x = g.cells[i];
+        h += x ? `<td class="${line.has(i) ? "won" : ""}" style="border-color:var(--c${col(x[1])});background:color-mix(in srgb,var(--c${col(x[1])}) 18%,transparent)">${esc(titleOf(BY_ID.get(x[0]), g.lang))}</td>`
+          : `<td class="free${sel === i ? " sel" : ""}" data-i="${i}">${sel === i ? "🎯" : ""}</td>`; }
+      h += `</tr>`;
+    }
+    return h + `</table></div>`;
+  },
+  bingoResult(g, ps){
+    if (g.phase !== "end") return "";
+    const name = pid => (ps.find(p => p.id === pid) || {}).name || "?", full = g.cells.every(Boolean);
+    if (g.mode === "coop") return full ? t("bgDone", fmtTime(GAMES.bingo.elapsed(g)), Object.values(g.wrong).reduce((s, x) => s + x, 0)) : t("bgEnded", g.cells.filter(Boolean).length, g.n * g.n);
+    if (g.win && g.win.pid) return t("bgWin", name(g.win.pid));
+    return full ? t("bgDraw") : t("bgEnded", g.cells.filter(Boolean).length, g.n * g.n);
+  },
+  drawBingoShow(g, ps){
+    $("showHead").innerHTML = `<b>${esc(t("g_bingo"))}</b> · ${esc(t(g.mode === "coop" ? "bgCoop" : "bgVs"))} · ${g.n}×${g.n}`;
+    const name = pid => (ps.find(p => p.id === pid) || {}).name || "?", colr = pid => (ps.find(p => p.id === pid) || {color: 7}).color;
+    let h = g.mode === "coop" ? `<div style="text-align:center;margin-bottom:8px"><span class="clock" id="bgClock">${fmtTime(GAMES.bingo.elapsed(g))}</span></div>` : "";
+    h += this.bingoTable(g, ps, -1);
+    const res = this.bingoResult(g, ps);
+    if (res) h += `<h3 style="text-align:center">${esc(res)}</h3>`;
+    if (g.log.length) h += `<ol class="bglog" reversed>${g.log.slice().reverse().map(([pid, id]) => `<li><b style="color:var(--c${colr(pid)})">${esc(name(pid))}</b>: ${esc(titleOf(BY_ID.get(id), g.lang))}</li>`).join("")}</ol>`;
+    h += `<div class="row" style="margin-top:12px">` + (g.phase === "play" ? `<button type="button" id="bEnd" style="flex:0 0 auto">${esc(t("bgEnd"))}</button>`
+      : `<button type="button" class="main" id="bLobby" style="flex:0 0 auto">${esc(t("over"))}</button>`) + `</div>`;
+    $("stage").innerHTML = h;
+    if ($("bEnd")) $("bEnd").onclick = () => this.endBingo();
+    if ($("bLobby")) $("bLobby").onclick = () => this.lobby();
+  },
+  // Spieler: das Eingabefeld wird nur einmal gebaut (sonst ginge beim Aktualisieren der getippte Text verloren)
+  bs: {nr: 0, sel: -1, wait: 0, msg: "", cls: "", sent: 0},
+  drawBingoCtrl(g, me){
+    const pad = $("pad"), bs = this.bs, ps = this.players();
+    if (pad.dataset.bg !== g.id) {
+      pad.dataset.bg = g.id; bs.sel = -1; bs.msg = ""; bs.wait = 0; bs.sent = 0;
+      bs.nr = Math.max(0, ...(me.ans.b || []).map(e => e[0]), g.done[me.id] || 0);
+      pad.innerHTML = `<div class="mute" id="bgHead"></div><div id="bgBoardC"></div>
+        <div class="bgin"><input id="bgIn" autocomplete="off" maxlength="120"><button type="button" class="main" id="bgGo"></button></div>
+        <div id="bgMsg"></div>`;
+      $("bgIn").placeholder = t("bgPh"); $("bgGo").textContent = t("bgEnter");
+      $("bgGo").onclick = () => this.bingoEnter(); $("bgIn").addEventListener("keydown", e => { if (e.key === "Enter") this.bingoEnter(); });
+    }
+    // Ergebnis meines letzten Eintrags (vom Gastgeber)
+    const r = g.res[me.id];
+    if (r && r[0] === bs.nr && bs.sent === bs.nr) { bs.sent = 0; const a = BY_ID.get(r[3]), nm = a ? titleOf(a, g.lang) : "";
+      if (r[1] === "ok") { bs.msg = t("bgOk", nm); bs.cls = "good"; }
+      else { bs.msg = r[1] === "used" ? t("bgUsedM") : r[1] === "taken" ? t("bgTaken") : t("bgNoFit", nm); bs.cls = r[1] === "taken" ? "warn" : "bad";
+        if (r[1] !== "taken") this.bingoWrong(g); } }
+    if (bs.sel >= 0 && g.cells[bs.sel]) bs.sel = -1;
+    $("bgHead").textContent = `${t(g.mode === "coop" ? "bgCoop" : "bgVs")} · ${t("fields", GAMES.bingo.score(g, null, me.id))}`
+      + (g.mode === "coop" ? ` · ${fmtTime(GAMES.bingo.elapsed(g))}` : "");
+    $("bgBoardC").innerHTML = this.bingoTable(g, ps, bs.sel);
+    $("bgBoardC").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => { const i = +td.dataset.i; bs.sel = bs.sel === i ? -1 : i; this.draw(); $("bgIn").focus(); });
+    const over = g.phase === "end", res = this.bingoResult(g, ps);
+    $("bgIn").disabled = $("bgGo").disabled = over || bs.wait > Date.now();
+    $("bgMsg").innerHTML = over ? `<h3>${esc(res)}</h3>` : `<span class="${bs.cls}">${esc(bs.msg)}</span>` + (bs.wait > Date.now() ? ` <b class="warn">${esc(t("bgWait", Math.ceil((bs.wait - Date.now()) / 1000)))}</b>` : "");
+  },
+  // Falsche Antwort: gegeneinander 3 Sekunden Pause, zusammen +10 Sekunden (zaehlt der Gastgeber)
+  bingoWrong(g){
+    if (g.mode !== "vs") return;
+    this.bs.wait = Date.now() + 3000; this.draw();
+    setTimeout(() => { if (this.role === "ctrl") { this.draw(); if ($("bgIn")) $("bgIn").focus(); } }, 3050);
+  },
+  async bingoEnter(){
+    const g = this.game(), me = this.players().find(p => p.id === this.pid), bs = this.bs;
+    if (!g || g.type !== "bingo" || g.phase !== "play" || !me || bs.wait > Date.now()) return;
+    const text = $("bgIn").value; if (!norm(text)) return;
+    $("bgIn").value = "";
+    // Vorab hier pruefen (spart Wege): kennt das Spiel den Anime, passt er in ein freies (oder das gewaehlte) Feld?
+    const freeIdx = g.cells.map((c, i) => i).filter(i => !g.cells[i] && (bs.sel < 0 || i === bs.sel));
+    const fitsAny = a => freeIdx.some(i => GAMES.bingo.fits(g, a, i));
+    const {hits} = findAnime(text, DB.anime, fitsAny), ok = hits.find(fitsAny);
+    let entry;
+    if (ok) { entry = [++bs.nr, ok.id, bs.sel]; bs.msg = t("bgSent"); bs.cls = "mute"; bs.sent = bs.nr; }
+    else { entry = [++bs.nr, 0, -1]; bs.msg = hits.length ? t("bgNoFit", titleOf(hits[0], g.lang)) + (g.mode === "coop" ? " " + t("bgPen") : "") : t("bgUnknown") + (g.mode === "coop" ? " " + t("bgPen") : ""); bs.cls = "bad"; }
+    bs.sel = -1;
+    const b = [...(me.ans.b || []), entry].slice(-20);
+    await this.net.put(`players/${this.pid}/ans`, JSON.stringify({b}));
+    if (!ok) this.bingoWrong(g); else this.draw();
+  },
   drawCtrl(){
     const g = this.game(), me = this.players().find(p => p.id === this.pid);
     $("meName").textContent = me ? me.name : this.name; $("meName").style.color = me ? `var(--c${me.color})` : "";
     $("meRoom").textContent = "· " + t("roomCode") + " " + this.code;
     const pad = $("pad");
-    if (!g || !me) { pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
+    if (!g || !me) { pad.dataset.bg = ""; pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
+    if (g.type === "bingo") return this.drawBingoCtrl(g, me);
+    pad.dataset.bg = "";
     const L = g.lang, mine = me.ans[g.round];
     if (g.phase === "end") { pad.innerHTML = `<h3>${esc(t("final"))}</h3><p>${esc(g.type === "blind" ? t("dist", GAMES.blind.score(g, me.ans)) : t("pts", GAMES.hol.score(g, me.ans)))}</p>`; return; }
     if (g.phase === "reveal") { pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
@@ -433,6 +804,13 @@ $("join").onclick = () => APP.join();
 $("code").addEventListener("keydown", e => { if (e.key === "Enter") APP.join(); });
 $("startGame").onclick = () => APP.startGame();
 $("gameSel").onchange = () => APP.draw();
+$("bgMode").onchange = () => APP.draw();
+// Uhr im Koop-Bingo laufen lassen
+setInterval(() => { const g = APP.role ? APP.game() : null;
+  if (g && g.type === "bingo" && APP.role === "ctrl" && APP.bs.wait > Date.now() - 1500 && $("bgHead")) APP.draw();
+  if (!g || g.type !== "bingo" || g.mode !== "coop" || g.phase !== "play") return;
+  if ($("bgClock")) $("bgClock").textContent = fmtTime(GAMES.bingo.elapsed(g));
+  if (APP.role === "ctrl" && $("bgHead")) APP.draw(); }, 1000);
 $("leaveShow").onclick = async () => { if (APP.net) await APP.net.put("", null); APP.leave(); };
 $("leaveCtrl").onclick = async () => { if (APP.net && APP.pid) await APP.net.put(`players/${APP.pid}`, null); APP.leave(); };
 $("uilang").onchange = e => { lang = e.target.value; store.set("ap_uilang", lang); applyLang(); };
