@@ -255,7 +255,7 @@ Level 1–100 pro Route; Ränge ab Level 1, 12, 23, 34, 45, 56, 67, 78, 89, 100.
 | 🗺️ | Conqueror | Hole 100 Bingo-Felder |
 | 🗺️ | Emperor | Hole 500 Bingo-Felder |
 | ✕ | Tic-Tac-Anime | Gewinne ein 3×3-Bingo |
-| 🧱 | Big Board Boss | Gewinne ein 6×7-Bingo |
+| 🧱 | Big Board Boss | Gewinne ein Bingo ab 6×7 |
 | 🤝 | Nakama Power | Gewinne ein Bingo im Team-Modus |
 | 🧹 | Perfect Game | Gewinne ein Bingo, während die Gegenseite kein Feld hat |
 | ⏱️ | Speed Bingo | Schließe ein Time-Attack-Raster ab |
