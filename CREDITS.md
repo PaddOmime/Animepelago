@@ -27,6 +27,16 @@ Logo images for the silhouette hints.
 - <https://www.themoviedb.org>
 - This product uses the TMDB API but is not endorsed or certified by TMDB.
 - Logo images are loaded directly from TMDB's servers and are not stored in this repository.
+## Services
+
+### Firebase Realtime Database (Google)
+Online rooms for the party games (room code, player names, answers). Rooms contain no account data.
+- <https://firebase.google.com>
+
+### Twitch
+Optional: the client reads a channel's public chat (anonymous, read-only) so viewers can guess along.
+- <https://www.twitch.tv>
+
 <!--
 ### AnimeThemes
 Opening and ending information.

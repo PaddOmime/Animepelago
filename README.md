@@ -5,7 +5,7 @@
 Guess anime to send checks to your friends. Their games send you genres, letters and perks that unlock more anime to guess.
 
 ### ▶ [Play now in your browser](https://paddomime.github.io/Animepelago/client/)
-Archipelago mode, offline mode and mini games (Hangman, Anime Bingo, Top 100). No install needed.
+Archipelago mode, offline mode, mini games (Hangman, Animedle with a daily puzzle, Anime Bingo, Top 100) and party games to play together online. Profiles with routes, ranks and achievements. No install needed.
 
 > 🇩🇪 Deutsche Anleitung: siehe [unten](#deutsch)
 
@@ -52,7 +52,23 @@ Archipelago mode, offline mode and mini games (Hangman, Anime Bingo, Top 100). N
 
 ### Offline mode
 
-No Archipelago server at hand? Open the web client, choose **Offline**, pick your settings and play alone. Every guessed anime gives you an item from the same pool, and your progress is saved in your browser. Under **🎮 More** there are mini games: **🪢 Hangman** (guess the title letter by letter, every mistake reveals a clue), **🎯 Anime Bingo** for two players, and **🏆 Top 100**: name the 100 best-rated anime on AniList, of all time or per genre.
+No Archipelago server at hand? Open the web client, choose **Offline**, pick your settings and play alone. Every guessed anime gives you an item from the same pool, and your progress is saved in your browser. Under **🎮 More** there are mini games:
+- **🪢 Hangman:** guess the title letter by letter, every mistake reveals a clue.
+- **🟩 Animedle:** guess the anime – every guess shows how close you are (genres, demographic, year, season, source, studio, popularity). A **daily puzzle** that is the same for everyone, with streak and a spoiler-free result to share, plus an endless mode.
+- **🎯 Anime Bingo:** 2–6 players or teams, **Time Attack** (alone or as a team), board codes to share the same board, a board editor, and a hidden **🔥 Risk Bingo** (7×7 to 10×10) that unlocks with an achievement.
+- **🏆 Top 100:** name the 100 best-rated anime on AniList, of all time or per genre.
+
+### Profiles, routes and achievements
+
+The **👤** button at the top creates a profile on your device. Offline games, mini games and – once you pick a route – Archipelago games give XP. Choose one of 7 routes (Saiyan, Pirate, Ninja, Soul Reaper, Hero, Jujutsu Sorcerer, Demon Slayer) with 10 ranks each, unlock 222 achievements (list: [docs/ERFOLGE.md](docs/ERFOLGE.md)) and compare records per game. Profiles can be saved as a file or code and loaded on another device.
+
+### Party games
+
+**🎉 Party games** (under More) let several people play together online, e.g. over Discord: the host opens a room and shares the show view, everyone joins with the room code on their phone and answers in secret. Games: **Blind Ranking**, **Higher or Lower** and **Bingo** (against each other or co-op Time Attack).
+
+### Twitch chat *(preview)*
+
+With the Twitch button at the top your chat can guess along: enter your channel name (no login – the page only reads the chat), and correct answers from chat count for unlocked anime. Agree with your multiworld whether chat help is OK.
 
 ### Tracker
 
@@ -88,7 +104,7 @@ Animepelago works with the **Universal Tracker**: it shows which anime are in lo
 ## Data and privacy
 
 The game files contain only a small list of anime (AniList IDs, titles, genres and popularity).
-Covers, studios, episode counts and related entries are loaded **live from AniList** in your browser while you play and cached there. The client sends nothing anywhere except to your Archipelago server and the AniList API.
+Covers, studios, episode counts and related entries are loaded **live from AniList** in your browser while you play and cached there; logos come from TMDB. Profiles and records stay in your browser. The client only talks to your Archipelago server, AniList and TMDB – plus the Twitch chat (read-only) if you switch on the Twitch integration, and the party-room database (Firebase) when you play party games online. Party rooms only hold the room code, the names you enter and your answers.
 
 ## Credits
 
@@ -107,7 +123,7 @@ The code is licensed under the [MIT License](LICENSE). Data from third parties k
 Errate Anime, um Checks an deine Mitspieler zu schicken. Ihre Spiele schicken dir Genres, Buchstaben und Perks, die weitere Anime freischalten.
 
 ### ▶ [Jetzt im Browser spielen](https://paddomime.github.io/Animepelago/client/)
-Archipelago-Modus, Offline-Modus und Minispiele (Galgenmännchen, Anime-Bingo, Top 100). Keine Installation nötig.
+Archipelago-Modus, Offline-Modus, Minispiele (Galgenmännchen, Animedle mit Tagesrätsel, Anime-Bingo, Top 100) und Party-Spiele für zusammen online. Profile mit Routen, Rängen und Erfolgen. Keine Installation nötig.
 
 ### So funktioniert es
 
@@ -127,13 +143,19 @@ Archipelago-Modus, Offline-Modus und Minispiele (Galgenmännchen, Anime-Bingo, T
 3. Das Spiel wie gewohnt erstellen und hosten.
 4. Den **Web-Client** öffnen: **[https://paddomime.github.io/Animepelago/client/](https://paddomime.github.io/Animepelago/client/)**. Server, Port, Spielername und gegebenenfalls Passwort eingeben und losraten.
 
-**Offline-Modus:** Kein Archipelago-Server zur Hand? Im Web-Client **Offline** wählen, Einstellungen festlegen und allein spielen. Jeder erratene Anime gibt ein Item aus demselben Pool, der Spielstand wird im Browser gespeichert.
+**Offline-Modus:** Kein Archipelago-Server zur Hand? Im Web-Client **Offline** wählen, Einstellungen festlegen und allein spielen. Jeder erratene Anime gibt ein Item aus demselben Pool, der Spielstand wird im Browser gespeichert. Unter **🎮 Weitere** gibt es Minispiele: **🪢 Galgenmännchen**, **🟩 Animedle** (mit **Tagesrätsel** für alle gleich, Serie und Ergebnis zum Teilen), **🎯 Anime-Bingo** (2–6 Spieler oder Teams, **Time Attack**, Board-Codes, Editor und ein verstecktes **🔥 Risiko-Bingo**) und **🏆 Top 100**.
+
+**Profile, Routen und Erfolge:** Über **👤** oben legst du ein Profil an. Offline-Spiele, Minispiele und – mit gewählter Route – Archipelago-Spiele geben EP. 7 Routen mit je 10 Rängen, 222 Erfolge (Liste: [docs/ERFOLGE.md](docs/ERFOLGE.md)), Bestenlisten je Spiel. Profile lassen sich als Datei oder Code sichern und auf einem anderen Gerät laden.
+
+**Party-Spiele:** Unter **🎉 Party-Spiele** (bei Weitere) spielt ihr zusammen online, z. B. über Discord: Der Gastgeber öffnet einen Raum, alle treten mit dem Raum-Code am Handy bei und antworten geheim. Spiele: **Blind Ranking**, **Higher or Lower** und **Bingo** (gegeneinander oder Koop-Time-Attack).
+
+**Twitch-Chat *(Vorschau)*:** Mit dem Twitch-Knopf oben rät dein Chat mit: Kanalname eintragen (ohne Login, die Seite liest den Chat nur), richtige Antworten aus dem Chat zählen für freigeschaltete Anime. Sprecht in eurer Multiworld ab, ob Chat-Hilfe okay ist.
 
 Die Items und Optionen sind oben in der englischen Tabelle erklärt.
 
 ### Daten
 
-Mitgeliefert wird nur eine kleine Liste: AniList-IDs, Titel, Genres und Beliebtheit. Cover, Studios, Folgen und Teile lädt der Client **live von AniList** und speichert sie in deinem Browser. Der Client schickt nichts woandershin als an deinen Archipelago-Server und an AniList.
+Mitgeliefert wird nur eine kleine Liste: AniList-IDs, Titel, Genres und Beliebtheit. Cover, Studios, Folgen und Teile lädt der Client **live von AniList** und speichert sie in deinem Browser, Logos kommen von TMDB. Profile und Rekorde bleiben in deinem Browser. Der Client spricht nur mit deinem Archipelago-Server, AniList und TMDB – dazu mit dem Twitch-Chat (nur lesend), wenn du die Twitch-Integration einschaltest, und mit der Party-Datenbank (Firebase), wenn ihr Party-Spiele online spielt. Party-Räume enthalten nur den Raum-Code, die eingegebenen Namen und eure Antworten.
 
 ### Hinweis
 

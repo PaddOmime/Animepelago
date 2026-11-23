@@ -7,7 +7,9 @@ Anime-Ratespiel mit Archipelago-Anbindung.
 - `apworld/`   die Archipelago-Welt (Quellcode). Gebaut: `animepelago.apworld` + Vorlage `Animepelago.yaml` (kommen ins Release)
 - `client/`    das Web-Spiel: `index.html`, `game_data.js` (nur IDs, Genres, verschleierte Titel, Namen als Pruefsumme;
                Cover, Studio, Folgen usw. holt der Client live von AniList), `Animepelago.yaml` (fuer den Download-Knopf)
-- `docs/`      diese Anleitung
+               `party.html` (Party-Spiele, Online-Raeume ueber Firebase), `twitch_icon.svg`, `tmdb_logo.svg`
+- `docs/`      diese Anleitung, `ERFOLGE.md` (alle Erfolge und Raenge), `PROFIL_FORMAT.md` (Profil-Sicherung),
+               `FIREBASE_EINRICHTEN.md` + `firebase_rules.json` (Party-Datenbank), `IDEEN.md` (Fahrplan)
 - `offline/`   **alles, was NICHT auf GitHub kommt** (steht in `.gitignore`)
   - `skripts/`               die Skripte zum Bauen der Datenbank
     - `fetch_anilist.py`     Anime von AniList holen (inkl. Staffel-Ketten)
