@@ -24,7 +24,7 @@
 - **Letter pairs:** a letter category is now randomly a single letter or a pair like "🔤 J / K" (title starts with one of the two). Every pair contains a rare letter (E, J, O, U, V, Y, Z, Q, X …) plus a fitting partner, so rare letters finally show up too. Letters and letter pairs never cross on a board.
 
 ### Animedle (new)
-- New mini-game under More: guess the anime – every guess shows per hint whether it matches (🟩), is close (🟨) or is different (🟥): genres, demographic, year (with ⬆️/⬇️), season, source, studio, popularity (with ⬆️/⬇️).
+- New mini-game under More: guess the anime – every guess shows per hint whether it matches (🟩), is close (🟨) or is different (🟥): genres, demographic, year (with ⬆️/⬇️), season, source, studio, popularity (with ⬆️/⬇️), first letter (with ⬅️/➡️) and number of words in the title (with ⬆️/⬇️).
 - **Daily puzzle:** the same anime for everyone each day (from the 300 most popular), progress survives a reload, daily streak, and a "Share result" button that copies an emoji grid without spoilers (for Discord / chat).
 - **Endless** mode with the same settings as Hangman (top N, only one genre).
 - 11 new achievements (category Animedle), XP for every solved puzzle (bonus for the daily).

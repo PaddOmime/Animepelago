@@ -54,7 +54,7 @@ Archipelago mode, offline mode, mini games (Hangman, Animedle with a daily puzzl
 
 No Archipelago server at hand? Open the web client, choose **Offline**, pick your settings and play alone. Every guessed anime gives you an item from the same pool, and your progress is saved in your browser. Under **🎮 More** there are mini games:
 - **🪢 Hangman:** guess the title letter by letter, every mistake reveals a clue.
-- **🟩 Animedle:** guess the anime – every guess shows how close you are (genres, demographic, year, season, source, studio, popularity). A **daily puzzle** that is the same for everyone, with streak and a spoiler-free result to share, plus an endless mode.
+- **🟩 Animedle:** guess the anime – every guess shows how close you are (genres, demographic, year, season, source, studio, popularity, first letter, number of words). A **daily puzzle** that is the same for everyone, with streak and a spoiler-free result to share, plus an endless mode.
 - **🎯 Anime Bingo:** 2–6 players or teams, **Time Attack** (alone or as a team), board codes to share the same board, a board editor, and a hidden **🔥 Risk Bingo** (7×7 to 10×10) that unlocks with an achievement.
 - **🏆 Top 100:** name the 100 best-rated anime on AniList, of all time or per genre.
 
