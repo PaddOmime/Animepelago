@@ -38,6 +38,7 @@
 
 ### Other
 - **Colorblind mode:** the 👁 button at the top switches right/wrong from green/red to blue/orange (Okabe-Ito colours) and adds symbols: crossed-out missing chips and a dashed border on guessable anime. The choice is remembered.
+- **Hangman and Animedle show the key art** (AniList cover) with title, genres and an AniList link when the anime is solved or revealed – so you at least see the anime you didn't know.
 - Windows (profile, Twitch, info) now close with the ✕ at the top or by clicking outside.
 - A leading "The" no longer counts for the letter: *The Promised Neverland* is a P anime (Letter clue, Unlock by Letter, Bingo). "T" had 263 anime, now about 100.
 - Titles also count without "The" (e.g. "Promised Neverland", "Apothecary Diaries").

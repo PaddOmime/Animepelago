@@ -177,6 +177,11 @@ dialog li.no{color:var(--mute)}
 .dlt td.g{background:#2e8b57}.dlt td.y{background:#c9a227;color:#1d1d1f}.dlt td.r{background:#b3413a}
 .cb .dlt td.g{background:#0072b2}.cb .dlt td.y{background:#e69f00;color:#1d1d1f}.cb .dlt td.r{background:#555}
 .dlt td .ar{font-size:15px;display:block}
+/* Aufloesung (Galgenmaennchen, Animedle): Key-Art von AniList, damit man den Anime auch sieht */
+.kart{display:flex;gap:14px;align-items:center;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.kart .kcov{width:120px;max-height:180px;object-fit:cover;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.25);flex:0 0 auto}
+.kart .klogo{max-width:180px;max-height:80px;object-fit:contain;flex:0 0 auto}
+.kart b{font-size:17px}
 /* Vorschlagsliste unter dem Eingabefeld (Animedle) */
 .acw{position:relative}
 .acl{position:absolute;left:0;right:0;top:100%;z-index:20;max-height:300px;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);margin-top:2px}
@@ -355,6 +360,7 @@ footer span[data-t="credits"]{flex:1 1 260px;min-width:0}
         <div id="hmMsg" style="margin-top:6px"></div>
       </div>
     </div>
+    <div id="hmReveal" class="hide"></div>
     <div id="hmKeys" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px"></div>
     <div class="row" style="margin-top:10px">
       <input id="hmGuess" autocomplete="off" style="flex:4 1 200px">
@@ -380,6 +386,7 @@ footer span[data-t="credits"]{flex:1 1 260px;min-width:0}
       <button type="button" id="dlNext" class="main hide" style="flex:0 0 auto" data-t="hmNext"></button>
     </div>
     <div id="dlMsg" style="margin-top:6px"></div>
+    <div id="dlReveal" class="hide"></div>
     <div class="dlw"><table class="dlt" id="dlTable"></table></div>
     <p class="mute" style="font-size:12px;margin:8px 0 0" data-t="dlLegend"></p>
   </div>
@@ -1653,6 +1660,20 @@ const LIVE = (() => {
   }
   return {get, need, pending: () => queue.length};
 })();
+// Aufloesung: Key-Art (Cover von AniList, sonst das TMDB-Logo) mit Titel und Link, damit man einen unbekannten Anime wenigstens sieht
+function keyArt(el, a, title){
+  el.dataset.id = a.id;
+  const cover = () => LIVE.get(a.id)?.coverImage?.large;
+  const paint = () => { if (el.dataset.id !== String(a.id)) return; const src = cover();
+    el.innerHTML = `<div class="kart">${src ? `<img class="kcov" src="${esc(src)}" alt="">` : a.logo ? `<img class="klogo" src="${esc(a.logo)}" alt="">` : ""}`
+      + `<div><b>${esc(title)}</b><div class="mute" style="font-size:13px;margin:4px 0">${esc(a.genres.join(", "))}</div>`
+      + `<a href="https://anilist.co/anime/${a.id}" target="_blank" rel="noopener">${esc(t("openAniList"))}</a></div></div>`;
+    el.classList.remove("hide"); };
+  paint(); if (!cover()) LIVE.need([a.id], true, paint);
+}
+const hideKeyArt = el => { el.classList.add("hide"); el.innerHTML = ""; el.dataset.id = ""; };
+// Bild laedt nicht (offline/gesperrt): einfach weglassen
+document.addEventListener("error", e => { const im = e.target; if (im && im.classList && (im.classList.contains("kcov") || im.classList.contains("klogo"))) im.remove(); }, true);
 // Folgen: Summe der zaehlenden TV-/ONA-Teile; nur wenn alle Teile geladen sind
 function episodesOf(a){
   let sum = 0;
@@ -2767,7 +2788,7 @@ const HM = (() => {
     st.a = pool[Math.floor(Math.random() * pool.length)]; st.big = false;
     st.word = titleOf(st.a, st.lang); st.guessed = new Set(); st.wrong = 0; st.over = false;
     LIVE.need([st.a.id], true, () => { if (st && !st.over) draw(); });  // Format/Folgen live, falls moeglich
-    $("hmMsg").textContent = ""; $("hmMsg").className = ""; $("hmGuess").value = "";
+    $("hmMsg").textContent = ""; $("hmMsg").className = ""; $("hmGuess").value = ""; hideKeyArt($("hmReveal"));
     $("hmNext").classList.add("hide"); $("hmSolve").disabled = false;
     $("hmKeys").innerHTML = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"].map(c => `<button type="button" data-k="${c}">${c}</button>`).join("");
     draw();
@@ -2824,6 +2845,7 @@ const HM = (() => {
     save(); draw(true);
     PROF.ev("hm", {won, wrong: st.wrong, lives: LIVES, streak: st.streak, big: !!st.big});
     $("hmMsg").textContent = won ? t("hmWon") : t("hmLost", st.word); $("hmMsg").className = won ? "good" : "bad";
+    keyArt($("hmReveal"), st.a, st.word);
     $("hmKeys").querySelectorAll("button").forEach(b => b.disabled = true);
     $("hmSolve").disabled = true; $("hmNext").classList.remove("hide"); $("hmNext").focus();
   }
@@ -2901,6 +2923,7 @@ const DLE = (() => {
     $("animedle").classList.remove("hide");
     $("dlMsg").textContent = st.daily && st.over ? t("dlDoneToday") : ""; $("dlMsg").className = st.daily && st.over ? "mute" : "";
     $("dlGuess").placeholder = t("dlPh"); $("dlGuess").value = "";
+    if (st.over) keyArt($("dlReveal"), st.a, titleOf(st.a, st.lang)); else hideKeyArt($("dlReveal"));
     draw(); if (!st.over) $("dlGuess").focus();
   }
   function draw(){
@@ -2943,6 +2966,7 @@ const DLE = (() => {
     PROF.ev("dle", {won, tries: n, daily: st.daily, streak: st.daily ? sv.streak : sv.eStreak});
     const nm = titleOf(st.a, st.lang);
     $("dlMsg").textContent = won ? (n === 1 ? t("dlWon1", nm) : t("dlWon", n, nm)) : t("dlLost", nm); $("dlMsg").className = won ? "good" : "bad";
+    keyArt($("dlReveal"), st.a, nm);
     draw(); if (!st.daily) $("dlNext").focus();
   }
   // Ergebnis zum Teilen: nur Farben, kein Titel (verraet nichts)
