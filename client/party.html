@@ -54,21 +54,23 @@ a{color:var(--accent)}
 .hol button{font-size:24px;padding:14px 22px}
 .pick{font-size:28px}
 /* Party-Bingo: Raster mit Kategorien oben und links */
+/* Higher or Lower am Handy: beide Anime mit Logo nebeneinander */
+.hvs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center;margin-bottom:10px}
+.hlogo{display:block;max-width:100%;max-height:70px;object-fit:contain;margin:0 auto 4px}
 .bgw{overflow-x:auto}
-.bgt{border-collapse:separate;border-spacing:4px;margin:0 auto;table-layout:fixed}
-.bgt th{font-size:13px;font-weight:700;padding:4px;overflow-wrap:anywhere;vertical-align:middle;max-width:130px}
-.bgt td{border:2px solid var(--line);border-radius:8px;width:130px;height:62px;text-align:center;font-size:13px;padding:3px;overflow-wrap:anywhere;vertical-align:middle}
+/* Alle Felder gleich gross: feste Spaltenbreiten (colgroup) und feste Hoehe fuer den Inhalt (.cc) */
+.bgt{--rh:110px;--cw:150px;--ch:76px;border-collapse:separate;border-spacing:4px;margin:0 auto;table-layout:fixed;width:calc(var(--rh) + var(--n) * (var(--cw) + 4px) + 4px)}
+.bgt col.rh{width:var(--rh)}
+.bgt th{font-size:13px;font-weight:700;padding:4px;overflow-wrap:break-word;vertical-align:middle}
+.bgt td{border:2px solid var(--line);border-radius:8px;padding:3px;text-align:center;vertical-align:middle;font-size:14px}
+.bgt .cc{height:var(--ch);display:flex;align-items:center;justify-content:center;overflow:hidden;overflow-wrap:anywhere;line-height:1.2}
+.bgt .blogo{display:block;max-width:100%;max-height:100%;object-fit:contain}
 .bgt td.free{cursor:pointer}
-.bgt .blogo{display:block;max-width:100%;max-height:54px;object-fit:contain;margin:0 auto}
-.big .bgt .blogo{max-height:64px}
-#pad .bgt .blogo{max-height:42px}
 .bgt td.sel{box-shadow:0 0 0 3px var(--accent) inset}
 .bgt td.won{outline:3px dashed var(--fg);outline-offset:2px;font-weight:800}
-.big .bgt td{width:150px;height:74px;font-size:15px}
-#pad .bgt td{width:auto;min-width:56px;height:52px;font-size:11px}
-@media (max-width:500px){#pad .bgt td{min-width:46px;font-size:10px;padding:2px}#pad .bgt{border-spacing:3px}#pad .bgt tr>th:first-child{min-width:54px}}
-#pad .bgt th{font-size:11px;max-width:90px;overflow-wrap:break-word}
-#pad .bgt tr>th:first-child{min-width:68px}
+#pad .bgt{--rh:70px;--ch:52px;width:100%;min-width:calc(var(--rh) + var(--n) * 50px);max-width:calc(var(--rh) + var(--n) * 130px)}
+#pad .bgt th,#pad .bgt td{font-size:11px;padding:2px}
+@media (max-width:500px){#pad .bgt{--rh:56px;--ch:46px;border-spacing:3px}#pad .bgt th,#pad .bgt td{font-size:10px}}
 .bgin{display:flex;gap:8px;margin:10px 0}
 .bgin input{flex:1 1 auto;min-width:0}
 .bglog{font-size:14px;margin:8px 0 0;padding-left:18px}
@@ -692,12 +694,12 @@ const APP = {
     // Logo (TMDB) wie im Offline-Bingo, Titel als Tooltip; ohne Logo der Titel als Text
     const cellPic = (a, L) => { const nm = esc(titleOf(a, L)); return a.logo ? `<img class="blogo" src="${esc(a.logo)}" alt="${nm}" title="${nm}">` : nm; };
     const col = pid => (ps.find(p => p.id === pid) || {color: 7}).color, n = g.n, line = new Set(g.win ? g.win.line : []);
-    let h = `<div class="bgw"><table class="bgt"><tr><th></th>${g.cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
+    let h = `<div class="bgw"><table class="bgt" style="--n:${n}"><colgroup><col class="rh">${"<col>".repeat(n)}</colgroup><tr><th></th>${g.cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
     for (let r = 0; r < n; r++) {
       h += `<tr><th>${esc(g.rows[r].label)}</th>`;
       for (let c = 0; c < n; c++) { const i = r * n + c, x = g.cells[i];
-        h += x ? `<td class="${line.has(i) ? "won" : ""}" style="border-color:var(--c${col(x[1])});background:color-mix(in srgb,var(--c${col(x[1])}) 18%,transparent)">${cellPic(BY_ID.get(x[0]), g.lang)}</td>`
-          : `<td class="free${sel === i ? " sel" : ""}" data-i="${i}">${sel === i ? "🎯" : ""}</td>`; }
+        h += x ? `<td class="${line.has(i) ? "won" : ""}" style="border-color:var(--c${col(x[1])});background:color-mix(in srgb,var(--c${col(x[1])}) 18%,transparent)"><div class="cc">${cellPic(BY_ID.get(x[0]), g.lang)}</div></td>`
+          : `<td class="free${sel === i ? " sel" : ""}" data-i="${i}"><div class="cc">${sel === i ? "🎯" : ""}</div></td>`; }
       h += `</tr>`;
     }
     return h + `</table></div>`;
@@ -799,7 +801,10 @@ const APP = {
       h += `</div>`;
     } else {
       const r = g.round, a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]), q = g.q[r];
-      h += `<p><b>${esc(t(q === "pop" ? "qPop" : "qYear"))}</b></p><p>${esc(titleOf(a, L))} (${esc(q === "pop" ? t("rank", RANK.get(a.id)) : a.year)})<br>vs. <b>${esc(titleOf(b, L))}</b></p>
+      const lg = x => x.logo ? `<img class="hlogo" src="${esc(x.logo)}" alt="">` : "";
+      h += `<p><b>${esc(t(q === "pop" ? "qPop" : "qYear"))}</b></p>
+        <div class="hvs"><div>${lg(a)}<div>${esc(titleOf(a, L))}</div><div class="mute">${esc(q === "pop" ? t("rank", RANK.get(a.id)) : a.year)}</div></div>
+        <b>vs.</b><div>${lg(b)}<div><b>${esc(titleOf(b, L))}</b></div><div class="mute">?</div></div></div>
         <div class="row hol"><button type="button" data-v="up" class="${mine === "up" ? "main" : ""}">${esc(t(q === "pop" ? "higher" : "newerBtn"))}</button>
         <button type="button" data-v="down" class="${mine === "down" ? "main" : ""}">${esc(t(q === "pop" ? "lower" : "olderBtn"))}</button></div>`;
     }
@@ -816,7 +821,8 @@ $("startGame").onclick = () => APP.startGame();
 $("gameSel").onchange = () => APP.draw();
 $("bgMode").onchange = () => APP.draw();
 // Logo laedt nicht (offline, gesperrt)? Dann den Titel als Text zeigen
-document.addEventListener("error", e => { const im = e.target; if (im && im.classList && im.classList.contains("blogo")) im.replaceWith(document.createTextNode(im.alt)); }, true);
+document.addEventListener("error", e => { const im = e.target; if (im && im.classList && im.classList.contains("blogo")) im.replaceWith(document.createTextNode(im.alt));
+  else if (im && im.classList && im.classList.contains("hlogo")) im.remove(); }, true);
 // Uhr im Koop-Bingo laufen lassen
 setInterval(() => { const g = APP.role ? APP.game() : null;
   if (g && g.type === "bingo" && APP.role === "ctrl" && APP.bs.wait > Date.now() - 1500 && $("bgHead")) APP.draw();
