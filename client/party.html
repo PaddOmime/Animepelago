@@ -59,6 +59,9 @@ a{color:var(--accent)}
 .bgt th{font-size:13px;font-weight:700;padding:4px;overflow-wrap:anywhere;vertical-align:middle;max-width:130px}
 .bgt td{border:2px solid var(--line);border-radius:8px;width:130px;height:62px;text-align:center;font-size:13px;padding:3px;overflow-wrap:anywhere;vertical-align:middle}
 .bgt td.free{cursor:pointer}
+.bgt .blogo{display:block;max-width:100%;max-height:54px;object-fit:contain;margin:0 auto}
+.big .bgt .blogo{max-height:64px}
+#pad .bgt .blogo{max-height:42px}
 .bgt td.sel{box-shadow:0 0 0 3px var(--accent) inset}
 .bgt td.won{outline:3px dashed var(--fg);outline-offset:2px;font-weight:800}
 .big .bgt td{width:150px;height:74px;font-size:15px}
@@ -686,12 +689,14 @@ const APP = {
   },
   // ---- Bingo-Anzeige ----
   bingoTable(g, ps, sel){
+    // Logo (TMDB) wie im Offline-Bingo, Titel als Tooltip; ohne Logo der Titel als Text
+    const cellPic = (a, L) => { const nm = esc(titleOf(a, L)); return a.logo ? `<img class="blogo" src="${esc(a.logo)}" alt="${nm}" title="${nm}">` : nm; };
     const col = pid => (ps.find(p => p.id === pid) || {color: 7}).color, n = g.n, line = new Set(g.win ? g.win.line : []);
     let h = `<div class="bgw"><table class="bgt"><tr><th></th>${g.cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
     for (let r = 0; r < n; r++) {
       h += `<tr><th>${esc(g.rows[r].label)}</th>`;
       for (let c = 0; c < n; c++) { const i = r * n + c, x = g.cells[i];
-        h += x ? `<td class="${line.has(i) ? "won" : ""}" style="border-color:var(--c${col(x[1])});background:color-mix(in srgb,var(--c${col(x[1])}) 18%,transparent)">${esc(titleOf(BY_ID.get(x[0]), g.lang))}</td>`
+        h += x ? `<td class="${line.has(i) ? "won" : ""}" style="border-color:var(--c${col(x[1])});background:color-mix(in srgb,var(--c${col(x[1])}) 18%,transparent)">${cellPic(BY_ID.get(x[0]), g.lang)}</td>`
           : `<td class="free${sel === i ? " sel" : ""}" data-i="${i}">${sel === i ? "🎯" : ""}</td>`; }
       h += `</tr>`;
     }
@@ -810,6 +815,8 @@ $("code").addEventListener("keydown", e => { if (e.key === "Enter") APP.join(); 
 $("startGame").onclick = () => APP.startGame();
 $("gameSel").onchange = () => APP.draw();
 $("bgMode").onchange = () => APP.draw();
+// Logo laedt nicht (offline, gesperrt)? Dann den Titel als Text zeigen
+document.addEventListener("error", e => { const im = e.target; if (im && im.classList && im.classList.contains("blogo")) im.replaceWith(document.createTextNode(im.alt)); }, true);
 // Uhr im Koop-Bingo laufen lassen
 setInterval(() => { const g = APP.role ? APP.game() : null;
   if (g && g.type === "bingo" && APP.role === "ctrl" && APP.bs.wait > Date.now() - 1500 && $("bgHead")) APP.draw();
