@@ -172,6 +172,11 @@ dialog li.no{color:var(--mute)}
 #twBar .sugg{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:3px 0}
 #twBar .sugg button{padding:2px 8px}
 #twBtn.live{outline:2px solid #9146ff}
+.twico{width:18px;height:18px;vertical-align:-4px}
+h3 .twico{width:22px;height:22px;vertical-align:-5px}
+@media (prefers-color-scheme:dark){.twico{filter:invert(1)}}
+#twBtn .dot{font-size:11px;margin-left:3px}
+#twBtn .dot.on{color:var(--ok)} #twBtn .dot.wait{color:var(--mute)} #twBtn .dot.prob{color:var(--warn)}
 #routeDlg{max-width:820px;max-height:88vh;overflow:auto}
 .routes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
 .route{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:13px}
@@ -2574,7 +2579,10 @@ const TW = (() => {
   const status = () => !cfg ? "" : !cfg.on ? t("twOff") : problem === "notFound" ? t("twNotFound", cfg.channel)
     : problem === "closed" && !joined ? t("twClosed") : joined ? t("twLive", cfg.channel) : t("twConnecting", cfg.channel);
   function draw(){
-    const b = $("twBtn"); b.textContent = "🟣" + (cfg ? (cfg.on ? (joined ? " ●" : " …") : " ○") : "");
+    // Knopf oben: Twitch-Logo und ein Punkt fuer den Zustand (gruen = verbunden, grau = verbindet/aus, orange = Problem)
+    const b = $("twBtn"), dot = !cfg ? "" : !cfg.on ? `<span class="dot wait">○</span>` : joined ? `<span class="dot on">●</span>`
+      : problem ? `<span class="dot prob">⚠</span>` : `<span class="dot wait">…</span>`;
+    b.innerHTML = `<img class="twico" src="twitch_icon.svg" alt="Twitch">` + dot;
     b.classList.toggle("live", !!(cfg && cfg.on && joined)); b.title = t("twTitle") + (cfg ? " – " + status() : "");
     // Leiste im Spiel
     const bar = $("twBar");
@@ -2582,7 +2590,7 @@ const TW = (() => {
     else {
       sugg = sugg.filter(s => { const a = BY_ID.get(s.id); return a && G.anime.includes(a) && (!isDone(a) || stillGuessable(a)); });
       const top = board().slice(0, 5);
-      bar.innerHTML = `<div class="${problem && !joined ? "twprob" : ""}">🟣 ${esc(status())}${problem === "notFound" ? ` <button type="button" data-tw="open">${esc(t("twSettings"))}</button>` : ""}</div>`
+      bar.innerHTML = `<div class="${problem && !joined ? "twprob" : ""}"><img class="twico" src="twitch_icon.svg" alt=""> ${esc(status())}${problem === "notFound" ? ` <button type="button" data-tw="open">${esc(t("twSettings"))}</button>` : ""}</div>`
         + (cfg.mode === "suggest" && sugg.length ? `<div class="mute">${esc(t("twSuggTitle"))}</div>` + sugg.map(s => { const a = BY_ID.get(s.id);
             return `<div class="sugg"><b>#${G.number.get(a.id)} ${esc(displayTitle(a))}</b> <span class="mute">${esc(t("twFrom", s.users.slice(0, 3).join(", ") + (s.users.length > 3 ? " +" + (s.users.length - 3) : "")))}</span>`
               + `<button type="button" data-ok="${s.id}">✓</button><button type="button" data-no="${s.id}">✕</button></div>`; }).join("") : "")
@@ -2597,13 +2605,13 @@ const TW = (() => {
   }
   function dialog(){
     const box = $("twBody");
-    let h = `<h3 style="margin:0 0 6px">${esc(t("twTitle"))}</h3><p class="mute" style="font-size:13px;margin:0 0 8px">${esc(t("twInfo"))}</p>`;
+    let h = `<h3 style="margin:0 0 6px"><img class="twico" src="twitch_icon.svg" alt=""> ${esc(t("twTitle"))}</h3><p class="mute" style="font-size:13px;margin:0 0 8px">${esc(t("twInfo"))}</p>`;
     if (!cfg) {
       h += `<div class="row"><label><span>${esc(t("twChannel"))}</span><input id="twChan" maxlength="80" autocomplete="off" placeholder="dein_kanal"></label>
         <button type="button" id="twSetup" class="main" style="flex:0 0 auto">${esc(t("twSetup"))}</button></div><div id="twMsg"></div>`;
     } else {
       const top = board();
-      h += `<p class="${problem && !joined && cfg.on ? "warn" : ""}" style="font-weight:600">🟣 ${esc(status())}</p>
+      h += `<p class="${problem && !joined && cfg.on ? "warn" : ""}" style="font-weight:600">${esc(status())}</p>
         <div class="row" style="align-items:center">
           <button type="button" id="twToggle" class="${cfg.on ? "main" : ""}" style="flex:0 0 auto">${esc(t(cfg.on ? "twIsOn" : "twIsOff"))}</button>
           <label><span>${esc(t("twChannel"))}</span><input id="twChan" maxlength="80" autocomplete="off" value="${esc(cfg.channel)}"></label>
