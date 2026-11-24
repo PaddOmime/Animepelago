@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.2.1 (in progress)
+## 1.0.0
+
+The first full release. Thanks to everyone who playtested!
+
+### Twitch
+- The Twitch integration is **no longer a preview**: tested live with a real Twitch chat (guessing, spam protection, display).
 
 ### Word Salad (new)
 - New mini game under More: the letters of an anime title are shuffled word by word – unscramble it. **Endless** with a streak, or **2 minutes** on the clock with a personal best.

@@ -50,7 +50,7 @@ Räume auf archipelago.gg können das. Ein Server auf deinem eigenen PC meist ni
 - **DeathLink / TrapLink:** schaltest du mit `death_link` / `trap_link` in deiner YAML ein.
 - **Collect:** Sammelt ein anderer Spieler seine Items aus deiner Welt ein, werden diese Anime mit 📦 markiert.
   Ein Schalter im Client entscheidet, ob sie für dein Ziel zählen.
-- **Twitch-Chat** *(Vorschau)*: Mit dem Twitch-Knopf rät dein Chat mit. Sprecht vorher in eurer Multiworld ab,
+- **Twitch-Chat**: Mit dem Twitch-Knopf rät dein Chat mit. Sprecht vorher in eurer Multiworld ab,
   ob das okay ist.
 - **Profile:** Lege ein Profil an (👤) und wähle eine Route – dann geben auch deine Archipelago-Spiele EP und Erfolge.
 - **Probleme oder Ideen?** Schreib ein Issue auf [GitHub](https://github.com/PaddOmime/Animepelago/issues).

@@ -50,7 +50,7 @@ Rooms on archipelago.gg support that. A server on your own PC usually doesn't �
 - **DeathLink / TrapLink:** switch them on with `death_link` / `trap_link` in your YAML.
 - **Collect:** if another player collects their items from your world, those anime are marked 📦. A switch in the
   client decides whether they count towards your goal.
-- **Twitch chat** *(preview)*: with the Twitch button your chat can guess along. Agree with your multiworld first
+- **Twitch chat**: with the Twitch button your chat can guess along. Agree with your multiworld first
   whether that is OK.
 - **Profiles:** create a profile (👤) and choose a route – then your Archipelago games also give XP and achievements.
 - **Problems or ideas?** Open an issue on [GitHub](https://github.com/PaddOmime/Animepelago/issues).

@@ -67,7 +67,7 @@ The **👤** button at the top creates a profile on your device. Offline games, 
 
 **🎉 Party games** (under More) let several people play together online, e.g. over Discord: the host opens a room and shares the show view, everyone joins with the room code on their phone and answers in secret. Games: **Blind Ranking**, **Higher or Lower** and **Bingo** (against each other or co-op Time Attack).
 
-### Twitch chat *(preview)*
+### Twitch chat
 
 With the Twitch button at the top your chat can guess along: enter your channel name (no login – the page only reads the chat), and correct answers from chat count for unlocked anime. Agree with your multiworld whether chat help is OK.
 
@@ -150,7 +150,7 @@ Archipelago-Modus, Offline-Modus, Minispiele (Galgenmännchen, Wortsalat, Animed
 
 **Party-Spiele:** Unter **🎉 Party-Spiele** (bei Weitere) spielt ihr zusammen online, z. B. über Discord: Der Gastgeber öffnet einen Raum, alle treten mit dem Raum-Code am Handy bei und antworten geheim. Spiele: **Blind Ranking**, **Higher or Lower** und **Bingo** (gegeneinander oder Koop-Time-Attack).
 
-**Twitch-Chat *(Vorschau)*:** Mit dem Twitch-Knopf oben rät dein Chat mit: Kanalname eintragen (ohne Login, die Seite liest den Chat nur), richtige Antworten aus dem Chat zählen für freigeschaltete Anime. Sprecht in eurer Multiworld ab, ob Chat-Hilfe okay ist.
+**Twitch-Chat:** Mit dem Twitch-Knopf oben rät dein Chat mit: Kanalname eintragen (ohne Login, die Seite liest den Chat nur), richtige Antworten aus dem Chat zählen für freigeschaltete Anime. Sprecht in eurer Multiworld ab, ob Chat-Hilfe okay ist.
 
 Die Items und Optionen sind oben in der englischen Tabelle erklärt.
 

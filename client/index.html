@@ -1739,7 +1739,7 @@ function episodesOf(a){
 const PROF = (() => {
   // Einzahl, wenn es dafuer einen eigenen Text gibt ("Errate einen Anime" statt "Errate 1 Anime")
   const tn = (k, n, ...a) => n === 1 && TXT[lang][k + "1"] != null ? t(k + "1", n, ...a) : t(k, n, ...a);
-  const KEY = "animepelago_profiles_v1", FORMAT = "animepelago-profile", V = 1, APP = "0.2.1", MAXP = 30;
+  const KEY = "animepelago_profiles_v1", FORMAT = "animepelago-profile", V = 1, APP = "1.0.0", MAXP = 30;
   // Rekord-Speicher der Spiele (je Profil). Das laufende Offline-Spiel wird nicht exportiert.
   const SCOPED = {offline: "animepelago_offline_v1", scores: "animepelago_scores_v1", hangman: "animepelago_hangman_v1",
                   top100: "animepelago_top100_v1", bingo: "animepelago_bingo_v1", animedle: "animepelago_animedle_v1",
