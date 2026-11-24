@@ -33,6 +33,7 @@ MIN_ANIME_BOTH = 50
 
 class AnimepelagoWeb(WebWorld):
     theme = "partyTime"
+    game_info_languages = ["en", "de"]
     option_groups = option_groups
     tutorials = [
         Tutorial("Multiworld Setup Guide", "How to play Animepelago with Archipelago.",

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1 (in progress)
+
+### Languages
+- **Spanish, French, Italian and Japanese** are now complete in the client: Animedle, the new achievements and the footer were still English.
+- **Party games** (`party.html`) now also speak Spanish, French, Italian and Japanese (before: only German and English).
+
+### Archipelago
+- **New guides:** the game page and the setup guides (shown on archipelago.gg and in the Launcher) are rewritten and complete – items, goals, important options, connecting, local servers. The game page now also exists in German.
+- The description of `title_language` said a leading "The" counts for the letter – it doesn't (since 0.1.4). Fixed in the option text and the YAML template.
+
 ## 0.2.0
 
 ### Archipelago

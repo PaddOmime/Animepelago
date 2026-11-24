@@ -122,7 +122,7 @@ TitleLanguage = type("TitleLanguage", (Choice,), {
     Other languages: the title in that language, e.g. Spirited Away in German = "Chihiros Reise ins Zauberland" = C.
     Anime without a title in that language use the English one.
     japanese: titles are shown in Japanese; the letter comes from the Romaji title (Japanese has no A-Z).
-    A leading "The" counts. Titles starting with a number or symbol use the "#" letter.
+    A leading "The" does not count (The Promised Neverland = P). Titles starting with a number or symbol use the "#" letter.
     Every known title in every language is accepted when guessing.""",
     "__module__": __name__,
     "display_name": "Title Language",
