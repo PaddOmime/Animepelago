@@ -1697,8 +1697,8 @@ const PROF = (() => {
   const KEY = "animepelago_profiles_v1", FORMAT = "animepelago-profile", V = 1, APP = "0.2.1", MAXP = 30;
   // Rekord-Speicher der Spiele (je Profil). Das laufende Offline-Spiel wird nicht exportiert.
   const SCOPED = {offline: "animepelago_offline_v1", scores: "animepelago_scores_v1", hangman: "animepelago_hangman_v1",
-                  top100: "animepelago_top100_v1", bingo: "animepelago_bingo_v1"};
-  const EXPORTED = ["scores", "hangman", "top100", "bingo"];
+                  top100: "animepelago_top100_v1", bingo: "animepelago_bingo_v1", animedle: "animepelago_animedle_v1"};
+  const EXPORTED = ["scores", "hangman", "top100", "bingo", "animedle"];
   const BG_NAMES = "animepelago_bingo_names_v1";
   const BG_TA = "animepelago_bingo_ta_v1";  // Time-Attack-Zeiten (alle auf diesem Geraet), beste 100  // Bingo-Bestenliste nach Spielernamen (fuer alle auf diesem Geraet)
   const idOk = id => typeof id === "string" && /^p_[a-z0-9]{10,24}$/.test(id);
@@ -1970,7 +1970,7 @@ const PROF = (() => {
     if (type === "tpDone") { inc(p, "tpDoneL", 1, d.list); p.stats.tpLists = Object.keys(p.stats.tpDoneL || {}).length; xp += 200; if (d.list === "all") p.stats.tpAll = 1; if (d.ms < 30 * 60000) p.stats.tpFast = 1; }
     if (type === "bg") {
       inc(p, "bgGames"); xp += 10 + 5 * d.fields; inc(p, "bgFields", d.fields);
-      if (d.won) { inc(p, "bgWins"); xp += 50; if (d.size === 3) p.stats.bgWin3 = 1; if (d.size >= 42) p.stats.bgWin67 = 1;
+      if (d.won) { inc(p, "bgWins"); xp += 50; if (d.size === 9) p.stats.bgWin3 = 1; if (d.size >= 42) p.stats.bgWin67 = 1;
         if (d.team) p.stats.bgTeamWin = 1; if (!d.oppFields) p.stats.bgShut = 1; }
       if (d.draw) p.stats.bgDraw = 1;
     }
@@ -2095,6 +2095,13 @@ const PROF = (() => {
       goal: String(e.goal ?? "").slice(0, 60), mode: String(e.mode ?? "").slice(0, 60), date: String(e.date ?? "").slice(0, 30)})) : null;
     if (k === "hangman") return v && typeof v === "object" ? {streak: num(v.streak, 0, 1e9), solved: num(v.solved, 0, 1e9)} : null;
     if (k === "bingo") return v && typeof v === "object" ? {score: num(v.score, 0, 1e12), full: num(v.full, 0, 1e9)} : null;
+    if (k === "animedle") {
+      if (!v || typeof v !== "object") return null;
+      const day = s => /^\d{4}-\d\d-\d\d$/.test(s || "") ? s : "", d = v.daily && typeof v.daily === "object" && day(v.daily.date) ? v.daily : null;
+      return {played: num(v.played, 0, 1e6), won: num(v.won, 0, 1e6), streak: num(v.streak, 0, 1e6), best: num(v.best, 0, 1e6),
+        eStreak: num(v.eStreak, 0, 1e6), eSolved: num(v.eSolved, 0, 1e6), lastWin: day(v.lastWin),
+        daily: d ? {date: d.date, guesses: (Array.isArray(d.guesses) ? d.guesses : []).filter(Number.isInteger).slice(0, 200), over: d.over === true, won: d.won === true} : null};
+    }
     if (k === "top100") {
       if (!v || typeof v !== "object") return null; const out = {};
       for (const [name, e] of Object.entries(v).slice(0, 60)) {

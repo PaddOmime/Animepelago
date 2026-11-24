@@ -10,6 +10,11 @@
 - **New guides:** the game page and the setup guides (shown on archipelago.gg and in the Launcher) are rewritten and complete – items, goals, important options, connecting, local servers. The game page now also exists in German.
 - The description of `title_language` said a leading "The" counts for the letter – it doesn't (since 0.1.4). Fixed in the option text and the YAML template.
 
+### Fixes (review)
+- The achievement **"Tic-Tac-Anime"** (win a 3×3 bingo) could never unlock – the board size was compared wrongly. Fixed; it unlocks with your next 3×3 win.
+- **Animedle progress now belongs to the profile** like the other mini games: it is saved in profile backups, taken over by your first profile and removed when a profile is deleted (before, the daily streak was shared by all profiles on the device and missing in backups).
+- Party games: the privacy note now says exactly what happens to rooms – "Leave" in the show view deletes the room, rooms left open are locked after 6 hours.
+
 ## 0.2.0
 
 ### Archipelago
