@@ -87,7 +87,7 @@ A message appears in the client, newly guessable anime light up, and perks becom
 
 ## Extras in the client
 
-- **Offline mode and mini games** (Hangman, Animedle with a daily puzzle, Anime Bingo, Top 100) – no server needed.
+- **Offline mode and mini games** (Hangman, Word Salad, Animedle with a daily puzzle, Anime Bingo, Top 100) – no server needed.
 - **Profiles, routes and achievements**: Archipelago games count for your play days; with a chosen route they also give XP.
 - **Twitch integration** *(preview)*: your chat can guess along (read-only, no login). Agree with your multiworld
   whether chat help is OK.

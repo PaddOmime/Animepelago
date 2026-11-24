@@ -2,6 +2,11 @@
 
 ## 0.2.1 (in progress)
 
+### Word Salad (new)
+- New mini game under More: the letters of an anime title are shuffled word by word – unscramble it. **Endless** with a streak, or **2 minutes** on the clock with a personal best.
+- 💡 reveals the first letter of the next word (costs 5 seconds on the clock). Any known name of the anime counts as the answer; afterwards you see the key art.
+- Titles follow your title language and top N / genre settings. 11 new achievements (now 233), XP for every title, saved in your profile and in backups.
+
 ### Languages
 - **Spanish, French, Italian and Japanese** are now complete in the client: Animedle, the new achievements and the footer were still English.
 - **Party games** (`party.html`) now also speak Spanish, French, Italian and Japanese (before: only German and English).

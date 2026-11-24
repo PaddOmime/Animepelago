@@ -89,7 +89,7 @@ Der Client zeigt eine Meldung, neu ratbare Anime leuchten auf, Hilfen werden nut
 
 ## Extras im Client
 
-- **Offline-Modus und Minispiele** (Galgenmännchen, Animedle mit Tagesrätsel, Anime-Bingo, Top 100) – ohne Server.
+- **Offline-Modus und Minispiele** (Galgenmännchen, Wortsalat, Animedle mit Tagesrätsel, Anime-Bingo, Top 100) – ohne Server.
 - **Profile, Routen und Erfolge**: Archipelago-Spiele zählen als Spieltage; mit gewählter Route geben sie auch EP.
 - **Twitch-Integration** *(Vorschau)*: Dein Chat rät mit (nur lesend, ohne Login). Sprecht in eurer Multiworld ab,
   ob Chat-Hilfe okay ist.

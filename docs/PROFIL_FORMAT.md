@@ -33,6 +33,7 @@ Das Passwort-Hashing (Argon2/bcrypt) gehört dann allein auf den Server.
     "hangman": {streak, solved},
     "top100":  { "<Liste>": {found:[ids], ms, gaveUp, best} },
     "bingo":   {score, full},
+    "wordsalad": {streak, best, solved, timedBest},
     "animedle": {played, won, streak, best, lastWin, eStreak, eSolved, daily: {date, guesses:[ids], over, won}}
   }
 }

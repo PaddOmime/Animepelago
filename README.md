@@ -5,7 +5,7 @@
 Guess anime to send checks to your friends. Their games send you genres, letters and perks that unlock more anime to guess.
 
 ### ▶ [Play now in your browser](https://paddomime.github.io/Animepelago/client/)
-Archipelago mode, offline mode, mini games (Hangman, Animedle with a daily puzzle, Anime Bingo, Top 100) and party games to play together online. Profiles with routes, ranks and achievements. No install needed.
+Archipelago mode, offline mode, mini games (Hangman, Word Salad, Animedle with a daily puzzle, Anime Bingo, Top 100) and party games to play together online. Profiles with routes, ranks and achievements. No install needed.
 
 > 🇩🇪 Deutsche Anleitung: siehe [unten](#deutsch)
 
@@ -55,12 +55,13 @@ Archipelago mode, offline mode, mini games (Hangman, Animedle with a daily puzzl
 No Archipelago server at hand? Open the web client, choose **Offline**, pick your settings and play alone. Every guessed anime gives you an item from the same pool, and your progress is saved in your browser. Under **🎮 More** there are mini games:
 - **🪢 Hangman:** guess the title letter by letter, every mistake reveals a clue.
 - **🟩 Animedle:** guess the anime – every guess shows how close you are (genres, demographic, year, season, source, studio, popularity, first letter, number of words). A **daily puzzle** that is the same for everyone, with streak and a spoiler-free result to share, plus an endless mode.
+- **🥗 Word Salad:** the letters of a title are shuffled word by word – unscramble it, endless with a streak or as many as you can in 2 minutes.
 - **🎯 Anime Bingo:** 2–6 players or teams, **Time Attack** (alone or as a team), board codes to share the same board, a board editor, and a hidden **🔥 Risk Bingo** (7×7 to 10×10) that unlocks with an achievement.
 - **🏆 Top 100:** name the 100 best-rated anime on AniList, of all time or per genre.
 
 ### Profiles, routes and achievements
 
-The **👤** button at the top creates a profile on your device. Offline games, mini games and – once you pick a route – Archipelago games give XP. Choose one of 7 routes (Saiyan, Pirate, Ninja, Soul Reaper, Hero, Jujutsu Sorcerer, Demon Slayer) with 10 ranks each, unlock 222 achievements (list: [docs/ERFOLGE.md](docs/ERFOLGE.md)) and compare records per game. Profiles can be saved as a file or code and loaded on another device.
+The **👤** button at the top creates a profile on your device. Offline games, mini games and – once you pick a route – Archipelago games give XP. Choose one of 7 routes (Saiyan, Pirate, Ninja, Soul Reaper, Hero, Jujutsu Sorcerer, Demon Slayer) with 10 ranks each, unlock 233 achievements (list: [docs/ERFOLGE.md](docs/ERFOLGE.md)) and compare records per game. Profiles can be saved as a file or code and loaded on another device.
 
 ### Party games
 
@@ -123,7 +124,7 @@ The code is licensed under the [MIT License](LICENSE). Data from third parties k
 Errate Anime, um Checks an deine Mitspieler zu schicken. Ihre Spiele schicken dir Genres, Buchstaben und Perks, die weitere Anime freischalten.
 
 ### ▶ [Jetzt im Browser spielen](https://paddomime.github.io/Animepelago/client/)
-Archipelago-Modus, Offline-Modus, Minispiele (Galgenmännchen, Animedle mit Tagesrätsel, Anime-Bingo, Top 100) und Party-Spiele für zusammen online. Profile mit Routen, Rängen und Erfolgen. Keine Installation nötig.
+Archipelago-Modus, Offline-Modus, Minispiele (Galgenmännchen, Wortsalat, Animedle mit Tagesrätsel, Anime-Bingo, Top 100) und Party-Spiele für zusammen online. Profile mit Routen, Rängen und Erfolgen. Keine Installation nötig.
 
 ### So funktioniert es
 
@@ -143,9 +144,9 @@ Archipelago-Modus, Offline-Modus, Minispiele (Galgenmännchen, Animedle mit Tage
 3. Das Spiel wie gewohnt erstellen und hosten.
 4. Den **Web-Client** öffnen: **[https://paddomime.github.io/Animepelago/client/](https://paddomime.github.io/Animepelago/client/)**. Server, Port, Spielername und gegebenenfalls Passwort eingeben und losraten.
 
-**Offline-Modus:** Kein Archipelago-Server zur Hand? Im Web-Client **Offline** wählen, Einstellungen festlegen und allein spielen. Jeder erratene Anime gibt ein Item aus demselben Pool, der Spielstand wird im Browser gespeichert. Unter **🎮 Weitere** gibt es Minispiele: **🪢 Galgenmännchen**, **🟩 Animedle** (mit **Tagesrätsel** für alle gleich, Serie und Ergebnis zum Teilen), **🎯 Anime-Bingo** (2–6 Spieler oder Teams, **Time Attack**, Board-Codes, Editor und ein verstecktes **🔥 Risiko-Bingo**) und **🏆 Top 100**.
+**Offline-Modus:** Kein Archipelago-Server zur Hand? Im Web-Client **Offline** wählen, Einstellungen festlegen und allein spielen. Jeder erratene Anime gibt ein Item aus demselben Pool, der Spielstand wird im Browser gespeichert. Unter **🎮 Weitere** gibt es Minispiele: **🪢 Galgenmännchen**, **🥗 Wortsalat** (Buchstaben eines Titels entwirren, endlos oder 2 Minuten auf Zeit), **🟩 Animedle** (mit **Tagesrätsel** für alle gleich, Serie und Ergebnis zum Teilen), **🎯 Anime-Bingo** (2–6 Spieler oder Teams, **Time Attack**, Board-Codes, Editor und ein verstecktes **🔥 Risiko-Bingo**) und **🏆 Top 100**.
 
-**Profile, Routen und Erfolge:** Über **👤** oben legst du ein Profil an. Offline-Spiele, Minispiele und – mit gewählter Route – Archipelago-Spiele geben EP. 7 Routen mit je 10 Rängen, 222 Erfolge (Liste: [docs/ERFOLGE.md](docs/ERFOLGE.md)), Bestenlisten je Spiel. Profile lassen sich als Datei oder Code sichern und auf einem anderen Gerät laden.
+**Profile, Routen und Erfolge:** Über **👤** oben legst du ein Profil an. Offline-Spiele, Minispiele und – mit gewählter Route – Archipelago-Spiele geben EP. 7 Routen mit je 10 Rängen, 233 Erfolge (Liste: [docs/ERFOLGE.md](docs/ERFOLGE.md)), Bestenlisten je Spiel. Profile lassen sich als Datei oder Code sichern und auf einem anderen Gerät laden.
 
 **Party-Spiele:** Unter **🎉 Party-Spiele** (bei Weitere) spielt ihr zusammen online, z. B. über Discord: Der Gastgeber öffnet einen Raum, alle treten mit dem Raum-Code am Handy bei und antworten geheim. Spiele: **Blind Ranking**, **Higher or Lower** und **Bingo** (gegeneinander oder Koop-Time-Attack).
 
