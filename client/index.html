@@ -184,12 +184,13 @@ dialog li.no{color:var(--mute)}
 .kart b{font-size:17px}
 /* Wortsalat: jedes Wort eine Gruppe Buchstaben-Kacheln */
 .wst{display:flex;flex-wrap:wrap;gap:14px 22px;justify-content:center;margin:16px 0 8px}
-.wst .w{display:flex;gap:4px}
-.wst .w span{width:34px;height:42px;display:flex;align-items:center;justify-content:center;border:2px solid var(--line);border-radius:8px;
-  font:800 20px/1 ui-monospace,monospace;background:var(--card)}
+.wst .w{display:flex;gap:4px;max-width:100%}
+/* Kachelbreite passt sich der Wortlaenge an (--n), damit auch lange Woerter am Handy in eine Zeile passen */
+.wst .w span{width:min(34px, calc((100vw - 72px) / var(--n, 8) - 4px));height:42px;display:flex;align-items:center;justify-content:center;border:2px solid var(--line);border-radius:8px;
+  font:800 min(20px, calc((100vw - 72px) / var(--n, 8) * .6))/1 ui-monospace,monospace;background:var(--card)}
 .wst .w span.fix{border-color:var(--ok);color:var(--ok)}
 .wst.solved .w span{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
-@media (max-width:500px){.wst .w span{width:26px;height:34px;font-size:16px}.wst{gap:10px 16px}}
+@media (max-width:500px){.wst .w{gap:3px}.wst .w span{height:32px;border-radius:6px;border-width:1.5px}.wst{gap:10px 14px}}
 .clock2{font:800 20px/1 ui-monospace,monospace}
 /* Vorschlagsliste unter dem Eingabefeld (Animedle) */
 .acw{position:relative}
@@ -2968,8 +2969,9 @@ const WS = (() => {
   }
   // Hinweise: Anfangsbuchstaben der Woerter der Reihe nach fest an Platz 1
   function tiles(){
+    const n = Math.max(8, ...st.words.map(w => w.length));  // alle Kacheln gleich gross, passend zum laengsten Wort
     return st.words.map((w, i) => { const s = st.solved ? w : st.mixed[i], fix = i < st.hints && !st.solved;
-      return `<div class="w">${[...s].map((c, j) => `<span class="${fix && j === 0 ? "fix" : ""}">${esc(c)}</span>`).join("")}</div>`; }).join("");
+      return `<div class="w" style="--n:${n}">${[...s].map((c, j) => `<span class="${fix && j === 0 ? "fix" : ""}">${esc(c)}</span>`).join("")}</div>`; }).join("");
   }
   function draw(){
     $("wsTiles").innerHTML = tiles(); $("wsTiles").classList.toggle("solved", st.solved);
