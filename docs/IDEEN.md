@@ -29,44 +29,49 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 - [ ] Ablauf: erst Skizzen/Mockups, dann bauen – Bedienung der Archipelago-Verbindung darf sich nicht verschlechtern
 
 
-### Hauptfeature: Guess the Anime Character
-- [ ] **Wer ist das?** – ein Charakter wird gezeigt, du errätst seinen Namen (oder den Anime, je nach Modus)
-  - Bild startet stark verpixelt / als Silhouette / als kleiner Ausschnitt und wird mit jedem Fehlversuch klarer
-  - dazu Text-Hinweise der Reihe nach: Anime-Genre → Rolle (Haupt-/Nebenfigur) → Geschlecht → Anime → Anfangsbuchstabe
-  - **Endlos** mit Serie, **auf Zeit**, und ein **Tagesrätsel** (für alle gleich, Ergebnis zum Teilen wie Animedle)
-  - Antwort zählt mit Vor- oder Nachname, Spitzname, japanischer Schreibweise, kleine Tippfehler okay
-  - Vorschläge beim Tippen wie bei Animedle (Name + Anime + Bild klein)
-- [ ] **Characterdle** – wie Animedle, aber für Figuren: Anime, Geschlecht, Rolle, Haarfarbe, Alter, Beliebtheit, Jahr des Anime …
-  (welche Spalten gehen, hängt von den Daten ab)
-- [ ] **Erkenne den Anime an der Figur** – Figur wird gezeigt, du nennst den Anime (leichter Einstieg)
+### Figuren-Spiele (abgestimmt 26.11.)
+- [ ] **Wer ist das?** (Hauptfeature): Bild verpixelt/Silhouette, wird mit jedem Fehlversuch klarer;
+      Tagesrätsel, Endlos, auf Zeit. Bild nur live von AniList, nichts speichern.
+  - Text-Hinweise der Reihe nach: Genre → Rolle → Geschlecht → Anime → Anfangsbuchstabe
+  - Antwort zählt mit Vor-/Nachname, Spitzname, kleine Tippfehler okay; Vorschläge beim Tippen wie Animedle
+- [ ] **Aus welchem Anime?**: Figur wird gezeigt, Anime nennen (leichter Einstieg)
+- [ ] **Impostor**: 4 Figuren, 3 aus demselben Anime – finde den Impostor (kleine Among-Us-Anspielung im Text, keine fremden Grafiken)
+- [ ] **Animedle-Option** „Anime / Figur raten“ (Characterdle); **Tagesrätsel bleibt Anime**
+- [ ] **Wortsalat-Option** „Anime-Titel / Figurenname“
+- [ ] **Figuren-Bingo** als eigener Modus: Felder = Anime, man trägt passende Figuren ein
+- [ ] Bingo: neue Felder rund um Figuren (weibl. Hauptfigur, Name auf S, mehr als 50 Figuren …) – **alles als Optionen**, weiter ausbaubar
+- nicht geplant: Higher or Lower mit Figuren, Japanischer Name, Tabu
 
-### Weitere Charakter-Spiele
-- [ ] **Anime-Draft** (Party): reihum Figuren für ein Team wählen (z. B. „stärkstes Team“), dann abstimmen
-- [ ] **Anime-Tabu** (Party): Anime erklären, ohne die Namen der Hauptfiguren zu sagen
-- [ ] **Charakter-Blind-Ranking** (Party): Figuren blind auf Plätze 1–N setzen
-- [ ] **Silhouetten-Buzzer** (Party): wer die Figur zuerst erkennt, buzzert
-- [ ] **Smash or Pass / Wer würde gewinnen?** (Party, Abstimmung) – nur zum Spaß, keine Wertung
-- [ ] Charaktere im **Bingo** als neue Kategorie (z. B. „hat eine Figur mit blauen Haaren“) – nur wenn die Daten es hergeben
+### Party
+- [ ] **Silhouetten-Buzzer**: wer die Figur zuerst erkennt, gewinnt die Runde
+- [ ] **Anime-Draft**: reihum Figuren fürs Team wählen, dann abstimmen; mit Themen (Schwertkämpfer, Nahkämpfer …) – Themen brauchen eigene Daten, später ausbauen
+- [ ] **Blind-Ranking**: Option „Anime / Figuren“
+- [ ] **Wer würde gewinnen?** (Abstimmung, ohne Wertung)
+- [ ] Smash or Pass: nur mit Figuren, die sicher erwachsen sind (Alter-Daten fehlen noch) – siehe Notiz im Chat
 
-### Archipelago
-- [ ] **Waifupelago** = Option von Animepelago (dieselbe APWorld, kein eigenes Spiel):
-  YAML-Option z. B. `waifupelago: off / on / mixed` → Figuren statt/zusätzlich zu Anime raten
-  - Anzeigename im Client umschaltbar auf **Husbandopelago** (⚙️ Einstellungen, **nur der Name**)
-  - welche Figuren kommen, ist eine **eigene YAML-Option** (Mehrfachauswahl), z. B.
-    `character_gender: [female, male, nonbinary]` – Standard: alle; Figuren ohne Angabe nur, wenn alle gewählt sind
-    (Daten: weiblich / männlich / nichtbinär inkl. genderfluid, agender …; unbekannte Wikidata-Werte werden gesammelt)
-- [ ] **Regel für Figuren-Daten (Geschlecht, Namen …): Was der Autor / das offizielle Werk sagt, gilt.**
-  Reihenfolge: offizielle Angabe (Databook, Vivre Card, SBS, offizielle Seite, Interview) > Wikidata > Fandom.
-  Abweichungen kommen in eine Korrekturliste (wie corrections.json) – **immer mit Quelle**, z. B.
-  `"Yamato (One Piece)": {"gender": "f", "source": "Vivre Card, Sept. 2021"}`
-  - **Mehrere oder unklare Angaben werden IMMER von Hand geprüft.** Das Skript schreibt sie nach
-    `raw/figuren_pruefen.tsv`; solche Figuren kommen erst ins Spiel, wenn sie mit Quelle in der Korrekturliste stehen.
-- [ ] **Nebenfiguren bleiben drin**, kommen aber seltener dran: Auswahl gewichtet nach Bekanntheit
-      (Wikidata: Anzahl Wikipedia-Artikel der Figur; später evtl. AniList-Rolle/Favoriten live)
-- [ ] Datenstand prüfen: `offline/skripts/figuren_holen.bat` (Wikidata) → Auswertung an Claude; danach Fandom
-- [ ] Option `character_checks`: zu jedem Anime zusätzlich 1–3 Hauptfiguren als Checks (Figur erraten = Check)
-- [ ] Charakter-Karten als sammelbare Füller (wie Clow Cards), mit Album im Client
-- [ ] neues Ziel: „Erkenne N Figuren“
+### Archipelago (Waifupelago)
+- [ ] Figuren als **Checks**, Figuren als **Hinweis-Items**, **Charakter-Karten** als Füller mit Album, Ziel **„Erkenne N Figuren“** (Filter Waifu/Husbando/alle)
+- [ ] Option: Figuren eines Anime erst **freigeschaltet, wenn der Anime erraten** ist
+- [ ] Option: Anime **und** Figuren gleichzeitig raten (gemischt)
+- [ ] **Waifupelago** = Option von Animepelago (dieselbe APWorld): `waifupelago: off / on / mixed`
+  - Anzeigename im Client umschaltbar auf **Husbandopelago** (nur der Name)
+  - eigene Option `character_gender: [female, male, nonbinary]` (Standard alle; ohne Angabe nur bei „alle“)
+
+### Regeln für Figuren-Daten
+- [ ] **Was der Autor / das offizielle Werk sagt, gilt.** Reihenfolge: offizielle Angabe (Databook, Vivre Card, SBS,
+  offizielle Seite, Interview) > Wikidata > Fandom. Abweichungen in eine Korrekturliste – **immer mit Quelle**, z. B.
+  `"Yamato (One Piece)": {"gender": "f", "source": "Vivre Card, Sept. 2021", "note": "Tochter von Kaido, sieht sich als Oden"}`
+- [ ] **Mehrere oder unklare Angaben werden IMMER von Hand geprüft** (`raw/figuren_pruefen.tsv`), erst dann ins Spiel
+- [ ] **Nebenfiguren bleiben drin**, kommen aber seltener dran: sanfte Gewichtung nach Bekanntheit
+      (Wikidata: Anzahl Wikipedia-Artikel; später evtl. AniList-Rolle live)
+- [x] Datenstand (25.11.): ~18.000 Figuren; Top 300: 69 % mit Figuren; Geschlecht bei 55 %; 145 zu prüfen → Lücken mit Fandom füllen
+
+### Glossar / Lexikon (Profil)
+- [ ] Jeder erratene Anime und jede erratene Figur wird **ab sofort im Hintergrund** im Profil vermerkt
+- [ ] Das Glossar selbst wird sichtbar, wenn man eine **Route geschafft** hat (Belohnung)
+- [ ] Eintrag erst offen, wenn genau dieser Anime / diese Figur erraten wurde; vorher „???“
+- [ ] nur Text-Daten (Name, Anime, Jahr …) gespeichert; Bilder live von AniList
+- [ ] Lieblingsfigur als Avatar (Bild live), Erfolge („100 Figuren“, „Alle Strohhüte“), Sammelalbum = Teil des Glossars
 
 ### Profil
 - [ ] neue Erfolge für Charakter-Spiele; eventuell eine 8. Route (z. B. „Isekai-Held“ oder „Idol“)
