@@ -61,6 +61,8 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
   `"Yamato (One Piece)": {"gender": "f", "source": "Vivre Card, Sept. 2021"}`
   - **Mehrere oder unklare Angaben werden IMMER von Hand geprüft.** Das Skript schreibt sie nach
     `raw/figuren_pruefen.tsv`; solche Figuren kommen erst ins Spiel, wenn sie mit Quelle in der Korrekturliste stehen.
+- [ ] **Nebenfiguren bleiben drin**, kommen aber seltener dran: Auswahl gewichtet nach Bekanntheit
+      (Wikidata: Anzahl Wikipedia-Artikel der Figur; später evtl. AniList-Rolle/Favoriten live)
 - [ ] Datenstand prüfen: `offline/skripts/figuren_holen.bat` (Wikidata) → Auswertung an Claude; danach Fandom
 - [ ] Option `character_checks`: zu jedem Anime zusätzlich 1–3 Hauptfiguren als Checks (Figur erraten = Check)
 - [ ] Charakter-Karten als sammelbare Füller (wie Clow Cards), mit Album im Client
