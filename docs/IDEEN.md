@@ -59,6 +59,8 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
   Reihenfolge: offizielle Angabe (Databook, Vivre Card, SBS, offizielle Seite, Interview) > Wikidata > Fandom.
   Abweichungen kommen in eine Korrekturliste (wie corrections.json) – **immer mit Quelle**, z. B.
   `"Yamato (One Piece)": {"gender": "f", "source": "Vivre Card, Sept. 2021"}`
+  - **Mehrere oder unklare Angaben werden IMMER von Hand geprüft.** Das Skript schreibt sie nach
+    `raw/figuren_pruefen.tsv`; solche Figuren kommen erst ins Spiel, wenn sie mit Quelle in der Korrekturliste stehen.
 - [ ] Datenstand prüfen: `offline/skripts/figuren_holen.bat` (Wikidata) → Auswertung an Claude; danach Fandom
 - [ ] Option `character_checks`: zu jedem Anime zusätzlich 1–3 Hauptfiguren als Checks (Figur erraten = Check)
 - [ ] Charakter-Karten als sammelbare Füller (wie Clow Cards), mit Album im Client
