@@ -55,6 +55,10 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
   - welche Figuren kommen, ist eine **eigene YAML-Option** (Mehrfachauswahl), z. B.
     `character_gender: [female, male, nonbinary]` – Standard: alle; Figuren ohne Angabe nur, wenn alle gewählt sind
     (Daten: weiblich / männlich / nichtbinär inkl. genderfluid, agender …; unbekannte Wikidata-Werte werden gesammelt)
+- [ ] **Regel für Figuren-Daten (Geschlecht, Namen …): Was der Autor / das offizielle Werk sagt, gilt.**
+  Reihenfolge: offizielle Angabe (Databook, Vivre Card, SBS, offizielle Seite, Interview) > Wikidata > Fandom.
+  Abweichungen kommen in eine Korrekturliste (wie corrections.json) – **immer mit Quelle**, z. B.
+  `"Yamato (One Piece)": {"gender": "f", "source": "Vivre Card, Sept. 2021"}`
 - [ ] Datenstand prüfen: `offline/skripts/figuren_holen.bat` (Wikidata) → Auswertung an Claude; danach Fandom
 - [ ] Option `character_checks`: zu jedem Anime zusätzlich 1–3 Hauptfiguren als Checks (Figur erraten = Check)
 - [ ] Charakter-Karten als sammelbare Füller (wie Clow Cards), mit Album im Client
