@@ -44,6 +44,11 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 - [ ] Charaktere im **Bingo** als neue Kategorie (z. B. „hat eine Figur mit blauen Haaren“) – nur wenn die Daten es hergeben
 
 ### Archipelago
+- [ ] Im neuen UI unter 🌐 Archipelago zwei Unterpunkte: **Animepelago** (Anime raten) und **Charakter-Variante**
+      (Name offen, z. B. Charapelago / Characterpelago)
+  - Vorschlag: **dieselbe APWorld** mit YAML-Option `guess: anime / characters / mixed` statt eigener APWorld
+    (weniger Pflege, eine Datei; zwei Spieler im selben Multiworld können trotzdem verschiedene Varianten spielen)
+  - eigene APWorld nur, wenn die Charakter-Variante eigene Items/Fallen/Ziele braucht
 - [ ] Option `character_checks`: zu jedem Anime zusätzlich 1–3 Hauptfiguren als Checks (Figur erraten = Check)
 - [ ] Charakter-Karten als sammelbare Füller (wie Clow Cards), mit Album im Client
 - [ ] neues Ziel: „Erkenne N Figuren“
