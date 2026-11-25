@@ -15,7 +15,12 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 
 ### UI-Überarbeitung (Pflicht für 2.0)
 - [ ] Erst sammeln: Was stört heute? (Screenshots, Handy und PC)
-- [ ] Startseite: klare Übersicht aller Modi (Archipelago, Offline, Minispiele, Party) statt langer Liste
+- [ ] **Plan (abgesegnet):**
+  1. Start = 5 große Kacheln: 🌐 Archipelago · 🎮 Offline · 🧩 Minispiele · 🎉 Party · 👤 Profil
+  2. Minispiele-Seite: eine Kachel pro Spiel (Symbol, ein Satz, Bestwert); Risiko-Bingo + Editor unter Bingo
+  3. Einstellungen nur bei Bedarf: Standardwerte + großer „▶ Spielen“, Seltenes unter „⚙️ Mehr Optionen“
+  4. feste Kopfzeile: ← Zurück · Modus · Profil/Sprache/⚙️ (Twitch, Farbenblind, Hell/Dunkel ins Einstellungsfenster)
+  5. im Spiel nur das Spiel; Statistik/Erfolge im Ergebnis-Fenster
 - [ ] einheitliches Design für alle Minispiele (Kopfzeile, Knöpfe, Ergebnis-Fenster, Teilen)
 - [ ] Handy zuerst: große Tipp-Flächen, nichts läuft über den Rand
 - [ ] Profil, Erfolge und Routen übersichtlicher (eigene Seite statt Fenster?)
@@ -44,8 +49,8 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 - [ ] Charaktere im **Bingo** als neue Kategorie (z. B. „hat eine Figur mit blauen Haaren“) – nur wenn die Daten es hergeben
 
 ### Archipelago
-- [ ] Im neuen UI unter 🌐 Archipelago zwei Unterpunkte: **Animepelago** (Anime raten) und **Charakter-Variante**
-      (Name offen, z. B. Charapelago / Characterpelago)
+- [ ] Im neuen UI unter 🌐 Archipelago zwei Unterpunkte: **Animepelago** (Anime raten) und **Waifupelago**
+      (Figuren raten). Name umschaltbar auf **Husbandopelago** (Einstellung im Profil/⚙️, nur Anzeige)
   - Vorschlag: **dieselbe APWorld** mit YAML-Option `guess: anime / characters / mixed` statt eigener APWorld
     (weniger Pflege, eine Datei; zwei Spieler im selben Multiworld können trotzdem verschiedene Varianten spielen)
   - eigene APWorld nur, wenn die Charakter-Variante eigene Items/Fallen/Ziele braucht
