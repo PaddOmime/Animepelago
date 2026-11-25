@@ -52,8 +52,10 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 - [ ] **Waifupelago** = Option von Animepelago (dieselbe APWorld, kein eigenes Spiel):
   YAML-Option z. B. `waifupelago: off / on / mixed` → Figuren statt/zusätzlich zu Anime raten
   - Anzeigename im Client umschaltbar auf **Husbandopelago** (⚙️ Einstellungen, **nur der Name**)
-  - welche Figuren kommen, ist eine **eigene YAML-Option**, z. B. `character_gender: all / female / male`
-    (braucht Geschlecht in den Daten; Figuren ohne Angabe nur bei `all`)
+  - welche Figuren kommen, ist eine **eigene YAML-Option** (Mehrfachauswahl), z. B.
+    `character_gender: [female, male, nonbinary]` – Standard: alle; Figuren ohne Angabe nur, wenn alle gewählt sind
+    (Daten: weiblich / männlich / nichtbinär inkl. genderfluid, agender …; unbekannte Wikidata-Werte werden gesammelt)
+- [ ] Datenstand prüfen: `offline/skripts/figuren_holen.bat` (Wikidata) → Auswertung an Claude; danach Fandom
 - [ ] Option `character_checks`: zu jedem Anime zusätzlich 1–3 Hauptfiguren als Checks (Figur erraten = Check)
 - [ ] Charakter-Karten als sammelbare Füller (wie Clow Cards), mit Album im Client
 - [ ] neues Ziel: „Erkenne N Figuren“
