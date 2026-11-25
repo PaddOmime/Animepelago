@@ -47,7 +47,8 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 - [ ] **Anime-Draft**: reihum Figuren fürs Team wählen, dann abstimmen; mit Themen (Schwertkämpfer, Nahkämpfer …) – Themen brauchen eigene Daten, später ausbauen
 - [ ] **Blind-Ranking**: Option „Anime / Figuren“
 - [ ] **Wer würde gewinnen?** (Abstimmung, ohne Wertung)
-- [ ] **Team oder Pass** (alle Figuren): „Würdest du die Figur in dein Abenteuer-Team holen?“ – Abstimmung, ohne Wertung
+- [ ] **Pick or Pass** (alle Figuren): Figur ins eigene Team holen oder nicht – Abstimmung (Chat), ohne Wertung;
+      optional wechselnde Themen pro Runde (z. B. Strohhut-Crew oder Marine?)
 - [ ] **Smash or Pass** (eigener Modus): **nur Figuren, die im Werk sicher volljährig sind** – braucht Altersangaben
       (gleiche Quellenregel: offiziell > Wikidata > Fandom); Figuren ohne gesichertes Alter kommen nicht vor.
       Kein „stell dir vor, sie wäre 18“ für minderjährige Figuren.
