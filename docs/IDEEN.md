@@ -47,7 +47,10 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 - [ ] **Anime-Draft**: reihum Figuren fürs Team wählen, dann abstimmen; mit Themen (Schwertkämpfer, Nahkämpfer …) – Themen brauchen eigene Daten, später ausbauen
 - [ ] **Blind-Ranking**: Option „Anime / Figuren“
 - [ ] **Wer würde gewinnen?** (Abstimmung, ohne Wertung)
-- [ ] Smash or Pass: nur mit Figuren, die sicher erwachsen sind (Alter-Daten fehlen noch) – siehe Notiz im Chat
+- [ ] **Team oder Pass** (alle Figuren): „Würdest du die Figur in dein Abenteuer-Team holen?“ – Abstimmung, ohne Wertung
+- [ ] **Smash or Pass** (eigener Modus): **nur Figuren, die im Werk sicher volljährig sind** – braucht Altersangaben
+      (gleiche Quellenregel: offiziell > Wikidata > Fandom); Figuren ohne gesichertes Alter kommen nicht vor.
+      Kein „stell dir vor, sie wäre 18“ für minderjährige Figuren.
 
 ### Archipelago (Waifupelago)
 - [ ] Figuren als **Checks**, Figuren als **Hinweis-Items**, **Charakter-Karten** als Füller mit Album, Ziel **„Erkenne N Figuren“** (Filter Waifu/Husbando/alle)
