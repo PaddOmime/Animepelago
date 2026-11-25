@@ -6,15 +6,23 @@ Gemerkte Wünsche und Vorschläge. Erledigtes wandert in den CHANGELOG.
 ---
 
 ## 1.0.x – Kleinkram nach dem Release
-- [ ] **Daten:** Fate/strange Fake als eigener Anime (hängt an Fate/Zero), Namen „Fate/stay night [Heaven's Feel]“
-      und „Fate/Grand Order“; andere große Reihen genauso durchsehen (Gundam, Monogatari, Lupin …) → `bauen.bat`
-- [ ] **Firebase aufräumen:** alte Party-Räume (älter als 1 Tag) automatisch löschen
-- [ ] **Testskripte:** Risiko-Bingo-Test an die Freischaltung per Erfolg anpassen
+- [ ] **Firebase aufräumen:** alte Party-Räume automatisch löschen – **zusammen machen**
 - [ ] Wortsalat: Überspringen im 2-Minuten-Modus kostet evtl. 3 Sekunden (gegen „leichte Titel ausrollen“)
 - [ ] Übersetzungen ES/FR/IT/JA von Muttersprachlern gegenlesen lassen
 - [ ] **Twitch Variante B** (Spiel antwortet im Chat, „✅ X hat #12 erraten“, MVP) – nur wenn der Chat es will
 
-## 2.0 – Charaktere 🧑‍🎤
+## 2.0 – Charaktere 🧑‍🎤 und neues UI
+
+### UI-Überarbeitung (Pflicht für 2.0)
+- [ ] Erst sammeln: Was stört heute? (Screenshots, Handy und PC)
+- [ ] Startseite: klare Übersicht aller Modi (Archipelago, Offline, Minispiele, Party) statt langer Liste
+- [ ] einheitliches Design für alle Minispiele (Kopfzeile, Knöpfe, Ergebnis-Fenster, Teilen)
+- [ ] Handy zuerst: große Tipp-Flächen, nichts läuft über den Rand
+- [ ] Profil, Erfolge und Routen übersichtlicher (eigene Seite statt Fenster?)
+- [ ] Hell/Dunkel, Farbenblind-Modus beibehalten; Schrift und Farben festlegen (kleines Design-System)
+- [ ] Party-Seite (Show-Ansicht und Handy) im selben Stil
+- [ ] Ablauf: erst Skizzen/Mockups, dann bauen – Bedienung der Archipelago-Verbindung darf sich nicht verschlechtern
+
 
 ### Hauptfeature: Guess the Anime Character
 - [ ] **Wer ist das?** – ein Charakter wird gezeigt, du errätst seinen Namen (oder den Anime, je nach Modus)
