@@ -3241,7 +3241,7 @@ const WHO = (() => {
   // Bild live von AniList: Figur per Name suchen und nur nehmen, wenn sie in einem Teil genau dieses Anime vorkommt.
   // Sonst Bild aus dem Fandom-Wiki (Dateiname aus den Daten, live geladen). Bild-Spalte 0 = kein Bild -> ueberspringen.
   // Was beim Spielen herauskommt (Bild ja/nein), merkt sich der Browser, damit nichts doppelt gefragt wird.
-  const imgCache = new Map(); let lastAsk = 0;
+  const imgCache = new Map(); let lastAsk = 0, gap = 800;
   const SEEN_KEY = "animepelago_charimg_v1"; let seen = {};
   try { const o = JSON.parse(localStorage.getItem(SEEN_KEY) || "{}"); if (o && typeof o === "object") seen = o; } catch(e) {}
   const learn = (k, v) => { seen[k] = v; const ks = Object.keys(seen); if (ks.length > 20000) delete seen[ks[0]]; try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen)); } catch(e) {} };
@@ -3250,10 +3250,17 @@ const WHO = (() => {
   async function picture(c){
     const k = c.aid + ":" + c.h; if (imgCache.has(k)) return imgCache.get(k);
     if (c.img === 0 || seen[k] === 0) { imgCache.set(k, null); return null; }
-    const wait = Math.max(0, lastAsk + 700 - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
     const q = `query($s:String){Page(perPage:6){characters(search:$s){name{full} image{large} media(perPage:50,type:ANIME){nodes{id}}}}}`;
-    const res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
-      body: JSON.stringify({query: q, variables: {s: nameOf(c)}})});
+    let res = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      // Abstand zwischen Anfragen; nach "zu viele Anfragen" (429) langsamer werden und kurz warten
+      const wait = Math.max(0, lastAsk + gap - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
+      res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
+        body: JSON.stringify({query: q, variables: {s: nameOf(c)}})});
+      if (res.status !== 429) break;
+      gap = 2200; const ra = Math.min(20, Math.max(2, +res.headers.get("Retry-After") || 5));
+      await new Promise(r => setTimeout(r, ra * 1000));
+    }
     if (!res.ok) throw new Error("anilist " + res.status);
     const parts = new Set(BY_ID.get(c.aid).parts.map(p => p.id));
     const hit = ((await res.json())?.data?.Page?.characters || []).find(x => (x.media?.nodes || []).some(m => parts.has(m.id)));
@@ -3461,10 +3468,10 @@ const WHO = (() => {
   try { const o = JSON.parse(localStorage.getItem(IK) || "{}"); for (const k of Object.keys(isv)) isv[k] = num(o[k], 0, 1e9); } catch(e) {}
   const isave = () => { try { localStorage.setItem(IK, JSON.stringify(isv)); } catch(e) {} };
   async function withPic(list, n, my){            // n Figuren mit Bild aus der Liste (nach Gewicht)
-    const out = [], left = [...list];
+    const out = [], left = [...list]; let fails = 0;
     while (out.length < n && left.length && ip === my) {
       const c = weighted(left, Math.random()); left.splice(left.indexOf(c), 1);
-      let url = null; try { url = await picture(c); } catch(e) { return null; }
+      let url = null; try { url = await picture(c); } catch(e) { fails = (fails || 0) + 1; if (fails > 2) return null; continue; }
       if (url) out.push({c, url});
     }
     return out.length === n ? out : null;
@@ -3499,7 +3506,7 @@ const WHO = (() => {
     if (!set) { $("impMsg").textContent = t("whoNoImg"); $("impMsg").className = "warn"; $("impNext").classList.remove("hide"); return; }
     ip.set = set; $("impMsg").textContent = t("impQ"); $("impMsg").className = "";
     $("impGrid").innerHTML = set.cards.map((x, i) => `<button type="button" class="impc" data-i="${i}"><img src="${esc(x.url)}" alt="" referrerpolicy="no-referrer"><b>${esc(nameOf(x.c))}</b><small></small></button>`).join("");
-    ip.next = impFind(my);                          // naechste Runde schon vorbereiten
+    ip.next = new Promise(r => setTimeout(r, 1500)).then(() => ip === my ? impFind(my) : null);   // naechste Runde schon vorbereiten
   }
   function impPick(i){
     if (!ip || !ip.set || ip.done) return; ip.done = true;
