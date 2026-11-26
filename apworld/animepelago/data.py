@@ -47,4 +47,16 @@ try:
 except (OSError, ValueError, TypeError):
     _chars = {"version": 0, "tiers": {}}
 CHARACTER_DATA_VERSION: int = _chars.get("version", 0)
-CHARACTER_TIERS: dict[int, list[int]] = {int(k): v for k, v in _chars.get("tiers", {}).items() if int(k) in ANIME_BY_ID}
+# Je Anime und Geschlecht ("f", "m", "nb", "o" = ohne Angabe): [selten, mittel, bekannt]. Version 1 kannte kein Geschlecht.
+CHARACTER_TIERS: dict[int, dict[str, list[int]]] = {
+    int(k): (v if isinstance(v, dict) else {"o": v}) for k, v in _chars.get("tiers", {}).items() if int(k) in ANIME_BY_ID}
+
+
+def character_total(aid: int) -> int:
+    """Alle Figuren eines Anime (alle Geschlechter): so viele Figuren-Orte gibt es hoechstens."""
+    return sum(sum(t) for t in CHARACTER_TIERS.get(aid, {}).values())
+
+
+# Ziel "Big 3 + Daddy": Anime-ID, Held, Heldin (Love Interest). Reihenfolge = feste IDs der Boss-Orte.
+BIG3 = [(223, "Goku", "Chi-Chi"), (21, "Monkey D. Luffy", "Boa Hancock"),
+        (20, "Naruto Uzumaki", "Hinata Hyūga"), (269, "Ichigo Kurosaki", "Orihime Inoue")]

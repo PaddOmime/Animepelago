@@ -61,6 +61,16 @@ Depending on `goal`:
 - **anime** (default): guess the number of anime set in `anime_goal`.
 - **exodia**: collect all 5 Exodia pieces.
 - **genre_master**: guess `genre_master_anime` anime in each of `genre_master_genres` different genres.
+- **big3_daddy**: guess Goku, Luffy, Naruto and Ichigo – the Big 3 and their "Daddy" Dragon Ball. Each hero opens after you
+  guessed his anime and have a "Characters: <Genre>" of it and all 3 Progressive Rarity. With `character_gender: [female]`
+  it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue.
+
+## Waifupelago (characters)
+
+- `character_rarity` (off / famous_only / medium_and_famous / all): characters of your guessed anime become extra checks.
+  You need a "Characters: <Genre>" item of the anime and "Progressive Rarity" – the rarest characters come first, the most famous last.
+- `character_max`: at most this many character checks per anime (0 = no limit).
+- `character_gender`: which characters can be guessed (female, male, nonbinary).
 
 ## Important options
 

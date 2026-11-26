@@ -9,11 +9,16 @@ class Goal(Choice):
     """What you need to win.
     anime: guess the number of anime set in Anime Goal.
     exodia: collect all 5 pieces of Exodia. The pieces become progression items spread across the multiworld.
-    genre_master: guess enough anime in enough genres (see Genre Master Genres and Genre Master Anime)."""
+    genre_master: guess enough anime in enough genres (see Genre Master Genres and Genre Master Anime).
+    big3_daddy: guess Goku, Luffy, Naruto and Ichigo (the Big 3 and their "Daddy" Dragon Ball).
+      Dragon Ball, ONE PIECE, Naruto and Bleach are always in your world. A hero opens after you guessed his anime
+      and have one "Characters: <Genre>" of it and all 3 Progressive Rarity. Turns on Waifupelago (all characters).
+      With Character Gender = female it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue instead."""
     display_name = "Goal"
     option_anime = 0
     option_exodia = 1
     option_genre_master = 2
+    option_big3_daddy = 3
     default = 0
 
 
@@ -242,6 +247,13 @@ class CharacterRarity(Choice):
     default = 0
 
 
+class CharacterGender(OptionSet):
+    """Waifupelago: which characters can be guessed. Characters without a known gender only come with all three."""
+    display_name = "Character Gender"
+    valid_keys = {"female", "male", "nonbinary"}
+    default = frozenset({"female", "male", "nonbinary"})
+
+
 class CharacterMax(Range):
     """Waifupelago: at most this many character checks per anime. 0 = no limit (every character in play is a check)."""
     display_name = "Characters per Anime"
@@ -277,10 +289,11 @@ class AnimepelagoOptions(PerGameCommonOptions):
     trap_link: TrapLink
     character_rarity: CharacterRarity
     character_max: CharacterMax
+    character_gender: CharacterGender
 
 
 option_groups = [
     OptionGroup("Game", [Goal, GenreMasterGenres, GenreMasterAnime, AnimeCount, AnimeGoal, OnlyGenres, OnlyGenresStartAnime, UnlockMode, UnlockByYear, UnlockBySource, UnlockBySeason, UnlockByStudio, TitleLanguage, GenreRule, GenreStep, IncludeDemographics, StartingGenre]),
     OptionGroup("Items", [PerkItems, GeassItems, StandArrowItems, TrapItems, TrapLink]),
-    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax]),
+    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax, CharacterGender]),
 ]
