@@ -519,7 +519,7 @@ h1,h2,h3,h4{font-weight:800}
     <div class="whoimg"><canvas id="whoCv" width="300" height="420" role="img"></canvas></div>
     <ol id="whoHints" class="whoh"></ol>
     <div class="row" style="margin-top:8px">
-      <div class="acw" style="flex:4 1 200px"><input id="whoGuess" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="whoList" aria-expanded="false" style="width:100%"><div id="whoList" class="ac hide" role="listbox"></div></div>
+      <div class="acw" style="flex:4 1 200px"><input id="whoGuess" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="whoList" aria-expanded="false" style="width:100%"><div id="whoList" class="acl hide" role="listbox"></div></div>
       <button type="button" id="whoSend" class="main" style="flex:0 0 auto" data-t="dlSend"></button>
       <button type="button" id="whoHint" style="flex:0 0 auto" data-t="whoHint"></button>
       <button type="button" id="whoSkip" style="flex:0 0 auto" data-t="wsSkip"></button>
@@ -560,7 +560,7 @@ h1,h2,h3,h4{font-weight:800}
       <button type="button" id="cdBack" style="flex:0 0 auto" data-t="yBack"></button>
     </div>
     <div class="row" style="margin-top:8px">
-      <div class="acw" style="flex:4 1 200px"><input id="cdGuess" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="cdList" aria-expanded="false" style="width:100%"><div id="cdList" class="ac hide" role="listbox"></div></div>
+      <div class="acw" style="flex:4 1 200px"><input id="cdGuess" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="cdList" aria-expanded="false" style="width:100%"><div id="cdList" class="acl hide" role="listbox"></div></div>
       <button type="button" id="cdSend" class="main" style="flex:0 0 auto" data-t="dlSend"></button>
       <button type="button" id="cdGiveUp" style="flex:0 0 auto" data-t="tpGiveUp"></button>
       <button type="button" id="cdNext" class="main hide" style="flex:0 0 auto" data-t="chNext"></button>
@@ -704,7 +704,7 @@ h1,h2,h3,h4{font-weight:800}
       <button type="button" id="cpClose" style="flex:0 0 auto" data-t="cpClose"></button>
     </div>
     <div class="row" style="margin-top:8px">
-      <div class="acw" style="flex:4 1 200px"><input id="cpIn" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="cpList" aria-expanded="false" style="width:100%"><div id="cpList" class="ac hide" role="listbox"></div></div>
+      <div class="acw" style="flex:4 1 200px"><input id="cpIn" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="cpList" aria-expanded="false" style="width:100%"><div id="cpList" class="acl hide" role="listbox"></div></div>
       <button type="button" id="cpSend" class="main" style="flex:0 0 auto" data-t="guessBtn"></button>
     </div>
     <div id="cpMsg" style="margin-top:6px" aria-live="polite"></div>
@@ -1605,6 +1605,8 @@ function checkAnime(list){
   if (locs.length) send({cmd:"LocationChecks", locations:locs});
   render(); checkGoal();
 }
+// Passt die Eingabe zum Titel eines Anime (Anfang eines Titels in irgendeiner Sprache, ab 3 Zeichen)?
+const titleHit = (a, q) => q.length >= 3 && [a.title, ...Object.values(a.titles || {})].some(x => x && norm(x).startsWith(q));
 // ---------- Waifupelago: Figuren-Checks ----------
 // Nach einem erratenen Anime lassen sich seine Figuren raten. Dafuer braucht man ein "Characters: <Genre>" eines
 // seiner Genres und genug "Progressive Rarity" (erst die seltensten Figuren, zuletzt die bekanntesten).
@@ -3747,16 +3749,22 @@ const WHO = (() => {
       const out = [];
       const src = st.ap ? G.anime.filter(a => data.has(a.id)).map(a => [a, data.get(a.id)])
         : st.daily ? DB.anime.slice(0, 300).filter(a => data.has(a.id)).map(a => [a, data.get(a.id)]) : poolList();
+      // Anime-Titel eingegeben: dessen Figuren vorschlagen (bekanntere zuerst)
+      const byTitle = [];
+      for (const [a, l] of src) if (titleHit(a, q)) for (const c of l) if (c.img !== 0 && seen[c.aid + ":" + c.h] !== 0) byTitle.push({c, n: nameOf(c), a});
+      byTitle.sort((x, y) => y.c.w - x.c.w);
       for (const [a, l] of src) {
         for (const c of l) { if (c.img === 0 || seen[c.aid + ":" + c.h] === 0) continue; const n = nameOf(c); if (norm(n).startsWith(q) || n.split(/\s+/).some(w => norm(w).startsWith(q))) out.push({c, n, a}); }
       }
       out.sort((x, y) => y.c.w - x.c.w || x.n.localeCompare(y.n));
-      items = out.slice(0, 12); on = -1; if (!items.length) return close();
+      const seenN = new Set(), merged = [];
+      for (const x of [...out, ...byTitle]) { const k = x.n + "|" + x.a.id; if (!seenN.has(k)) { seenN.add(k); merged.push(x); } }
+      items = merged.slice(0, out.length ? 12 : 30); on = -1; if (!items.length) return close();
       box.innerHTML = items.map((x, i) => `<div role="option" data-i="${i}"><span>${esc(x.n)} <small>· ${esc(titleOf(x.a, st.lang))}</small></span></div>`).join("");
       box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
     }
     function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length;
-      box.querySelectorAll("div[data-i]").forEach((el, i) => el.classList.toggle("on", i === on)); }
+      box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
     inp.addEventListener("input", show);
     inp.addEventListener("keydown", e => {
       if (e.key === "ArrowDown") { e.preventDefault(); move(1); } else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
@@ -3954,7 +3962,7 @@ const WHO = (() => {
       box.innerHTML = items.map((n, i) => `<div role="option" data-i="${i}"><span>${esc(n)}</span></div>`).join("");
       box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
     }
-    function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => el.classList.toggle("on", i === on)); }
+    function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
     inp.addEventListener("input", show);
     inp.addEventListener("keydown", e => {
       if (items.length && e.key === "ArrowDown") { e.preventDefault(); move(1); } else if (items.length && e.key === "ArrowUp") { e.preventDefault(); move(-1); }
@@ -4252,13 +4260,13 @@ const CDLE = (() => {
       const q = norm(inp.value); if (!st || st.over || !all || q.length < 2) return close();
       const out = [];
       for (const x of all) { if (st.guesses.includes(x)) continue; const n = nameOf(x);
-        if (norm(n).startsWith(q) || n.split(/\s+/).some(w => norm(w).startsWith(q))) out.push(x); }
+        if (norm(n).startsWith(q) || n.split(/\s+/).some(w => norm(w).startsWith(q)) || titleHit(x.a, q)) out.push(x); }
       out.sort((p, r) => r.c.w - p.c.w || nameOf(p).localeCompare(nameOf(r)));
       items = out.slice(0, 12); on = -1; if (!items.length) return close();
       box.innerHTML = items.map((x, i) => `<div role="option" data-i="${i}"><span>${esc(nameOf(x))} <small>· ${esc(titleOf(x.a, st.lang))}</small></span></div>`).join("");
       box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
     }
-    function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => el.classList.toggle("on", i === on)); }
+    function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
     inp.addEventListener("input", show);
     inp.addEventListener("keydown", e => {
       if (e.key === "ArrowDown") { e.preventDefault(); move(1); } else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
