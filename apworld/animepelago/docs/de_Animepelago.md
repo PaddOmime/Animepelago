@@ -63,6 +63,17 @@ Je nach `goal`:
 - **anime** (Standard): Errate so viele Anime wie in `anime_goal` eingestellt.
 - **exodia**: Sammle alle 5 Exodia-Teile.
 - **genre_master**: Errate `genre_master_anime` Anime in `genre_master_genres` verschiedenen Genres.
+- **big3_daddy**: Errate Goku, Ruffy, Naruto und Ichigo – die Big 3 und ihren „Daddy“ Dragon Ball. Jeder Held öffnet sich,
+  wenn sein Anime erraten ist und du ein „Characters: <Genre>“ davon und alle 3 Progressive Rarity hast. Mit
+  `character_gender: [female]` sind es Chi-Chi, Boa Hancock, Hinata Hyuga und Orihime Inoue.
+- **characters**: Errate `character_goal` Figuren (Waifupelago; wird automatisch eingeschaltet).
+
+## Waifupelago (Figuren)
+
+- `character_rarity` (off / famous_only / medium_and_famous / all): Figuren deiner erratenen Anime werden zusätzliche Checks.
+  Du brauchst ein „Characters: <Genre>“ des Anime und „Progressive Rarity“ – erst kommen die seltensten Figuren, zuletzt die bekanntesten.
+- `character_max`: höchstens so viele Figuren-Checks pro Anime (0 = keine Grenze).
+- `character_gender`: welche Figuren geraten werden (female, male, nonbinary).
 
 ## Wichtige Optionen
 
@@ -71,7 +82,7 @@ Je nach `goal`:
 | `anime_count` | Wie viele Anime (Checks) in deiner Welt sind. |
 | `unlock_mode` | `genres`, `letters` oder `both` (Standard) – was ein Anime braucht, bevor du ihn raten darfst. |
 | `genre_rule` | `any`: eines seiner Genres reicht (mit `genre_step` brauchen lange Genre-Listen mehr). `all`: alle Genres. |
-| `starting_genre` | Mit welchem Genre du startest (oder `random`). |
+| `starting_genre` | Mit welchem Genre du startest, `auto` (Standard: ein selteneres Genre mit genug Anime) oder `random`. |
 | `only_genres` | Nur Anime bestimmter Genres, z. B. `[Romance]`. Dann gibt es keine Genre-Items; du startest mit den Items einiger Anime (`only_genres_start_anime`). |
 | `title_language` | Bestimmt die Buchstaben und in welcher Sprache der Client die Titel zeigt. |
 | `unlock_by_year` / `_source` / `_season` / `_studio` | Zusätzliche Freischalt-Items. |

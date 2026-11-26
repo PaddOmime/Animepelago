@@ -61,6 +61,17 @@ Depending on `goal`:
 - **anime** (default): guess the number of anime set in `anime_goal`.
 - **exodia**: collect all 5 Exodia pieces.
 - **genre_master**: guess `genre_master_anime` anime in each of `genre_master_genres` different genres.
+- **big3_daddy**: guess Goku, Luffy, Naruto and Ichigo – the Big 3 and their "Daddy" Dragon Ball. Each hero opens after you
+  guessed his anime and have a "Characters: <Genre>" of it and all 3 Progressive Rarity. With `character_gender: [female]`
+  it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue.
+- **characters**: guess `character_goal` characters (Waifupelago; turned on automatically).
+
+## Waifupelago (characters)
+
+- `character_rarity` (off / famous_only / medium_and_famous / all): characters of your guessed anime become extra checks.
+  You need a "Characters: <Genre>" item of the anime and "Progressive Rarity" – the rarest characters come first, the most famous last.
+- `character_max`: at most this many character checks per anime (0 = no limit).
+- `character_gender`: which characters can be guessed (female, male, nonbinary).
 
 ## Important options
 
@@ -69,7 +80,7 @@ Depending on `goal`:
 | `anime_count` | How many anime (checks) are in your world. |
 | `unlock_mode` | `genres`, `letters` or `both` (default) – what an anime needs before you may guess it. |
 | `genre_rule` | `any`: one of its genres is enough (with `genre_step` long genre lists need more). `all`: every genre. |
-| `starting_genre` | Which genre you start with (or `random`). |
+| `starting_genre` | Which genre you start with, `auto` (default: a rarer genre with enough anime) or `random`. |
 | `only_genres` | Play only with anime of certain genres, e.g. `[Romance]`. Then there are no genre items; you start with the items of a few anime (`only_genres_start_anime`). |
 | `title_language` | Decides the letters and in which language the client shows titles. |
 | `unlock_by_year` / `_source` / `_season` / `_studio` | Extra unlock items on top. |

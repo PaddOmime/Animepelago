@@ -9,11 +9,18 @@ class Goal(Choice):
     """What you need to win.
     anime: guess the number of anime set in Anime Goal.
     exodia: collect all 5 pieces of Exodia. The pieces become progression items spread across the multiworld.
-    genre_master: guess enough anime in enough genres (see Genre Master Genres and Genre Master Anime)."""
+    genre_master: guess enough anime in enough genres (see Genre Master Genres and Genre Master Anime).
+    big3_daddy: guess Goku, Luffy, Naruto and Ichigo (the Big 3 and their "Daddy" Dragon Ball).
+      Dragon Ball, ONE PIECE, Naruto and Bleach are always in your world. A hero opens after you guessed his anime
+      and have one "Characters: <Genre>" of it and all 3 Progressive Rarity. Turns on Waifupelago (all characters).
+      With Character Gender = female it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue instead.
+    characters: guess the number of characters set in Character Goal (Waifupelago). Turns on Waifupelago if it is off."""
     display_name = "Goal"
     option_anime = 0
     option_exodia = 1
     option_genre_master = 2
+    option_big3_daddy = 3
+    option_characters = 4
     default = 0
 
 
@@ -145,13 +152,14 @@ def _genre_option_name(genre: str) -> str:
     return "option_" + genre.lower().replace(" ", "_").replace("-", "_")
 
 
-# StartingGenre: eine Auswahl pro Genre plus "random". Wird aus der Genre-Liste erzeugt.
+# StartingGenre: eine Auswahl pro Genre plus "auto". Wird aus der Genre-Liste erzeugt.
+# ("random" darf seit Archipelago 0.6.9 keine eigene Auswahl mehr sein; "random" in der YAML waehlt jetzt ein beliebiges Genre.)
 StartingGenre = type("StartingGenre", (Choice,), {
-    "__doc__": "The genre you have unlocked from the start. random picks one that unlocks enough anime.",
+    "__doc__": "The genre you have unlocked from the start. auto picks a rarer genre that unlocks enough anime. random picks any genre.",
     "__module__": __name__,
     "display_name": "Starting Genre",
     **{_genre_option_name(g): i for i, g in enumerate(GENRES)},
-    "option_random": len(GENRES),
+    "option_auto": len(GENRES),
     "default": len(GENRES),
 })
 
@@ -223,6 +231,47 @@ class TrapItems(DefaultOnToggle):
     display_name = "Trap Items"
 
 
+class CharacterRarity(Choice):
+    """Waifupelago: guess characters of your anime as extra checks.
+    A character check of an anime opens after you guessed that anime.
+    You also need one "Characters: <Genre>" item of its genres and enough "Progressive Rarity" items.
+    Progressive Rarity unlocks the rarest characters first and the most famous last.
+    off: no characters.
+    famous_only: only well-known characters (1 Progressive Rarity).
+    medium_and_famous: medium and famous characters (2 Progressive Rarity).
+    all: every character, even minor ones (3 Progressive Rarity).
+    Only characters with a picture are used."""
+    display_name = "Characters (Waifupelago)"
+    option_off = 0
+    option_famous_only = 1
+    option_medium_and_famous = 2
+    option_all = 3
+    default = 0
+
+
+class CharacterGoal(Range):
+    """Goal "characters": how many characters you have to guess. Lowered if your world has fewer character checks."""
+    display_name = "Character Goal"
+    range_start = 1
+    range_end = 2000
+    default = 50
+
+
+class CharacterGender(OptionSet):
+    """Waifupelago: which characters can be guessed. Characters without a known gender only come with all three."""
+    display_name = "Character Gender"
+    valid_keys = {"female", "male", "nonbinary"}
+    default = frozenset({"female", "male", "nonbinary"})
+
+
+class CharacterMax(Range):
+    """Waifupelago: at most this many character checks per anime. 0 = no limit (every character in play is a check)."""
+    display_name = "Characters per Anime"
+    range_start = 0
+    range_end = 20
+    default = 0
+
+
 @dataclass
 class AnimepelagoOptions(PerGameCommonOptions):
     goal: Goal
@@ -248,9 +297,14 @@ class AnimepelagoOptions(PerGameCommonOptions):
     trap_items: TrapItems
     death_link: DeathLink
     trap_link: TrapLink
+    character_rarity: CharacterRarity
+    character_max: CharacterMax
+    character_gender: CharacterGender
+    character_goal: CharacterGoal
 
 
 option_groups = [
     OptionGroup("Game", [Goal, GenreMasterGenres, GenreMasterAnime, AnimeCount, AnimeGoal, OnlyGenres, OnlyGenresStartAnime, UnlockMode, UnlockByYear, UnlockBySource, UnlockBySeason, UnlockByStudio, TitleLanguage, GenreRule, GenreStep, IncludeDemographics, StartingGenre]),
     OptionGroup("Items", [PerkItems, GeassItems, StandArrowItems, TrapItems, TrapLink]),
+    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax, CharacterGender, CharacterGoal]),
 ]

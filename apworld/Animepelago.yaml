@@ -34,7 +34,7 @@ game: Animepelago
 requires:
   version: 0.6.8 # Version of Archipelago required for this yaml to work as expected.
   game:
-    Animepelago: 1.0.0 # Version of the world required for this yaml to work as expected.
+    Animepelago: 2.0.0 # Version of the world required for this yaml to work as expected.
 
 Animepelago:
   ################
@@ -78,9 +78,16 @@ Animepelago:
     # anime: guess the number of anime set in Anime Goal.
     # exodia: collect all 5 pieces of Exodia. The pieces become progression items spread across the multiworld.
     # genre_master: guess enough anime in enough genres (see Genre Master Genres and Genre Master Anime).
+    # big3_daddy: guess Goku, Luffy, Naruto and Ichigo (the Big 3 and their "Daddy" Dragon Ball).
+    #   Dragon Ball, ONE PIECE, Naruto and Bleach are always in your world. A hero opens after you guessed his anime
+    #   and have one "Characters: <Genre>" of it and all 3 Progressive Rarity. Turns on Waifupelago (all characters).
+    #   With Character Gender = female it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue instead.
+    # characters: guess the number of characters set in Character Goal (Waifupelago). Turns on Waifupelago if it is off.
     anime: 50
     exodia: 0
     genre_master: 0
+    big3_daddy: 0
+    characters: 0
 
   genre_master_genres:
     # Only with Goal: genre_master. In how many different genres you must master anime.
@@ -238,7 +245,7 @@ Animepelago:
     'true': 50
 
   starting_genre:
-    # The genre you have unlocked from the start. random picks one that unlocks enough anime.
+    # The genre you have unlocked from the start. auto picks a rarer genre that unlocks enough anime. random picks any genre.
     action: 0
     adventure: 0
     comedy: 0
@@ -262,7 +269,7 @@ Animepelago:
     seinen: 0
     josei: 0
     kids: 0
-    random: 50
+    auto: 50
 
   #########
   # Items #
@@ -322,6 +329,52 @@ Animepelago:
     # and their traps hit you as one of the Animepelago traps.
     'false': 50
     'true': 0
+
+  ###############
+  # Waifupelago #
+  ###############
+  character_rarity:
+    # Waifupelago: guess characters of your anime as extra checks.
+    # A character check of an anime opens after you guessed that anime.
+    # You also need one "Characters: <Genre>" item of its genres and enough "Progressive Rarity" items.
+    # Progressive Rarity unlocks the rarest characters first and the most famous last.
+    # off: no characters.
+    # famous_only: only well-known characters (1 Progressive Rarity).
+    # medium_and_famous: medium and famous characters (2 Progressive Rarity).
+    # all: every character, even minor ones (3 Progressive Rarity).
+    # Only characters with a picture are used.
+    'off': 50
+    famous_only: 0
+    medium_and_famous: 0
+    all: 0
+
+  character_max:
+    # Waifupelago: at most this many character checks per anime. 0 = no limit (every character in play is a check).
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 20
+    0: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-20: 0 # random value between 0 and 20
+
+  character_gender:
+    # Waifupelago: which characters can be guessed. Characters without a known gender only come with all three.
+    ['female', 'nonbinary', 'male']
+
+  character_goal:
+    # Goal "characters": how many characters you have to guess. Lowered if your world has fewer character checks.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 1
+    # Maximum value is 2000
+    50: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-1-2000: 0 # random value between 1 and 2000
 
   ###########################
   # Item & Location Options #
