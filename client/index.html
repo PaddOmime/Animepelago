@@ -3247,26 +3247,43 @@ const WHO = (() => {
   const learn = (k, v) => { seen[k] = v; const ks = Object.keys(seen); if (ks.length > 20000) delete seen[ks[0]]; try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen)); } catch(e) {} };
   const fandomUrl = c => { if (typeof c.img !== "string" || !c.img) return null; const [w, f] = c.img.split("|");
     return /^[a-z0-9-]{2,60}$/.test(w || "") && f && f.length < 200 && !/[<>"]/.test(f) ? `https://${w}.fandom.com/wiki/Special:FilePath/${encodeURIComponent(f.replace(/ /g, "_")).replace(/[()'!*]/g, x => "%" + x.charCodeAt(0).toString(16).toUpperCase())}` : null; };
-  async function picture(c){
-    const k = c.aid + ":" + c.h; if (imgCache.has(k)) return imgCache.get(k);
-    if (c.img === 0 || seen[k] === 0) { imgCache.set(k, null); return null; }
-    const q = `query($s:String){Page(perPage:6){characters(search:$s){name{full} image{large} media(perPage:50,type:ANIME){nodes{id}}}}}`;
-    let res = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      // Abstand zwischen Anfragen; nach "zu viele Anfragen" (429) langsamer werden und kurz warten
-      const wait = Math.max(0, lastAsk + gap - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
-      res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
-        body: JSON.stringify({query: q, variables: {s: nameOf(c)}})});
-      if (res.status !== 429) break;
-      gap = 2200; const ra = Math.min(20, Math.max(2, +res.headers.get("Retry-After") || 5));
-      await new Promise(r => setTimeout(r, ra * 1000));
+  const okAni = u => typeof u === "string" && /^https:\/\/[a-z0-9.-]*anilist\.co\//.test(u) && !/default\.(jpg|png)$/.test(u);
+  // Bilder fuer mehrere Figuren auf einmal: zuerst Gemerktes und Fandom-Bilder (keine Anfrage noetig),
+  // der Rest in EINER AniList-Anfrage (bis zu 6 Suchen gebuendelt) - schont das Anfrage-Limit.
+  async function pictures(list){
+    const out = list.map(() => undefined), need = [];
+    list.forEach((c, i) => { const k = c.aid + ":" + c.h;
+      if (imgCache.has(k)) out[i] = imgCache.get(k);
+      else if (c.img === 0 || seen[k] === 0) out[i] = null;
+      else if (okAni(seen[k])) out[i] = seen[k];
+      else if (fandomUrl(c)) out[i] = fandomUrl(c);
+      else need.push(i);
+      if (out[i] !== undefined) imgCache.set(k, out[i]); });
+    for (let n = 0; n < need.length; n += 6) {
+      const chunk = need.slice(n, n + 6);
+      const q = "query(" + chunk.map((_, j) => `$s${j}:String`).join(",") + "){" + chunk.map((_, j) =>
+        `a${j}:Page(perPage:6){characters(search:$s${j}){image{large} media(perPage:50,type:ANIME){nodes{id}}}}`).join(" ") + "}";
+      const vars = Object.fromEntries(chunk.map((i, j) => ["s" + j, nameOf(list[i])]));
+      let res = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        // Abstand zwischen Anfragen; nach "zu viele Anfragen" (429) langsamer werden und kurz warten
+        const wait = Math.max(0, lastAsk + gap - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
+        res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
+          body: JSON.stringify({query: q, variables: vars})});
+        if (res.status !== 429) break;
+        gap = 2200; const ra = Math.min(20, Math.max(2, +res.headers.get("Retry-After") || 5));
+        await new Promise(r => setTimeout(r, ra * 1000));
+      }
+      if (!res.ok) throw new Error("anilist " + res.status);
+      const d = (await res.json())?.data || {};
+      chunk.forEach((i, j) => { const c = list[i], k = c.aid + ":" + c.h, parts = new Set(BY_ID.get(c.aid).parts.map(p => p.id));
+        const hit = (d["a" + j]?.characters || []).find(x => (x.media?.nodes || []).some(m => parts.has(m.id)));
+        const url = hit && okAni(hit.image?.large) ? hit.image.large : null;
+        learn(k, url || 0); imgCache.set(k, url); out[i] = url; });
     }
-    if (!res.ok) throw new Error("anilist " + res.status);
-    const parts = new Set(BY_ID.get(c.aid).parts.map(p => p.id));
-    const hit = ((await res.json())?.data?.Page?.characters || []).find(x => (x.media?.nodes || []).some(m => parts.has(m.id)));
-    const url = (hit && /^https:\/\/[a-z0-9.-]*anilist\.co\//.test(hit.image?.large || "") && !/default\.(jpg|png)$/.test(hit.image.large) ? hit.image.large : null) || fandomUrl(c);
-    learn(k, url ? 1 : 0); imgCache.set(k, url); return url;
+    return out;
   }
+  const picture = async c => (await pictures([c]))[0];
   // Auswahl: Anime aus dem Pool (Einstellungen der Minispiele), dann Figur nach Bekanntheit gewichtet
   function poolList(){
     const only = $("mOnly").value, gsel = $("whoGender").value;
@@ -3467,12 +3484,13 @@ const WHO = (() => {
   const IK = PROF.pkey("animepelago_impostor_v1"); let ip = null, isv = {streak: 0, best: 0, won: 0, played: 0};
   try { const o = JSON.parse(localStorage.getItem(IK) || "{}"); for (const k of Object.keys(isv)) isv[k] = num(o[k], 0, 1e9); } catch(e) {}
   const isave = () => { try { localStorage.setItem(IK, JSON.stringify(isv)); } catch(e) {} };
-  async function withPic(list, n, my){            // n Figuren mit Bild aus der Liste (nach Gewicht)
-    const out = [], left = [...list]; let fails = 0;
+  async function withPic(list, n, my){            // n Figuren mit Bild aus der Liste (nach Gewicht), gebuendelt geprueft
+    const out = [], left = list.filter(c => c.img !== 0 && seen[c.aid + ":" + c.h] !== 0); let fails = 0;
     while (out.length < n && left.length && ip === my) {
-      const c = weighted(left, Math.random()); left.splice(left.indexOf(c), 1);
-      let url = null; try { url = await picture(c); } catch(e) { fails = (fails || 0) + 1; if (fails > 2) return null; continue; }
-      if (url) out.push({c, url});
+      const batch = [];
+      while (batch.length < n - out.length + 2 && left.length) { const c = weighted(left, Math.random()); left.splice(left.indexOf(c), 1); batch.push(c); }
+      let urls; try { urls = await pictures(batch); } catch(e) { if (++fails > 2) return null; continue; }
+      batch.forEach((c, i) => { if (urls[i] && out.length < n) out.push({c, url: urls[i]}); });
     }
     return out.length === n ? out : null;
   }
