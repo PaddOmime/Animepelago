@@ -72,6 +72,8 @@ Depending on `goal`:
   You need a "Characters: <Genre>" item of the anime and "Progressive Rarity" – the rarest characters come first, the most famous last.
 - `character_max`: at most this many character checks per anime (0 = no limit).
 - `character_gender`: which characters can be guessed (female, male, nonbinary).
+- `waifupelago_only`: play only Waifupelago. Anime are not checks and are open from the start; you collect
+  "Characters: <Genre>" and Progressive Rarity and guess characters. You start with one character genre and one Progressive Rarity.
 
 ## Important options
 

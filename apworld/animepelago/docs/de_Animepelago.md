@@ -74,6 +74,8 @@ Je nach `goal`:
   Du brauchst ein „Characters: <Genre>“ des Anime und „Progressive Rarity“ – erst kommen die seltensten Figuren, zuletzt die bekanntesten.
 - `character_max`: höchstens so viele Figuren-Checks pro Anime (0 = keine Grenze).
 - `character_gender`: welche Figuren geraten werden (female, male, nonbinary).
+- `waifupelago_only`: nur Waifupelago spielen. Anime sind keine Checks und von Anfang an offen; du sammelst
+  „Characters: <Genre>“ und Progressive Rarity und rätst Figuren. Du startest mit einem Figuren-Genre und einer Progressive Rarity.
 
 ## Wichtige Optionen
 

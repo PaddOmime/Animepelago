@@ -249,6 +249,14 @@ class CharacterRarity(Choice):
     default = 0
 
 
+class WaifupelagoOnly(Toggle):
+    """Play only Waifupelago: anime are not checks and need no unlocks. All anime of your world are open from the start.
+    Collect "Characters: <Genre>" items and Progressive Rarity and guess the characters of your anime.
+    You start with one "Characters: <Genre>" and one Progressive Rarity. Turns on Character Rarity (all) if it is off.
+    Goals "anime" and "genre_master" become "characters"; "big3_daddy" and "exodia" stay."""
+    display_name = "Waifupelago Only"
+
+
 class CharacterGoal(Range):
     """Goal "characters": how many characters you have to guess. Lowered if your world has fewer character checks."""
     display_name = "Character Goal"
@@ -301,10 +309,11 @@ class AnimepelagoOptions(PerGameCommonOptions):
     character_max: CharacterMax
     character_gender: CharacterGender
     character_goal: CharacterGoal
+    waifupelago_only: WaifupelagoOnly
 
 
 option_groups = [
     OptionGroup("Game", [Goal, GenreMasterGenres, GenreMasterAnime, AnimeCount, AnimeGoal, OnlyGenres, OnlyGenresStartAnime, UnlockMode, UnlockByYear, UnlockBySource, UnlockBySeason, UnlockByStudio, TitleLanguage, GenreRule, GenreStep, IncludeDemographics, StartingGenre]),
     OptionGroup("Items", [PerkItems, GeassItems, StandArrowItems, TrapItems, TrapLink]),
-    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax, CharacterGender, CharacterGoal]),
+    OptionGroup("Waifupelago", [WaifupelagoOnly, CharacterRarity, CharacterMax, CharacterGender, CharacterGoal]),
 ]

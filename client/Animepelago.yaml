@@ -333,6 +333,14 @@ Animepelago:
   ###############
   # Waifupelago #
   ###############
+  waifupelago_only:
+    # Play only Waifupelago: anime are not checks and need no unlocks. All anime of your world are open from the start.
+    # Collect "Characters: <Genre>" items and Progressive Rarity and guess the characters of your anime.
+    # You start with one "Characters: <Genre>" and one Progressive Rarity. Turns on Character Rarity (all) if it is off.
+    # Goals "anime" and "genre_master" become "characters"; "big3_daddy" and "exodia" stay.
+    'false': 50
+    'true': 0
+
   character_rarity:
     # Waifupelago: guess characters of your anime as extra checks.
     # A character check of an anime opens after you guessed that anime.
