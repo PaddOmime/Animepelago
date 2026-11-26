@@ -2331,6 +2331,7 @@ const PROF = (() => {
   const favOf = () => { const p = cur(), c = p ? p.color : store.get("ap_color"); return /^#[0-9a-f]{6}$/i.test(c || "") ? c.toLowerCase() : null; };
   function applyFav(c){
     const r = document.documentElement.style;
+    try { localStorage.setItem("ap_fav_now", c || ""); } catch(e) {}   // fuer die Party-Seite
     if (!c) { r.removeProperty("--fav"); r.removeProperty("--fav-on"); return; }
     const lin = v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
     const [R, G, B] = [1, 3, 5].map(i => lin(parseInt(c.slice(i, i + 2), 16) / 255));
