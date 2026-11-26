@@ -849,7 +849,7 @@ const APP = {
     const isPk = $("gameSel").value === "pick", isBz = $("gameSel").value === "buzz";
     document.querySelectorAll(".pkOpt").forEach(x => x.classList.toggle("hide", !isPk && !(isBz && !x.classList.contains("pk18Opt"))));
     if (isPk) $("gameInfo").textContent = t($("pk18").checked ? "info_pick18" : "info_pick");
-    $("playToo").href = "party.html#" + this.code;
+    $("playToo").href = location.pathname + "#" + this.code;   // dieselbe Seite (auch party_2.0.html)
     this.drawBar(g);
     if (!g) { $("showHead").innerHTML = ""; return; }
     if (g.type === "bingo") return this.drawBingoShow(g, ps);
