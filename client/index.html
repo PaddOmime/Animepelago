@@ -4042,23 +4042,26 @@ const WHO = (() => {
     const inp = $("cpIn"), box = $("cpList"); let items = [], on = -1;
     const close = () => { box.classList.add("hide"); box.innerHTML = ""; items = []; on = -1; inp.setAttribute("aria-expanded", "false"); };
     function show(){
-      const q = norm(inp.value); if (!cp || q.length < 2) return close();
+      // Wie bei den anderen Modi: Namen, die so anfangen; Anime-Titel (oder leeres Feld beim Antippen) zeigt die Figuren des Anime
+      const q = norm(inp.value); if (!cp) return close();
+      const all = q.length === 0 || titleHit(BY_ID.get(cp.aid), q);
       const seenN = new Set(), out = [];
-      for (const c of [...(data.get(cp.aid) || [])].sort((x, y) => y.w - x.w)) { const n = nameOf(c); if (seenN.has(n)) continue;
-        if (norm(n).startsWith(q) || words(n).some(w => w.startsWith(q))) { seenN.add(n); out.push(n); } if (out.length >= 10) break; }
+      for (const c of [...(data.get(cp.aid) || [])].sort((x, y) => y.w - x.w)) { const n = nameOf(c); if (seenN.has(n) || c.img === 0) continue;
+        if (all || norm(n).startsWith(q) || words(n).some(w => w.startsWith(q))) { seenN.add(n); out.push(n); } if (out.length >= (all ? 30 : 12)) break; }
       items = out; on = -1; if (!items.length) return close();
       box.innerHTML = items.map((n, i) => `<div role="option" data-i="${i}"><span>${esc(n)}</span></div>`).join("");
       box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true"); acPlace(box);
     }
     function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
     inp.addEventListener("input", show);
+    inp.addEventListener("focus", () => { if (!inp.value) show(); });
     inp.addEventListener("keydown", e => {
       if (items.length && e.key === "ArrowDown") { e.preventDefault(); move(1); } else if (items.length && e.key === "ArrowUp") { e.preventDefault(); move(-1); }
       else if (e.key === "Escape") close();
       else if (e.key === "Enter") { e.preventDefault(); cpGuess(on >= 0 ? items[on] : undefined); }
     });
     box.addEventListener("mousedown", e => { const el = e.target.closest("div[data-i]"); if (!el) return; e.preventDefault(); cpGuess(items[+el.dataset.i]); });
-    inp.addEventListener("blur", () => setTimeout(close, 150));
+    inp.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== inp) close(); }, 150));
     return {close};
   })();
   // Neue Items (z. B. Progressive Rarity): offene Liste auffuellen
