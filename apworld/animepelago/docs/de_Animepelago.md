@@ -71,7 +71,7 @@ Je nach `goal`:
 | `anime_count` | Wie viele Anime (Checks) in deiner Welt sind. |
 | `unlock_mode` | `genres`, `letters` oder `both` (Standard) – was ein Anime braucht, bevor du ihn raten darfst. |
 | `genre_rule` | `any`: eines seiner Genres reicht (mit `genre_step` brauchen lange Genre-Listen mehr). `all`: alle Genres. |
-| `starting_genre` | Mit welchem Genre du startest (oder `random`). |
+| `starting_genre` | Mit welchem Genre du startest, `auto` (Standard: ein selteneres Genre mit genug Anime) oder `random`. |
 | `only_genres` | Nur Anime bestimmter Genres, z. B. `[Romance]`. Dann gibt es keine Genre-Items; du startest mit den Items einiger Anime (`only_genres_start_anime`). |
 | `title_language` | Bestimmt die Buchstaben und in welcher Sprache der Client die Titel zeigt. |
 | `unlock_by_year` / `_source` / `_season` / `_studio` | Zusätzliche Freischalt-Items. |

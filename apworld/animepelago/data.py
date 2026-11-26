@@ -20,6 +20,8 @@ GENRES: list[str] = [
 # Hinten angehaengt, damit die Item-IDs der normalen Genres gleich bleiben.
 DEMOGRAPHICS: list[str] = ["Shounen", "Shoujo", "Seinen", "Josei", "Kids"]
 GENRES += DEMOGRAPHICS
+# Nur die echten Genres (ohne Zielgruppen), z. B. fuer die Figuren-Items "Characters: <Genre>"
+BASE_GENRES: list[str] = [g for g in GENRES if g not in DEMOGRAPHICS]
 
 # Anfangsbuchstaben: A-Z und "#" fuer Titel, die mit einer Zahl oder einem Zeichen beginnen.
 # Feste Reihenfolge, denn sie bestimmt die Item-IDs.
@@ -37,3 +39,12 @@ CATEGORIES: dict[str, list[str]] = _raw.get("categories", {"year": [], "source":
 HAS_DEMOGRAPHICS: bool = any(a.get("demographics") for a in ANIME)
 HAS_CATEGORY: dict[str, bool] = {c: bool(CATEGORIES.get(c)) and any((a.get("cat") or {}).get(c) for a in ANIME)
                                  for c in ("year", "source", "season", "studio")}
+
+# Waifupelago: je Anime die Zahl der Figuren pro Seltenheitsstufe [selten, mittel, bekannt].
+# Erzeugt von offline/skripts/build_characters.py (nur Figuren, die ein Bild haben koennen). Fehlt die Datei: keine Figuren.
+try:
+    _chars = json.loads(pkgutil.get_data(__name__.rsplit(".", 1)[0], "characters_data.json").decode("utf-8"))
+except (OSError, ValueError, TypeError):
+    _chars = {"version": 0, "tiers": {}}
+CHARACTER_DATA_VERSION: int = _chars.get("version", 0)
+CHARACTER_TIERS: dict[int, list[int]] = {int(k): v for k, v in _chars.get("tiers", {}).items() if int(k) in ANIME_BY_ID}

@@ -94,7 +94,7 @@ Animepelago works with the **Universal Tracker**: it shows which anime are in lo
 | `genre_rule` | `any` genre of an anime unlocks it, or `all` its genres are needed |
 | `genre_step` | With `any`: for every N genres an anime has, it needs one more (6: 1–5 genres → 1, 6–11 → 2, 12+ → 3). 0 = off |
 | `include_demographics` | Shounen, Shoujo, Seinen, Josei and Kids count as genres (only with `genre_rule: any`) |
-| `starting_genre` | Your first genre, or `random` |
+| `starting_genre` | Your first genre, `auto` (default: a rarer genre that unlocks enough anime) or `random` |
 | `perk_items` | Sukuna's Fingers, Dragon Balls, Senzu Beans and Time Leaps |
 | `geass_items` | Number of Geass (0–50, at most 10% of your anime) |
 | `stand_arrow_items` | Number of Stand Arrows (0–100) |

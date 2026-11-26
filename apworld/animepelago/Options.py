@@ -145,13 +145,14 @@ def _genre_option_name(genre: str) -> str:
     return "option_" + genre.lower().replace(" ", "_").replace("-", "_")
 
 
-# StartingGenre: eine Auswahl pro Genre plus "random". Wird aus der Genre-Liste erzeugt.
+# StartingGenre: eine Auswahl pro Genre plus "auto". Wird aus der Genre-Liste erzeugt.
+# ("random" darf seit Archipelago 0.6.9 keine eigene Auswahl mehr sein; "random" in der YAML waehlt jetzt ein beliebiges Genre.)
 StartingGenre = type("StartingGenre", (Choice,), {
-    "__doc__": "The genre you have unlocked from the start. random picks one that unlocks enough anime.",
+    "__doc__": "The genre you have unlocked from the start. auto picks a rarer genre that unlocks enough anime. random picks any genre.",
     "__module__": __name__,
     "display_name": "Starting Genre",
     **{_genre_option_name(g): i for i, g in enumerate(GENRES)},
-    "option_random": len(GENRES),
+    "option_auto": len(GENRES),
     "default": len(GENRES),
 })
 
@@ -223,6 +224,32 @@ class TrapItems(DefaultOnToggle):
     display_name = "Trap Items"
 
 
+class CharacterRarity(Choice):
+    """Waifupelago: guess characters of your anime as extra checks.
+    A character check of an anime opens after you guessed that anime.
+    You also need one "Characters: <Genre>" item of its genres and enough "Progressive Rarity" items.
+    Progressive Rarity unlocks the rarest characters first and the most famous last.
+    off: no characters.
+    famous_only: only well-known characters (1 Progressive Rarity).
+    medium_and_famous: medium and famous characters (2 Progressive Rarity).
+    all: every character, even minor ones (3 Progressive Rarity).
+    Only characters with a picture are used."""
+    display_name = "Characters (Waifupelago)"
+    option_off = 0
+    option_famous_only = 1
+    option_medium_and_famous = 2
+    option_all = 3
+    default = 0
+
+
+class CharacterMax(Range):
+    """Waifupelago: at most this many character checks per anime. 0 = no limit (every character in play is a check)."""
+    display_name = "Characters per Anime"
+    range_start = 0
+    range_end = 20
+    default = 0
+
+
 @dataclass
 class AnimepelagoOptions(PerGameCommonOptions):
     goal: Goal
@@ -248,9 +275,12 @@ class AnimepelagoOptions(PerGameCommonOptions):
     trap_items: TrapItems
     death_link: DeathLink
     trap_link: TrapLink
+    character_rarity: CharacterRarity
+    character_max: CharacterMax
 
 
 option_groups = [
     OptionGroup("Game", [Goal, GenreMasterGenres, GenreMasterAnime, AnimeCount, AnimeGoal, OnlyGenres, OnlyGenresStartAnime, UnlockMode, UnlockByYear, UnlockBySource, UnlockBySeason, UnlockByStudio, TitleLanguage, GenreRule, GenreStep, IncludeDemographics, StartingGenre]),
     OptionGroup("Items", [PerkItems, GeassItems, StandArrowItems, TrapItems, TrapLink]),
+    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax]),
 ]

@@ -16,16 +16,23 @@ from Options import OptionError
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
 
-from .data import ANIME, ANIME_BY_ID, DATA_VERSION, DEMOGRAPHICS, GENRES, HAS_CATEGORY, HAS_DEMOGRAPHICS, LETTERS
-from .Items import (CLOW_CARD, CLOW_CARD_MAX, EXODIA_PIECES, EXTRA_CATEGORIES, FILLER_ITEM, FLAVOR_FILLERS, GAME, ITEMS, AnimepelagoItem, extra_item,
-                    genre_item, item_name_groups, item_name_to_id, letter_item)
-from .Locations import (LOCATION_ID_OFFSET, MILESTONES, AnimepelagoLocation, location_name_groups,
-                        location_name_to_id, milestone_name)
+from .data import (ANIME, ANIME_BY_ID, BASE_GENRES, CHARACTER_TIERS, DATA_VERSION, DEMOGRAPHICS, GENRES, HAS_CATEGORY,
+                   HAS_DEMOGRAPHICS, LETTERS)
+from .Items import (CHARACTER_CARD, CLOW_CARD, CLOW_CARD_MAX, EXODIA_PIECES, EXTRA_CATEGORIES, FILLER_ITEM, FLAVOR_FILLERS, GAME,
+                    ITEMS, PROGRESSIVE_RARITY, AnimepelagoItem, character_item, extra_item, genre_item, item_name_groups,
+                    item_name_to_id, letter_item)
+from .Locations import (CHARACTER_BLOCK, CHARACTER_ID_OFFSET, LOCATION_ID_OFFSET, MILESTONES, AnimepelagoLocation,
+                        character_location, location_name_groups, location_name_to_id, milestone_name)
 from .Options import AnimepelagoOptions, option_groups
 
 # So viele Anime muessen am Anfang (nur mit den Start-Genres) erratbar sein,
 # sonst haette der Spieler keinen Einstieg.
 MIN_START_ANIME = 3
+
+# Waifupelago: Seltenheitsstufen im Spiel je Option (0 = selten, 1 = mittel, 2 = bekannt), immer von selten nach bekannt.
+# "Progressive Rarity" schaltet sie in dieser Reihenfolge frei: erst die seltensten, zuletzt die bekanntesten Figuren.
+CHARACTER_TIER_SETS = {0: [], 1: [2], 2: [1, 2], 3: [0, 1, 2]}
+CHARACTER_RARITY_NAMES = ["off", "famous_only", "medium_and_famous", "all"]
 
 # Mit zwei oder mehr Kategorien (z. B. Genres UND Buchstaben) gibt es viele Freischalt-Items. Darunter waere das Spiel zu klein.
 MIN_ANIME_BOTH = 50
@@ -149,7 +156,7 @@ class AnimepelagoWorld(World):
 
         if self.use_genres:
             # Startgenre bestimmen
-            if self.options.starting_genre.value == self.options.starting_genre.option_random:
+            if self.options.starting_genre.value == self.options.starting_genre.option_auto:
                 # Zufaellig unter den selteneren Genres, die genug Anime haben: so ist am Anfang nicht gleich
                 # ein grosser Teil offen (ein haeufiges Startgenre wie Action wuerde viel auf einmal oeffnen).
                 counts = {g: sum(g in a["genres"] for a in selected) for g in GENRES}
@@ -231,6 +238,9 @@ class AnimepelagoWorld(World):
 
         self.milestones = [n for n in MILESTONES if n <= count]
         self._setup_goal()
+        self.char_rarity = self.options.character_rarity.value
+        self.char_max = self.options.character_max.value
+        self.char_fixed = None
         self._finish_setup()
 
     def _finish_setup(self) -> None:
@@ -239,6 +249,52 @@ class AnimepelagoWorld(World):
         # Benutzte Werte je Einzelwert-Kategorie (nur die, die bei den gewaehlten Anime vorkommen)
         self.used_single = {c: sorted({v for a in self.selected for v in self.values_of(a, c)})
                             for c in self.single_cats}
+        self._setup_characters()
+
+    def _setup_characters(self) -> None:
+        """Waifupelago: Figuren-Checks je Anime. char_slots[AniList-ID] = Anzahl je Stufe im Spiel (selten -> bekannt)."""
+        self.char_tiers = CHARACTER_TIER_SETS.get(self.char_rarity, [])
+        self.char_slots: dict[int, list[int]] = {}
+        if self.char_fixed is not None:  # Universal Tracker: genau wie beim Erzeugen
+            self.char_slots = {int(k): list(v) for k, v in self.char_fixed.items() if int(k) in ANIME_BY_ID}
+        elif self.char_tiers:
+            for a in self.selected:
+                tiers = CHARACTER_TIERS.get(a["id"])
+                if not tiers:
+                    continue
+                counts, left = [], self.char_max or CHARACTER_BLOCK
+                for t in self.char_tiers:  # Begrenzung: zuerst die selteneren Stufen
+                    take = min(tiers[t], left)
+                    counts.append(take)
+                    left -= take
+                if sum(counts):
+                    self.char_slots[a["id"]] = counts
+            if not self.char_slots:
+                logging.warning(f"Animepelago ({self.player_name}): Keine Figuren fuer die gewaehlten Anime gefunden. "
+                                "Waifupelago ist in dieser Welt aus.")
+        if not self.char_slots:
+            self.char_tiers = []
+        self.char_genres = sorted({g for a in self.selected if a["id"] in self.char_slots for g in self.char_genres_of(a)},
+                                  key=BASE_GENRES.index)
+
+    @staticmethod
+    def char_genres_of(anime: dict) -> list[str]:
+        return [g for g in anime["genres"] if g in BASE_GENRES]
+
+    @staticmethod
+    def rarity_needed(counts: list[int], n: int) -> int:
+        """Wie viele Progressive Rarity Figur-Check Nr. n braucht (kleinste Stufe, bis zu der es n Figuren gibt)."""
+        total = 0
+        for k, c in enumerate(counts, 1):
+            total += c
+            if total >= n:
+                return k
+        return len(counts)
+
+    def character_locations(self):
+        for a in self.selected:
+            for n in range(1, sum(self.char_slots.get(a["id"], ())) + 1):
+                yield a, n, character_location(a["name"], n)
 
     def _setup_goal(self) -> None:
         """Genre-Meister: X Genres mit je mindestens K erratenen Anime. Bei zu wenig passenden Genres wird X gesenkt."""
@@ -301,6 +357,10 @@ class AnimepelagoWorld(World):
         self.gm_genres = sd.get("genre_master_genres", 0)
         self.gm_anime = sd.get("genre_master_anime", 0)
         self.options.anime_count.value = len(self.selected)
+        chars = sd.get("characters") or {}
+        self.char_rarity = CHARACTER_RARITY_NAMES.index(chars["rarity"]) if chars.get("rarity") in CHARACTER_RARITY_NAMES else 0
+        self.char_max = int(chars.get("max", 0) or 0)
+        self.char_fixed = chars.get("slots", {})
         self._finish_setup()
 
     def letter_of(self, anime: dict) -> str:
@@ -366,6 +426,8 @@ class AnimepelagoWorld(World):
         for n in self.milestones:
             name = milestone_name(n)
             menu.locations.append(AnimepelagoLocation(self.player, name, self.location_name_to_id[name], menu))
+        for a, n, name in self.character_locations():
+            menu.locations.append(AnimepelagoLocation(self.player, name, CHARACTER_ID_OFFSET + a["id"] * CHARACTER_BLOCK + n, menu))
         goal = AnimepelagoLocation(self.player, "Goal", None, menu)
         goal.place_locked_item(AnimepelagoItem("Victory", ItemClassification.progression, None, self.player))
         menu.locations.append(goal)
@@ -391,10 +453,14 @@ class AnimepelagoWorld(World):
             for v in sorted(self.start_single[c]):
                 self.multiworld.push_precollected(self.create_item(self.single_item(c, v)))
 
-        slots = len(self.selected) + len(self.milestones)
+        char_locations = sum(sum(v) for v in self.char_slots.values())
+        slots = len(self.selected) + len(self.milestones) + char_locations
         required = [genre_item(g) for g in self.used_genres if g not in self.start_genres]
         required += [self.single_item(c, v) for c in self.single_cats for v in self.used_single[c]
                      if v not in self.start_single[c]]
+        # Waifupelago: je Genre ein "Characters: <Genre>" und je Stufe eine "Progressive Rarity"
+        char_unlocks = [character_item(g) for g in self.char_genres] + [PROGRESSIVE_RARITY] * len(self.char_tiers)
+        required += char_unlocks
         exodia_goal = self.options.goal.value == self.options.goal.option_exodia
         if exodia_goal:
             required += EXODIA_PIECES
@@ -402,7 +468,7 @@ class AnimepelagoWorld(World):
         if len(required) > slots:
             # Zu wenige Checks fuer alle Genres/Buchstaben: die ueberzaehligen gibt es von Anfang an.
             unlock_names = {self.single_item(c, v): (c, v) for c in self.single_cats for v in self.used_single[c]}
-            unlocks = [r for r in required if r.startswith("Genre: ") or r in unlock_names]
+            unlocks = [r for r in required if r.startswith("Genre: ") or r in unlock_names or r in char_unlocks]
             surplus = len(required) - slots
             if surplus > len(unlocks):
                 raise OptionError(f"Animepelago ({self.player_name}): Anime Count ist zu klein fuer das Exodia-Ziel.")
@@ -411,6 +477,8 @@ class AnimepelagoWorld(World):
                 self.multiworld.push_precollected(self.create_item(name))
                 if name.startswith("Genre: "):
                     self.start_genres.add(name[len("Genre: "):])
+                elif name in char_unlocks:
+                    pass  # Figuren-Items brauchen keinen Start-Eintrag, die Logik fragt den Besitz ab
                 else:
                     c, v = unlock_names[name]
                     self.start_single[c].add(v)
@@ -452,6 +520,10 @@ class AnimepelagoWorld(World):
         self.clow_cards = min(CLOW_CARD_MAX, free // 3)
         pool += [self.create_item(CLOW_CARD) for _ in range(self.clow_cards)]
         free -= self.clow_cards
+        # Waifupelago: etwa die Haelfte der Figuren-Checks bringt eine Sammelkarte (ohne Wirkung)
+        self.character_cards = min(free, char_locations // 2)
+        pool += [self.create_item(CHARACTER_CARD) for _ in range(self.character_cards)]
+        free -= self.character_cards
         # Rest: meist "Filler Episode", etwa jedes vierte Mal ein Spass-Fueller (AYAYA!, Waifu ...) ohne Wirkung
         random_flavor = [f for f in FLAVOR_FILLERS if f != CLOW_CARD]
         pool += [self.create_item(self.random.choice(random_flavor) if self.random.random() < 0.25 else FILLER_ITEM)
@@ -488,6 +560,15 @@ class AnimepelagoWorld(World):
                 rule = lambda state, g=genres, s=singles, o=any_of: (state.has_all(s, player)
                     and all(state.has_any(x, player) for x in o) and state.has_all(g, player))
             set_rule(location, rule)
+            # Waifupelago: Figuren-Checks erst nach dem Anime, mit einem passenden Figuren-Genre und genug Seltenheit
+            counts = self.char_slots.get(a["id"])
+            if counts:
+                cg = [character_item(g) for g in self.char_genres_of(a)]
+                for n in range(1, sum(counts) + 1):
+                    need = self.rarity_needed(counts, n)
+                    set_rule(self.get_location(character_location(a["name"], n)),
+                             lambda state, r=rule, cg=cg, k=need: (state.has(PROGRESSIVE_RARITY, player, k)
+                                 and (not cg or state.has_any(cg, player)) and r(state)))
 
         # Schnelle Logik fuer Meilensteine und Ziel: Vorher pro Anime festhalten, welche Items er braucht.
         # Dann wird pro Logik-Zustand nur EINMAL gezaehlt und das Ergebnis gemerkt (Zwischenspeicher).
@@ -599,4 +680,16 @@ class AnimepelagoWorld(World):
             "geass": self.perk_counts["Geass"],
             "stand_arrows": self.perk_counts["Stand Arrow"],
             "clow_cards": getattr(self, "clow_cards", 0),  # Sammel-Karten ohne Wirkung (Anzeige x/N)
+            # Waifupelago: Stufen im Spiel (0 selten, 1 mittel, 2 bekannt; in Freischalt-Reihenfolge) und je Anime
+            # die Zahl der Figuren-Checks pro Stufe. Check Nr. n: ID = character_offset + AniList-ID * character_block + n
+            "characters": {
+                "rarity": CHARACTER_RARITY_NAMES[self.char_rarity] if self.char_tiers else "off",
+                "max": self.char_max,
+                "tiers": self.char_tiers,
+                "genres": self.char_genres,
+                "slots": {str(k): v for k, v in self.char_slots.items()},
+                "character_offset": CHARACTER_ID_OFFSET,
+                "character_block": CHARACTER_BLOCK,
+                "cards": getattr(self, "character_cards", 0),
+            },
         }

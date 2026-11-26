@@ -1,6 +1,6 @@
 from BaseClasses import Item, ItemClassification
 
-from .data import CATEGORIES, DEMOGRAPHICS, GENRES, LETTERS
+from .data import BASE_GENRES, CATEGORIES, DEMOGRAPHICS, GENRES, LETTERS
 
 GAME = "Animepelago"
 
@@ -15,6 +15,16 @@ def genre_item(genre: str) -> str:
 
 def letter_item(letter: str) -> str:
     return f"Letter: {letter}"
+
+
+# Waifupelago: Figuren eines Anime sind erratbar, wenn man eins der "Characters: <Genre>"-Items seiner Genres hat
+# und genug "Progressive Rarity" (erst die seltensten Figuren, zuletzt die bekanntesten).
+def character_item(genre: str) -> str:
+    return f"Characters: {genre}"
+
+
+PROGRESSIVE_RARITY = "Progressive Rarity"
+CHARACTER_CARD = "Character Card"
 
 
 # Zusatz-Kategorien: Schluessel -> (Name im Item, ID-Bereich). Bereiche nie aendern.
@@ -136,6 +146,12 @@ for _i, _piece in enumerate(EXODIA_PIECES):
     # Klasse haengt vom Spielmodus ab (Exodia-Ziel: progression, sonst filler), siehe create_item.
     ITEMS[_piece] = (ITEM_ID_OFFSET + 400 + _i, ItemClassification.filler, 1)
 
+# Waifupelago (ab 2.0): Bereich 1000 ff.
+for _i, _g in enumerate(BASE_GENRES):
+    ITEMS[character_item(_g)] = (ITEM_ID_OFFSET + 1000 + _i, ItemClassification.progression, 1)
+ITEMS[PROGRESSIVE_RARITY] = (ITEM_ID_OFFSET + 1100, ItemClassification.progression, 0)
+ITEMS[CHARACTER_CARD] = (ITEM_ID_OFFSET + 1101, ItemClassification.filler, 0)
+
 # Keine zwei Items duerfen dieselbe ID haben
 assert len({v[0] for v in ITEMS.values()}) == len(ITEMS), "Doppelte Item-IDs"
 
@@ -149,7 +165,8 @@ item_name_groups: dict[str, set[str]] = {
     **{_label + "s": {extra_item(_cat, v) for v in CATEGORIES.get(_cat, [])} for _cat, (_label, _) in EXTRA_CATEGORIES.items()},
     "Traps": {"Kira's Hand", "Death Note", "Isekai Truck", "Filler Arc", "Tsundere"},
     "Perks": {"Sukuna's Finger", "Dragon Ball", "Geass", "Stand Arrow", "Senzu Bean", "Time Leap"},
-    "Fillers": {"Filler Episode", *FLAVOR_FILLERS},
+    "Fillers": {"Filler Episode", *FLAVOR_FILLERS, CHARACTER_CARD},
+    "Character Unlocks": {character_item(g) for g in BASE_GENRES} | {PROGRESSIVE_RARITY},
 }
 
 FILLER_ITEM = "Filler Episode"

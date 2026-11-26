@@ -69,7 +69,7 @@ Depending on `goal`:
 | `anime_count` | How many anime (checks) are in your world. |
 | `unlock_mode` | `genres`, `letters` or `both` (default) – what an anime needs before you may guess it. |
 | `genre_rule` | `any`: one of its genres is enough (with `genre_step` long genre lists need more). `all`: every genre. |
-| `starting_genre` | Which genre you start with (or `random`). |
+| `starting_genre` | Which genre you start with, `auto` (default: a rarer genre with enough anime) or `random`. |
 | `only_genres` | Play only with anime of certain genres, e.g. `[Romance]`. Then there are no genre items; you start with the items of a few anime (`only_genres_start_anime`). |
 | `title_language` | Decides the letters and in which language the client shows titles. |
 | `unlock_by_year` / `_source` / `_season` / `_studio` | Extra unlock items on top. |
