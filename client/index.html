@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Sicherheit: Die Seite darf nur eigene Skripte laden, Bilder nur von AniList und nur mit Archipelago-Servern
      (WebSocket) und der AniList-API sprechen. So kann eingeschleuster Code nichts nachladen oder Daten wegschicken. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://s4.anilist.co https://*.anilist.co https://image.tmdb.org; connect-src 'self' ws: wss: https://graphql.anilist.co wss://irc-ws.chat.twitch.tv; media-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://s4.anilist.co https://*.anilist.co https://image.tmdb.org https://*.fandom.com https://static.wikia.nocookie.net; connect-src 'self' ws: wss: https://graphql.anilist.co wss://irc-ws.chat.twitch.tv; media-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Animepelago</title>
 <style>
 :root{--on-accent:var(--fav-on,#191B30);--accent-ink:color-mix(in srgb,var(--accent) 42%,#1E1B33);--i1:#2F7DB8;--i2:#6B4FD1;--i3:#9A640C;--i4:#1F7A52;--bg:#F4F2FA;--fg:#1E1B33;--mute:#5E5978;--card:#FFFFFF;--line:#E2DEF0;--ok:#1f8a4c;--bad:#b3261e;--warn:#c2570c;--perk:#d4a017;--p1:#2f6fd6;--p2:#d9480f;--p3:#8e44ad;--p4:#1f8a4c;--p5:#c2185b;--p6:#00838f;--accent:var(--fav,#FF9EC4);--grey:#ECE9F5}
@@ -3231,17 +3231,25 @@ const WHO = (() => {
     return new Promise((ok, fail) => {
       const done = () => { const raw = window.ANIMEPELAGO_CHARS; if (!raw || !raw.a) return fail(); data = new Map();
         for (const [aid, rows] of Object.entries(raw.a)) { const a = BY_ID.get(+aid); if (!a) continue;
-          data.set(a.id, rows.map(r => ({aid: a.id, h: r[0], keys: new Set(r[1]), g: r[2] || "", w: +r[3] || 1, adult: !!r[4]}))); }
+          data.set(a.id, rows.map(r => ({aid: a.id, h: r[0], keys: new Set(r[1]), g: r[2] || "", w: +r[3] || 1, adult: !!r[4], img: r[5] === 0 ? 0 : (typeof r[5] === "string" ? r[5] : "")}))); }
         ok(data); };
       if (window.ANIMEPELAGO_CHARS) return done();
       const s = document.createElement("script"); s.src = "characters.js"; s.onload = done; s.onerror = () => fail(); document.head.appendChild(s);
     });
   }
   const nameOf = c => { if (!c.n) { try { c.n = unhide(c.h, c.aid); } catch(e) { c.n = "?"; } } return c.n; };
-  // Bild live von AniList: Figur per Name suchen und nur nehmen, wenn sie in einem Teil genau dieses Anime vorkommt
+  // Bild live von AniList: Figur per Name suchen und nur nehmen, wenn sie in einem Teil genau dieses Anime vorkommt.
+  // Sonst Bild aus dem Fandom-Wiki (Dateiname aus den Daten, live geladen). Bild-Spalte 0 = kein Bild -> ueberspringen.
+  // Was beim Spielen herauskommt (Bild ja/nein), merkt sich der Browser, damit nichts doppelt gefragt wird.
   const imgCache = new Map(); let lastAsk = 0;
+  const SEEN_KEY = "animepelago_charimg_v1"; let seen = {};
+  try { const o = JSON.parse(localStorage.getItem(SEEN_KEY) || "{}"); if (o && typeof o === "object") seen = o; } catch(e) {}
+  const learn = (k, v) => { seen[k] = v; const ks = Object.keys(seen); if (ks.length > 20000) delete seen[ks[0]]; try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen)); } catch(e) {} };
+  const fandomUrl = c => { if (typeof c.img !== "string" || !c.img) return null; const [w, f] = c.img.split("|");
+    return /^[a-z0-9-]{2,60}$/.test(w || "") && f && f.length < 200 && !/[<>"]/.test(f) ? `https://${w}.fandom.com/wiki/Special:FilePath/${encodeURIComponent(f.replace(/ /g, "_")).replace(/[()'!*]/g, x => "%" + x.charCodeAt(0).toString(16).toUpperCase())}` : null; };
   async function picture(c){
     const k = c.aid + ":" + c.h; if (imgCache.has(k)) return imgCache.get(k);
+    if (c.img === 0 || seen[k] === 0) { imgCache.set(k, null); return null; }
     const wait = Math.max(0, lastAsk + 700 - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
     const q = `query($s:String){Page(perPage:6){characters(search:$s){name{full} image{large} media(perPage:50,type:ANIME){nodes{id}}}}}`;
     const res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
@@ -3249,8 +3257,8 @@ const WHO = (() => {
     if (!res.ok) throw new Error("anilist " + res.status);
     const parts = new Set(BY_ID.get(c.aid).parts.map(p => p.id));
     const hit = ((await res.json())?.data?.Page?.characters || []).find(x => (x.media?.nodes || []).some(m => parts.has(m.id)));
-    const url = hit && /^https:\/\/[a-z0-9.-]*anilist\.co\//.test(hit.image?.large || "") && !/default\.(jpg|png)$/.test(hit.image.large) ? hit.image.large : null;
-    imgCache.set(k, url); return url;
+    const url = (hit && /^https:\/\/[a-z0-9.-]*anilist\.co\//.test(hit.image?.large || "") && !/default\.(jpg|png)$/.test(hit.image.large) ? hit.image.large : null) || fandomUrl(c);
+    learn(k, url ? 1 : 0); imgCache.set(k, url); return url;
   }
   // Auswahl: Anime aus dem Pool (Einstellungen der Minispiele), dann Figur nach Bekanntheit gewichtet
   function poolList(){
@@ -3429,7 +3437,7 @@ const WHO = (() => {
       const q = norm(inp.value); if (!st || !st.c || st.solved || st.ask !== "char" || q.length < 2) return close();
       const out = [];
       for (const [a, l] of (st.daily ? DB.anime.slice(0, 300).filter(a => data.has(a.id)).map(a => [a, data.get(a.id)]) : poolList())) {
-        for (const c of l) { const n = nameOf(c); if (norm(n).startsWith(q) || n.split(/\s+/).some(w => norm(w).startsWith(q))) out.push({c, n, a}); }
+        for (const c of l) { if (c.img === 0 || seen[c.aid + ":" + c.h] === 0) continue; const n = nameOf(c); if (norm(n).startsWith(q) || n.split(/\s+/).some(w => norm(w).startsWith(q))) out.push({c, n, a}); }
       }
       out.sort((x, y) => y.c.w - x.c.w || x.n.localeCompare(y.n));
       items = out.slice(0, 12); on = -1; if (!items.length) return close();

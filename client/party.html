@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Sicherheit: nur eigene Skripte; Bilder nur von TMDB; Verbindungen nur zur eigenen Seite und zur Firebase-Datenbank -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://image.tmdb.org https://s4.anilist.co https://*.anilist.co; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://graphql.anilist.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://image.tmdb.org https://s4.anilist.co https://*.anilist.co https://*.fandom.com https://static.wikia.nocookie.net; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://graphql.anilist.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Animepelago Party</title>
 <style>
 :root{--bg:#f6f6f4;--fg:#1d1d1f;--mute:#6b6b70;--card:#fff;--line:#d9d9de;--ok:#1f8a4c;--bad:#b3261e;--warn:#c2570c;--accent:#3355cc;--grey:#e4e4e8;
@@ -461,15 +461,19 @@ const CHARS = (() => {
     if (data) return Promise.resolve(data);
     return new Promise((ok, fail) => {
       const done = () => { const raw = window.ANIMEPELAGO_CHARS; if (!raw || !raw.a) return fail(); data = new Map();
-        for (const [aid, rows] of Object.entries(raw.a)) if (BY_ID.has(+aid)) data.set(+aid, rows.map(r => ({aid: +aid, h: r[0], g: r[2] || "", w: +r[3] || 1, adult: !!r[4]})));
+        for (const [aid, rows] of Object.entries(raw.a)) if (BY_ID.has(+aid)) data.set(+aid, rows.map(r => ({aid: +aid, h: r[0], g: r[2] || "", w: +r[3] || 1, adult: !!r[4], img: r[5] === 0 ? 0 : (typeof r[5] === "string" ? r[5] : "")})));
         ok(data); };
       if (window.ANIMEPELAGO_CHARS) return done();
       const sc = document.createElement("script"); sc.src = "characters.js"; sc.onload = done; sc.onerror = () => fail(); document.head.appendChild(sc);
     });
   }
-  const URL_OK = u => typeof u === "string" && u.length < 300 && /^https:\/\/[a-z0-9.-]*anilist\.co\/[\w\/.\-]+$/.test(u) && !/default\.(jpg|png)$/.test(u);
+  const URL_OK = u => typeof u === "string" && u.length < 300 && !/default\.(jpg|png)$/.test(u)
+    && (/^https:\/\/[a-z0-9.-]*anilist\.co\/[\w\/.\-]+$/.test(u) || /^https:\/\/[a-z0-9-]{2,60}\.fandom\.com\/wiki\/Special:FilePath\/[\w.%\-]+$/.test(u));
+  const fandomUrl = c => { if (typeof c.img !== "string" || !c.img) return null; const [w, f] = c.img.split("|");
+    return /^[a-z0-9-]{2,60}$/.test(w || "") && f && f.length < 200 ? `https://${w}.fandom.com/wiki/Special:FilePath/${encodeURIComponent(f.replace(/ /g, "_")).replace(/[()'!*]/g, x => "%" + x.charCodeAt(0).toString(16).toUpperCase())}` : null; };
   async function picture(c){
     const k = c.aid + ":" + c.h; if (cache.has(k)) return cache.get(k);
+    if (c.img === 0) return null;
     const wait = Math.max(0, last + 700 - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); last = Date.now();
     let name; try { name = unhide(c.h, c.aid); } catch(e) { return null; }
     const q = `query($s:String){Page(perPage:6){characters(search:$s){image{large} media(perPage:50,type:ANIME){nodes{id}}}}}`;
@@ -478,7 +482,9 @@ const CHARS = (() => {
     if (!res.ok) throw new Error("anilist " + res.status);
     const parts = new Set(BY_ID.get(c.aid).p.map(x => x[0]));
     const hit = ((await res.json())?.data?.Page?.characters || []).find(x => (x.media?.nodes || []).some(m => parts.has(m.id)));
-    const url = hit && URL_OK(hit.image?.large) ? hit.image.large : null; cache.set(k, url); return url;
+    let url = hit && URL_OK(hit.image?.large) ? hit.image.large : null;
+    if (!url) { const f = fandomUrl(c); url = f && URL_OK(f) ? f : null; }
+    cache.set(k, url); return url;
   }
   const weighted = l => { const sum = l.reduce((s, c) => s + c.w, 0); let x = Math.random() * sum; for (const c of l) { x -= c.w; if (x <= 0) return c; } return l[l.length - 1]; };
   return {load, picture, weighted, URL_OK};
