@@ -3342,7 +3342,7 @@ const WHO = (() => {
       if (imgCache.has(k)) out[i] = imgCache.get(k);
       else if (c.img === 0 || seen[k] === 0) out[i] = null;
       else if (okAni(seen[k])) out[i] = seen[k];
-      else if (fandomUrl(c)) out[i] = fandomUrl(c);
+      else if (fandomUrl(c) && seen["f:" + k] !== 0) out[i] = fandomUrl(c);   // Fandom-Bild, ausser es klappte schon einmal nicht
       else need.push(i);
       if (out[i] !== undefined) imgCache.set(k, out[i]); });
     for (let n = 0; n < need.length; n += 6) {
@@ -3370,6 +3370,25 @@ const WHO = (() => {
     return out;
   }
   const picture = async c => (await pictures([c]))[0];
+  // Bild wirklich laden (mit Zeitlimit). Nur geladene Bilder werden gezeigt - sonst gaebe es kaputte Bild-Symbole.
+  function loadImg(url){
+    return new Promise(r => { const img = new Image(), tm = setTimeout(() => r(null), 10000); img.referrerPolicy = "no-referrer";
+      img.onload = () => { clearTimeout(tm); r(img.naturalWidth ? img : null); }; img.onerror = () => { clearTimeout(tm); r(null); }; img.src = url; });
+  }
+  const isFandom = u => /\.fandom\.com\//.test(u || "");
+  // Bilder suchen UND laden. Klappt ein Fandom-Bild nicht, merkt sich der Browser das und fragt stattdessen AniList.
+  // Ergebnis je Figur: {c, url, img} oder null
+  async function verified(list){
+    const urls = await pictures(list), out = list.map(() => null), retry = [];
+    await Promise.all(list.map(async (c, i) => { if (!urls[i]) return; const img = await loadImg(urls[i]);
+      if (img) out[i] = {c, url: urls[i], img};
+      else if (isFandom(urls[i])) { const k = c.aid + ":" + c.h; learn("f:" + k, 0); imgCache.delete(k); retry.push(i); } }));
+    if (retry.length) {
+      const again = await pictures(retry.map(i => list[i]));
+      await Promise.all(retry.map(async (i, j) => { if (!again[j]) return; const img = await loadImg(again[j]); if (img) out[i] = {c: list[i], url: again[j], img}; }));
+    }
+    return out;
+  }
   // Auswahl: Anime aus dem Pool (Einstellungen der Minispiele), dann Figur nach Bekanntheit gewichtet
   function poolList(){
     const only = $("mOnly").value, gsel = $("whoGender").value;
@@ -3440,16 +3459,10 @@ const WHO = (() => {
   async function apFind(my){
     const list = candidates();
     for (let i = 0; i < list.length; i += 6) {
-      const chunk = list.slice(i, i + 6); let urls;
-      try { urls = await pictures(chunk); } catch(e) { if (st === my) st.apErr = true; return null; }
+      const chunk = list.slice(i, i + 6); let got;
+      try { got = await verified(chunk); } catch(e) { if (st === my) st.apErr = true; return null; }
       if (st !== my) return null;
-      for (let j = 0; j < chunk.length; j++) {
-        if (!urls[j]) continue;
-        const img = new Image(); img.referrerPolicy = "no-referrer";
-        const ok = await new Promise(r => { img.onload = () => r(true); img.onerror = () => r(false); img.src = urls[j]; });
-        if (st !== my) return null;
-        if (ok) return {c: chunk[j], img};
-      }
+      const hit = got.find(Boolean); if (hit) return {c: hit.c, img: hit.img};
     }
     return null;
   }
@@ -3459,11 +3472,8 @@ const WHO = (() => {
     for (const c of list) {
       if (st !== my) return null;
       if (st.seen.has(c.aid + ":" + c.h) || (st.c && st.c === c)) continue;
-      let url = null; try { url = await picture(c); } catch(e) { return null; }
-      if (!url) continue;
-      const img = new Image(); img.referrerPolicy = "no-referrer";
-      const okImg = await new Promise(r => { img.onload = () => r(true); img.onerror = () => r(false); img.src = url; });
-      if (okImg) return {c, img};
+      let got = null; try { [got] = await verified([c]); } catch(e) { return null; }
+      if (got) return {c, img: got.img};
     }
     return null;
   }
@@ -3632,8 +3642,8 @@ const WHO = (() => {
     while (out.length < n && left.length && ip === my) {
       const batch = [];
       while (batch.length < n - out.length + 2 && left.length) { const c = weighted(left, Math.random()); left.splice(left.indexOf(c), 1); batch.push(c); }
-      let urls; try { urls = await pictures(batch); } catch(e) { if (++fails > 2) return null; continue; }
-      batch.forEach((c, i) => { if (urls[i] && out.length < n) out.push({c, url: urls[i]}); });
+      let got; try { got = await verified(batch); } catch(e) { if (++fails > 2) return null; continue; }
+      got.forEach(x => { if (x && out.length < n) out.push({c: x.c, url: x.url}); });
     }
     return out.length === n ? out : null;
   }
