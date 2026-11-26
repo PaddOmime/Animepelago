@@ -3457,9 +3457,10 @@ const WHO = (() => {
     return (data.get(aid) || []).filter(c => c.img !== 0 && seen[c.aid + ":" + c.h] !== 0 && tiers.includes(tierOf(c)) && !got.has(c.h)
       && chGenderOk(c) && !(boss && nameOf(c) === boss.name)); };
   function candidates(){
-    if (st.ap) {   // gewichtet gemischt: bekanntere Figuren eher zuerst
+    if (st.ap) {   // Figuren mit schon bekanntem Bild zuerst (kein Warten auf AniList), sonst gewichtet gemischt
+      const src = c => { const k = c.aid + ":" + c.h; return okAni(seen[k]) ? 2 : fandomUrl(c) && seen["f:" + k] !== 0 ? 1 : 0; };
       return apPool(st.ap).filter(c => !st.seen.has(c.aid + ":" + c.h))
-        .map(c => [c, Math.pow(Math.random(), 1 / c.w)]).sort((x, y) => y[1] - x[1]).map(x => x[0]);
+        .map(c => [c, src(c) + Math.pow(Math.random(), 1 / c.w)]).sort((x, y) => y[1] - x[1]).map(x => x[0]);
     }
     if (st.daily) {   // Tagesraetsel: fuer alle gleich, bekannte Figuren aus den 300 beliebtesten
       const pool = DB.anime.slice(0, 300).filter(a => data.has(a.id)), out = [];
@@ -3513,7 +3514,7 @@ const WHO = (() => {
     if (got) { st.c = got.c; st.img = got.img; st.seen.add(got.c.aid + ":" + got.c.h); if (st.shown) st.shown.add(got.c.aid + ":" + got.c.h); }
     if (!st.c) { $("whoMsg").textContent = t("whoNoImg"); $("whoMsg").className = "warn"; $("whoNext").textContent = t("impNext"); $("whoNext").classList.remove("hide"); return; }
     $("whoMsg").textContent = ""; $("whoGuess").disabled = false; draw(); $("whoGuess").focus();
-    if (!st.daily && !st.ap) st.next = find(my);    // naechste Figur schon im Hintergrund laden
+    if (!st.daily && !st.boss) st.next = find(my);    // naechste Figur schon im Hintergrund laden
   }
   // Passende Figur mit Bild suchen (AniList), das Bild vorladen
   // AP: Bilder gebuendelt (6 je Anfrage) suchen. Merkt sich, ob es nur an fehlenden Bildern lag (dann Freigabe moeglich).
