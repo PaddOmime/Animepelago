@@ -213,6 +213,7 @@ dialog li.no{color:var(--mute)}
 /* Vorschlagsliste unter dem Eingabefeld (Animedle) */
 .acw{position:relative}
 .acl{position:absolute;left:0;right:0;top:100%;z-index:20;max-height:300px;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);margin-top:2px}
+.acl.up{top:auto;bottom:100%;margin:0 0 2px}
 .acl div{padding:7px 10px;cursor:pointer;display:flex;gap:8px;align-items:center}
 .acl div.on,.acl div:hover{background:color-mix(in srgb,var(--accent) 16%,transparent)}
 .acl .aci{width:64px;height:30px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:6px;background:color-mix(in srgb,var(--fg) 6%,transparent)}
@@ -1605,6 +1606,9 @@ function checkAnime(list){
   if (locs.length) send({cmd:"LocationChecks", locations:locs});
   render(); checkGoal();
 }
+// Vorschlagsliste nach oben aufklappen, wenn unten kein Platz ist (Eingabe ganz unten im Fenster)
+function acPlace(box){ box.classList.remove("up"); const r = box.getBoundingClientRect();
+  if (r.bottom > window.innerHeight - 8 && box.parentElement.getBoundingClientRect().top > r.height + 8) box.classList.add("up"); }
 // Passt die Eingabe zum Titel eines Anime (Anfang eines Titels in irgendeiner Sprache, ab 3 Zeichen)?
 const titleHit = (a, q) => q.length >= 3 && [a.title, ...Object.values(a.titles || {})].some(x => x && norm(x).startsWith(q));
 // ---------- Waifupelago: Figuren-Checks ----------
@@ -3761,7 +3765,7 @@ const WHO = (() => {
       for (const x of [...out, ...byTitle]) { const k = x.n + "|" + x.a.id; if (!seenN.has(k)) { seenN.add(k); merged.push(x); } }
       items = merged.slice(0, out.length ? 12 : 30); on = -1; if (!items.length) return close();
       box.innerHTML = items.map((x, i) => `<div role="option" data-i="${i}"><span>${esc(x.n)} <small>· ${esc(titleOf(x.a, st.lang))}</small></span></div>`).join("");
-      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
+      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true"); acPlace(box);
     }
     function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length;
       box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
@@ -3960,7 +3964,7 @@ const WHO = (() => {
         if (norm(n).startsWith(q) || words(n).some(w => w.startsWith(q))) { seenN.add(n); out.push(n); } if (out.length >= 10) break; }
       items = out; on = -1; if (!items.length) return close();
       box.innerHTML = items.map((n, i) => `<div role="option" data-i="${i}"><span>${esc(n)}</span></div>`).join("");
-      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
+      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true"); acPlace(box);
     }
     function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
     inp.addEventListener("input", show);
@@ -4130,7 +4134,7 @@ const DLE = (() => {
       const yr = x => x.a.c?.[0] ? ` <small>(${esc(x.a.c[0] === "Before 2000" ? t("before2000") : x.a.c[0])})</small>` : "";
       box.innerHTML = list.map((x, i) => `<div role="option" data-i="${i}"><span class="aci">${x.a.logo ? `<img src="${esc(x.a.logo)}" alt="" loading="lazy">` : ""}</span>`
         + `<span>${x.alt ? esc(x.nm) + ` <small>· ${mark(x.alt, raw2)}</small>` : mark(x.nm, raw2)}${yr(x)}</span></div>`).join("");
-      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
+      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true"); acPlace(box);
     }
     function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length;
       box.querySelectorAll("div[data-i]").forEach((el, i) => el.classList.toggle("on", i === on));
@@ -4264,7 +4268,7 @@ const CDLE = (() => {
       out.sort((p, r) => r.c.w - p.c.w || nameOf(p).localeCompare(nameOf(r)));
       items = out.slice(0, 12); on = -1; if (!items.length) return close();
       box.innerHTML = items.map((x, i) => `<div role="option" data-i="${i}"><span>${esc(nameOf(x))} <small>· ${esc(titleOf(x.a, st.lang))}</small></span></div>`).join("");
-      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true");
+      box.classList.remove("hide"); inp.setAttribute("aria-expanded", "true"); acPlace(box);
     }
     function move(d){ if (!items.length) return; on = (on + d + items.length) % items.length; box.querySelectorAll("div[data-i]").forEach((el, i) => { el.classList.toggle("on", i === on); if (i === on) el.scrollIntoView({block: "nearest"}); }); }
     inp.addEventListener("input", show);
