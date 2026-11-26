@@ -611,11 +611,21 @@ GAMES.buzz = {
     for (let tries = 0; items.length < o.rounds && tries < o.rounds * 4 && cand.length; tries++) {
       const c = CHARS.weighted(cand[Math.floor(Math.random() * cand.length)]); const k = c.aid + ":" + c.h; if (used.has(k)) continue; used.add(k);
       let url = null; try { url = await CHARS.picture(c); } catch(e) { break; }
-      if (url) items.push([c.aid, c.h, url, c.keys.slice(0, 60)]);
+      if (url) items.push([c.aid, c.h, url, GAMES.buzz.keysOf(c, data).slice(0, 60)]);
       $("lobbyMsg").textContent = t("pkLoad") + ` ${items.length}/${o.rounds}`;
     }
     if (items.length < Math.min(3, o.rounds)) return null;
     return {type: "buzz", n: items.length, items, round: 0, phase: "pick", lang: o.lang, t0: Date.now(), hits: {}};
+  },
+  // Antworten einer Figur. Steht sie nur mit Kurznamen in den Daten ("Fujimoto"), zaehlt auch der volle Name
+  // einer Figur desselben Anime mit diesem Vor- oder Nachnamen ("Shiro Fujimoto").
+  keysOf(c, data){
+    const keys = new Set(c.keys); let nm = ""; try { nm = unhide(c.h, c.aid).trim(); } catch(e) {}
+    const short = norm(nm);
+    if (nm && !/\s/.test(nm) && short.length >= 3) for (const o of data.get(c.aid) || []) { if (o === c) continue; let on = "";
+      try { on = unhide(o.h, o.aid); } catch(e) { continue; }
+      if (on.split(/[\s.\-]+/).map(norm).includes(short)) o.keys.forEach(k => keys.add(k)); }
+    return [...keys];
   },
   // Ein Spieler schickt nur eine richtige Antwort (Pruefsumme des Namens), geprueft wird auf seinem Geraet
   valid(g, ans, v){ return typeof v === "string" && g.items[g.round][3].includes(v); },

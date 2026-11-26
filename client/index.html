@@ -3586,7 +3586,14 @@ const WHO = (() => {
   function reveal(){ if (st.c) $("whoHints").innerHTML = `<li><b>${esc(nameOf(st.c))}</b> · ${esc(titleOf(BY_ID.get(st.c.aid), st.lang))}</li>`; }
   function isRight(text){
     if (st.ask === "anime") return findAnime(text, DB.anime, a => a.id === st.c.aid).hits.some(a => a.id === st.c.aid);
-    const h = nameHash(text); return !!h && st.c.keys.has(h);
+    const h = nameHash(text); if (!h) return false;
+    if (st.c.keys.has(h)) return true;
+    // Manche Figuren stehen doppelt in den Daten, einmal nur mit Nachnamen ("Fujimoto" und "Shiro Fujimoto").
+    // Ist die gesuchte Figur so ein Kurzname und passt die Eingabe zu einer Figur desselben Anime, die diesen Namen
+    // als Vor- oder Nachnamen traegt, zaehlt es auch.
+    const raw = nameOf(st.c).trim(); if (/\s/.test(raw)) return false;
+    const short = norm(raw); if (short.length < 3) return false;
+    return (data.get(st.c.aid) || []).some(c => c !== st.c && c.keys.has(h) && nameOf(c).split(/[\s.\-]+/).map(norm).includes(short));
   }
   function guess(pickName){
     if (!st || !st.c || st.solved || st.over) return;
