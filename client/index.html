@@ -1829,7 +1829,9 @@ const PROF = (() => {
             lastDay: dateOk(p.lastDay), lastExport: dateOk(p.lastExport),
             routes: Object.fromEntries(ROUTES.filter(r => p.routes && p.routes[r.id] != null).map(r => [r.id, num(p.routes[r.id], 0, CAP)])),
             route: ROUTE_BY[p.route] ? p.route : null, lastRoute: ROUTE_BY[p.lastRoute] ? p.lastRoute : null,
-            title: typeof p.title === "string" && /^[a-z]+:\d$/.test(p.title) ? p.title : null};
+            title: typeof p.title === "string" && /^[a-z]+:\d$/.test(p.title) ? p.title : null,
+            // Lieblingsfarbe aus der 2.0-Vorschau beim Speichern behalten
+            color: typeof p.color === "string" && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color.toLowerCase() : null};
   }
   function load(){
     const raw = read(KEY), out = {active: null, list: {}};
