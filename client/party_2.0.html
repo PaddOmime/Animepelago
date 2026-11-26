@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Sicherheit: nur eigene Skripte; Bilder nur von TMDB; Verbindungen nur zur eigenen Seite und zur Firebase-Datenbank -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://image.tmdb.org https://s4.anilist.co https://*.anilist.co https://*.fandom.com https://static.wikia.nocookie.net; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://graphql.anilist.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Animepelago Party</title>
+<style>
+:root{--bg:#F4F2FA;--fg:#1E1B33;--mute:#5E5978;--card:#FFFFFF;--line:#E2DEF0;--ok:#1f8a4c;--bad:#b3261e;--warn:#c2570c;--accent:var(--fav,#FF9EC4);--grey:#ECE9F5;
+  --on-accent:var(--fav-on,#191B30);--accent-ink:color-mix(in srgb,var(--accent) 42%,#1E1B33);
+  --c0:#2f6fd6;--c1:#d9480f;--c2:#8e44ad;--c3:#1f8a4c;--c4:#c2185b;--c5:#00838f;--c6:#9a6a00;--c7:#555}
+@media (prefers-color-scheme:dark){:root{--bg:#191B30;--fg:#F1EEFA;--mute:#B9B4D6;--card:#2A2D4A;--line:#3A3E63;--ok:#4cc27e;--bad:#ff6b60;--warn:#ff9a4d;--accent:var(--fav,#FF9EC4);--grey:#33365A;--accent-ink:var(--accent);
+  --c0:#6fa3ff;--c1:#ff8a4d;--c2:#c08bff;--c3:#4cc27e;--c4:#ff6fa8;--c5:#4dd0e1;--c6:#f0c040;--c7:#bbb}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:0 0 12px}
+.hide{display:none!important}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--mute);margin-bottom:8px}
+input,select,button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+input,label select{width:100%}
+label>span:first-child{display:block;margin-bottom:2px}
+button{cursor:pointer}
+button.main{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 160px}
+.mute{color:var(--mute)}.good{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+#topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+a{color:var(--accent-ink)}
+/* Spielerleiste: fuer jeden Spieler eine Karte in seiner Farbe */
+#bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.pl{border:3px solid var(--line);border-radius:10px;padding:6px 10px;min-width:0}
+.pl .nm{font-weight:700;font-size:17px;overflow-wrap:anywhere}
+.pl .st{font-size:13px;color:var(--mute)}
+.pl .pts{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.pl.now{box-shadow:0 0 0 3px var(--accent) inset}
+.code{font:800 34px/1 ui-monospace,monospace;letter-spacing:4px}
+/* Show-Ansicht: gross fuer den Stream */
+.big .anime{font-size:30px;font-weight:800;text-align:center;margin:10px 0}
+.anime img{display:block;max-height:110px;max-width:70%;margin:6px auto;object-fit:contain}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.col{border:2px solid var(--line);border-radius:10px;padding:6px}
+.col ol{margin:0;padding-left:26px}
+.col li{padding:2px 0;overflow-wrap:anywhere;font-size:14px}
+.col li.new{font-weight:800}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.slots button{padding:12px 6px;font-size:15px;text-align:left;overflow:hidden}
+.slots button b{display:block;font-size:20px}
+.pkc{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.pkc img{width:min(260px,60vw);aspect-ratio:5/7;object-fit:cover;border-radius:16px;background:var(--line)}
+.pkc .nm{font-size:22px;font-weight:800}.pkc .an{color:var(--mute)}
+.pkbar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;max-width:420px;margin:6px auto}.pkbar>i{display:block;height:100%;background:#3ba55c}
+.pk18tag{display:inline-block;background:#e5484d;color:#fff;border-radius:8px;padding:1px 8px;font-size:13px;font-weight:800;margin-left:6px}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center}
+.vs .card{border:2px solid var(--line);border-radius:12px;padding:12px;min-height:120px}
+.vs .val{font-size:26px;font-weight:800}
+.hol button{font-size:24px;padding:14px 22px}
+.pick{font-size:28px}
+/* Party-Bingo: Raster mit Kategorien oben und links */
+/* Higher or Lower am Handy: beide Anime mit Logo nebeneinander */
+.hvs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center;margin-bottom:10px}
+.hlogo{display:block;max-width:100%;max-height:70px;object-fit:contain;margin:0 auto 4px}
+.bgw{overflow-x:auto}
+/* Alle Felder gleich gross: feste Spaltenbreiten (colgroup) und feste Hoehe fuer den Inhalt (.cc) */
+.bgt{--rh:110px;--cw:150px;--ch:76px;border-collapse:separate;border-spacing:4px;margin:0 auto;table-layout:fixed;width:calc(var(--rh) + var(--n) * (var(--cw) + 4px) + 4px)}
+.bgt col.rh{width:var(--rh)}
+.bgt th{font-size:13px;font-weight:700;padding:4px;overflow-wrap:break-word;vertical-align:middle}
+.bgt td{border:2px solid var(--line);border-radius:8px;padding:3px;text-align:center;vertical-align:middle;font-size:14px}
+.bgt .cc{height:var(--ch);display:flex;align-items:center;justify-content:center;overflow:hidden;overflow-wrap:anywhere;line-height:1.2}
+.bgt .blogo{display:block;max-width:100%;max-height:100%;object-fit:contain}
+.bgt td.free{cursor:pointer}
+.bgt td.sel{box-shadow:0 0 0 3px var(--accent) inset}
+.bgt td.won{outline:3px dashed var(--fg);outline-offset:2px;font-weight:800}
+#pad .bgt{--rh:70px;--ch:52px;width:100%;min-width:calc(var(--rh) + var(--n) * 50px);max-width:calc(var(--rh) + var(--n) * 130px)}
+#pad .bgt th,#pad .bgt td{font-size:11px;padding:2px}
+@media (max-width:500px){#pad .bgt{--rh:56px;--ch:46px;border-spacing:3px}#pad .bgt th,#pad .bgt td{font-size:10px}}
+.bgin{display:flex;gap:8px;margin:10px 0}
+.bgin input{flex:1 1 auto;min-width:0}
+.bgin button{flex:0 0 auto;white-space:nowrap}
+.bglog{font-size:14px;margin:8px 0 0;padding-left:18px}
+.clock{font:800 28px/1 ui-monospace,monospace}
+
+/* ===== 2.0: Stil wie das neue Hauptmenue ===== */
+#topbar h1 a{color:inherit}
+#viewHead{display:flex;align-items:center;gap:10px;margin:4px 0 12px}#viewHead h2{margin:0;font-size:20px}
+.vhb{width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;background:var(--card);color:var(--fg)}
+.htiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.ht{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:12px;min-height:150px;padding:20px;border-radius:22px;background:var(--card);border:0;text-align:left;color:var(--fg);font-weight:400}
+.ht b{display:block;font-size:20px;font-weight:800}.ht .tx>span{display:block;font-size:14px;color:var(--mute);margin-top:4px;line-height:1.4}
+.ht.big{background:var(--accent);color:var(--on-accent);cursor:pointer}.ht.big .tx>span{color:inherit;opacity:.85}
+.ht.big:hover{filter:brightness(1.05)}
+.joinc label{color:var(--mute)}
+.gtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.gt{min-height:72px;border-radius:18px;background:var(--grey);border:3px solid transparent;text-align:left;padding:12px 14px}
+.gt b{font-size:16px;font-weight:800}.gt:hover{border-color:var(--accent)}.gt.on{border-color:var(--accent);background:var(--card)}
+body:has(#show:not(.hide)) #viewHead,body:has(#ctrl:not(.hide)) #viewHead{display:none}
+#lobby .row>label{flex:0 1 240px}#lobby .row>label.pkOpt{flex:0 1 auto}
+#topbar{align-items:center}
+.opts{margin-top:8px}.opts summary{cursor:pointer;font-weight:800;color:var(--mute)}
+body{font:15px/1.45 "M PLUS Rounded 1c","Nunito",ui-rounded,"Hiragino Maru Gothic ProN","Segoe UI",system-ui,sans-serif}
+main{padding:16px 20px 40px}
+h1{display:flex;align-items:center;gap:8px;font-size:21px;font-weight:800}
+h2,h3,h4{font-weight:800}
+.box{border-radius:20px;padding:16px;border-color:transparent}
+input,select,button{border-radius:12px;min-height:42px}
+button{font-weight:700}button.main{font-weight:800}
+.pl{border-radius:16px;background:var(--card)}
+.col,.vs .card{border-radius:16px}
+.code{color:var(--accent-ink)}
+.slots button,.hol button{border-radius:14px}
+#bar .pl{border-width:3px}
+</style>
+</head>
+<body>
+<main>
+<div id="topbar">
+  <h1><a href="index_2.0.html" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:8px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 5.6 6 .5-4.6 4 1.4 5.9L12 16l-5.2 3 1.4-5.9-4.6-4 6-.5z"></path></svg>Animepelago</a></h1>
+  <span><select id="uilang" aria-label="Language"><option value="de">Deutsch</option><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="it">Italiano</option><option value="ja">日本語</option></select></span>
+</div>
+<div id="viewHead"><a href="index_2.0.html" id="vhBack" class="vhb" data-t-aria="plBack"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a><h2 data-t="tileParty"></h2></div>
+
+<!-- Start: Raum erstellen (Show-Ansicht) oder beitreten (Controller) -->
+<section id="start">
+  <p class="mute" data-t="intro" style="margin:0 0 14px"></p>
+  <div class="htiles">
+    <button type="button" id="host" class="ht big"><span class="tx"><b data-t="host"></b><span data-t="hostInfo"></span></span></button>
+    <div class="ht joinc"><span class="tx"><b data-t="plJoinT"></b><span data-t="plJoinD"></span></span>
+      <div class="row" style="width:100%">
+        <label><span data-t="yourName"></span><input id="name" maxlength="20" autocomplete="off"></label>
+        <label style="flex:0 1 140px"><span data-t="roomCode"></span><input id="code" maxlength="5" autocomplete="off" style="text-transform:uppercase"></label>
+        <button type="button" id="join" class="main" style="flex:0 0 auto" data-t="join"></button>
+      </div>
+    </div>
+  </div>
+  <div class="row hide" id="reopenRow" style="margin-top:6px"><button type="button" id="reopen" style="flex:0 0 auto"></button></div>
+  <p id="netInfo" class="mute" style="font-size:12px;margin:8px 0 0"></p>
+  <div id="startMsg"></div>
+</section>
+
+<!-- Show-Ansicht (im Discord teilen) -->
+<section id="show" class="hide">
+  <div class="box">
+    <div class="row" style="align-items:center">
+      <div style="flex:0 0 auto"><div class="mute" data-t="roomCode"></div><div class="code" id="showCode"></div></div>
+      <div id="showHead" style="flex:1 1 300px"></div>
+      <a id="playToo" target="_blank" rel="noopener" style="flex:0 0 auto" data-t="playToo"></a>
+      <button type="button" id="leaveShow" style="flex:0 0 auto" data-t="leave"></button>
+    </div>
+    <div id="bar"></div>
+  </div>
+  <div class="box" id="lobby">
+    <h3 data-t="plGames" style="margin:0 0 10px"></h3>
+    <div class="gtiles" id="gTiles">
+      <button type="button" class="gt" data-g="blind"><b data-t="g_blind"></b></button>
+      <button type="button" class="gt" data-g="hol"><b data-t="g_hol"></b></button>
+      <button type="button" class="gt" data-g="pick"><b data-t="g_pick"></b></button>
+      <button type="button" class="gt" data-g="bingo"><b data-t="g_bingo"></b></button>
+    </div>
+    <p class="mute" id="gameInfo" style="font-size:14px;margin:10px 0"></p>
+    <div class="row">
+      <label class="hide"><span data-t="game"></span><select id="gameSel"><option value="blind" data-t="g_blind"></option><option value="hol" data-t="g_hol"></option><option value="pick" data-t="g_pick"></option><option value="bingo" data-t="g_bingo"></option></select></label>
+      <label class="bgOpt"><span data-t="bgMode"></span><select id="bgMode"><option value="vs" data-t="bgVs"></option><option value="coop" data-t="bgCoop"></option></select></label>
+      <label class="bgOpt"><span data-t="bgSize"></span><select id="bgSize"><option value="3">3×3</option><option value="4">4×4</option><option value="5" selected>5×5</option><option value="6">6×6</option></select></label>
+      <label class="pkOpt"><span data-t="pkG"></span><select id="pkG"><option value="" data-t="pkAll"></option><option value="f" data-t="pkF"></option><option value="m" data-t="pkM"></option><option value="nb" data-t="pkNB"></option></select></label>
+      <label class="pkOpt" style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="pk18" style="width:auto;min-height:0"><span data-t="pk18"></span></label>
+      <label class="notBg"><span data-t="rounds"></span><select id="rounds"><option>5</option><option selected>10</option><option>15</option></select></label>
+    </div>
+    <details class="opts"><summary data-t="plOpts"></summary>
+      <div class="row" style="margin-top:8px">
+        <label><span data-t="pool"></span><input id="pool" type="number" min="20" value="300"></label>
+        <label><span data-t="lang"></span><select id="tlang"><option value="english">English</option><option value="romaji">Romaji</option><option value="german">Deutsch</option></select></label>
+      </div>
+    </details>
+    <button type="button" id="startGame" class="main" style="margin-top:12px;min-width:200px;min-height:48px;font-size:17px" data-t="startGame"></button>
+    <span id="lobbyMsg" class="warn"></span>
+  </div>
+  <div class="box big hide" id="stage"></div>
+</section>
+
+<!-- Controller (jeder Spieler, am Handy oder im zweiten Fenster) -->
+<section id="ctrl" class="hide">
+  <div class="box">
+    <div class="row" style="align-items:center">
+      <div style="flex:1 1 auto"><b id="meName"></b> <span class="mute" id="meRoom"></span></div>
+      <button type="button" id="leaveCtrl" style="flex:0 0 auto" data-t="leave"></button>
+    </div>
+  </div>
+  <div class="box" id="pad"></div>
+</section>
+<p class="mute" style="font-size:12px" data-t="privacy"></p>
+</main>
+<script src="game_data.js"></script>
+<script>
+// Lieblingsfarbe aus dem Profil (vom Hauptmenue gemerkt) - Schrift darauf hell oder dunkel je nach Helligkeit
+try { const c = localStorage.getItem("ap_fav_now"); if (/^#[0-9a-f]{6}$/i.test(c || "")) { const r = document.documentElement.style;
+  const lin = v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4), [R, G, B] = [1, 3, 5].map(i => lin(parseInt(c.slice(i, i + 2), 16) / 255));
+  r.setProperty("--fav", c); r.setProperty("--fav-on", 0.2126 * R + 0.7152 * G + 0.0722 * B > 0.18 ? "#191B30" : "#FFFFFF"); } } catch(e) {}
+</script>
+<script>
+"use strict";
+// ---------- Einstellungen ----------
+// Firebase Realtime Database (kostenloser Spark-Tarif). Leer = nur "dieses Geraet" (mehrere Fenster, zum Testen).
+// Nur die Adresse der Datenbank wird gebraucht (z. B. "https://animepelago-party-default-rtdb.europe-west1.firebasedatabase.app").
+// Sie ist oeffentlich; geschuetzt wird die Datenbank durch die Regeln in docs/firebase_rules.json.
+const FIREBASE_DB = "https://animepelago-party-default-rtdb.europe-west1.firebasedatabase.app";
+
+// ---------- Texte ----------
+const TXT = {
+  en: {back:"← Animepelago", intro:"Party games for streams: the host opens a room and shares this window in Discord (show view). Everyone (the host too) joins on their phone or a second window with the room code and answers there in secret.",
+    yourName:"Your name", roomCode:"Room code", join:"Join", host:"📺 Open a room (show view)", hostInfo:"For the screen you share. To play along yourself, also join on your phone.",
+    netOnline:"Online rooms (Firebase) – works across the internet.", netLocal:"Test mode: rooms only work on this device (several windows). Online rooms are not set up yet.",
+    leave:"Leave", game:"Game", g_blind:"📊 Blind Ranking", g_hol:"⬆️⬇️ Higher or Lower", pool:"Anime from the top N", rounds:"Rounds", lang:"Titles in", startGame:"Start",
+    needPlayers:"Waiting for players …", info_blind:"One anime after another is revealed. Everyone places it on a free spot 1–N without knowing what comes next. Then all picks are revealed at once. At the end: who is closest to the AniList popularity order?",
+    g_pick:"💘 Pick or Pass", g_smash:"🔞 Smash or Pass", info_pick:"A character appears: would you take them into your team? Everyone votes in secret, then it is revealed. No points – just for fun.", info_pick18:"🔞 Smash or Pass: only characters who are confirmed adults in their series. Everyone votes in secret, then it is revealed.", pk18:"🔞 18+ variant (Smash or Pass)", pkG:"Characters", pkAll:"All", pkF:"Female", pkM:"Male", pkNB:"Non-binary", pkPick:"✅ Pick", pkSmash:"🔥 Smash", pkPass:"❌ Pass", pkLoad:"Looking for characters with pictures …", pkNone:"Not enough characters with pictures found – try again or change the filter.", pkTop:"Most picked", pkCount:"{0} of {1}", pkCredit:"Pictures live from AniList · Characters: Wikidata & Fandom wikis (CC BY-SA)", plJoinT:"📱 Play along", plJoinD:"Join a room with the code from the stream.", plGames:"Choose a game", plOpts:"⚙️ More options", plBack:"Back", tileParty:"Party", info_hol:"Is the second anime more popular / newer than the first? Everyone picks ⬆️ or ⬇️ in secret, then it is revealed. 1 point per correct pick.",
+    waiting:"Waiting for the host …", joined:"{0} joined", answered:"✓ answered", thinking:"… thinking", round:"Round {0}/{1}", reveal:"Reveal", next:"Next", allIn:"Everyone has answered!",
+    yourPick:"Your pick: {0}", pickSlot:"Pick a free spot for:", nameNeeded:"Please enter a name.", codeNeeded:"Please enter the 5-letter room code.", noRoom:"Room {0} not found (or expired).",
+    final:"🏁 Result", closest:"Closest to AniList: {0}", dist:"{0} off", pts:"{0} pts", more:"more popular", newer:"newer", qPop:"Which is MORE POPULAR on AniList?", qYear:"Which is NEWER?",
+    higher:"⬆️ More", lower:"⬇️ Less", newerBtn:"⬆️ Newer", olderBtn:"⬇️ Older", same:"Same year – everyone gets the point!", rank:"#{0} popular", year:"{0}", over:"Back to the lobby", correct:"✓", wrong:"✕",
+    privacy:"Online rooms store only names, answers and the game state in Firebase (Google). “Leave” in the show view deletes the room; rooms left open are locked after 6 hours. Names you enter are visible to everyone in the room.", connErr:"Connection problem – trying again …", kicked:"The room was closed.", hostLeft:"Host", reopen:"📺 Reopen room {0}",
+    g_bingo:"🎯 Bingo", bgMode:"Mode", bgVs:"Against each other", bgCoop:"Together (co-op, time attack)", bgSize:"Board",
+    info_bingo_vs:"Everyone sees the same board on their own device. Type an anime that fits row + column – whoever is first gets the field. 3×3/4×4: first full row, column or diagonal wins; from 5×5: most fields when the board is full. Tap a field first to aim for it, otherwise the best free field is picked.",
+    info_bingo_coop:"Fill the whole board together as fast as possible. Every wrong answer costs 10 seconds. Tap a field first to aim for it, otherwise the best free field is picked.",
+    playToo:"🎮 Play along (new tab)", bgEnter:"Enter", bgPh:"Anime title …", bgSent:"Sent …", bgOk:"✓ {0}", bgUsedM:"Already on the board.", bgTaken:"Field already taken – too slow!",
+    bgNoFit:"{0} doesn't fit a free field.", bgUnknown:"Don't know that anime.", bgWait:"⏳ Wrong – wait {0} s", bgPen:"+10 s", fields:"{0} fields", bgWrong:"{0} wrong",
+    bgWin:"🏆 {0} wins!", bgDraw:"🤝 Draw!", bgDone:"🎉 Board full in {0} ({1} wrong)!", bgEnd:"End game", bgGenFail:"No board found – take more anime (top N) or a smaller board.", bgEnded:"Game ended: {0} of {1} fields.",
+    stale:"A game is running that this page doesn't know yet – your browser has an old version. Please reload (on PC: Ctrl+F5).", reload:"🔄 Reload"},
+  de: {back:"← Animepelago", intro:"Party-Spiele für Streams: Der Gastgeber öffnet einen Raum und teilt dieses Fenster im Discord (Show-Ansicht). Alle (auch der Gastgeber) treten am Handy oder in einem zweiten Fenster mit dem Raum-Code bei und antworten dort geheim.",
+    yourName:"Dein Name", roomCode:"Raum-Code", join:"Beitreten", host:"📺 Raum öffnen (Show-Ansicht)", hostInfo:"Für den Bildschirm, den du teilst. Willst du selbst mitspielen, tritt zusätzlich am Handy bei.",
+    netOnline:"Online-Räume (Firebase) – funktioniert übers Internet.", netLocal:"Testmodus: Räume funktionieren nur auf diesem Gerät (mehrere Fenster). Online-Räume sind noch nicht eingerichtet.",
+    leave:"Verlassen", game:"Spiel", g_blind:"📊 Blind Ranking", g_hol:"⬆️⬇️ Higher or Lower", pool:"Anime aus den Top N", rounds:"Runden", lang:"Titel auf", startGame:"Starten",
+    needPlayers:"Warte auf Spieler …", info_blind:"Nacheinander wird je ein Anime aufgedeckt. Jeder setzt ihn auf einen freien Platz 1–N, ohne zu wissen, was noch kommt. Dann werden alle Plätze gleichzeitig aufgedeckt. Am Ende: Wer liegt am nächsten an der AniList-Beliebtheit?",
+    g_pick:"💘 Pick or Pass", g_smash:"🔞 Smash or Pass", info_pick:"Eine Figur erscheint: Würdest du sie in dein Team holen? Alle stimmen geheim ab, dann wird aufgedeckt. Ohne Punkte – nur zum Spaß.", info_pick18:"🔞 Smash or Pass: nur Figuren, die in ihrem Werk sicher volljährig sind. Alle stimmen geheim ab, dann wird aufgedeckt.", pk18:"🔞 Ü18-Variante (Smash or Pass)", pkG:"Figuren", pkAll:"Alle", pkF:"Weiblich", pkM:"Männlich", pkNB:"Nichtbinär", pkPick:"✅ Pick", pkSmash:"🔥 Smash", pkPass:"❌ Pass", pkLoad:"Suche Figuren mit Bild …", pkNone:"Nicht genug Figuren mit Bild gefunden – nochmal versuchen oder Filter ändern.", pkTop:"Am häufigsten gepickt", pkCount:"{0} von {1}", pkCredit:"Bilder live von AniList · Figuren: Wikidata & Fandom-Wikis (CC BY-SA)", plJoinT:"📱 Mitspielen", plJoinD:"Mit dem Code aus dem Stream beitreten.", plGames:"Spiel wählen", plOpts:"⚙️ Mehr Optionen", plBack:"Zurück", tileParty:"Party", info_hol:"Ist der zweite Anime beliebter / neuer als der erste? Jeder tippt geheim ⬆️ oder ⬇️, dann wird aufgedeckt. 1 Punkt pro richtigem Tipp.",
+    waiting:"Warte auf den Gastgeber …", joined:"{0} ist beigetreten", answered:"✓ abgegeben", thinking:"… überlegt", round:"Runde {0}/{1}", reveal:"Aufdecken", next:"Weiter", allIn:"Alle haben abgegeben!",
+    yourPick:"Deine Wahl: {0}", pickSlot:"Wähle einen freien Platz für:", nameNeeded:"Bitte einen Namen eingeben.", codeNeeded:"Bitte den 5-stelligen Raum-Code eingeben.", noRoom:"Raum {0} nicht gefunden (oder abgelaufen).",
+    final:"🏁 Ergebnis", closest:"Am nächsten an AniList: {0}", dist:"{0} daneben", pts:"{0} Pkt.", more:"beliebter", newer:"neuer", qPop:"Welcher ist BELIEBTER auf AniList?", qYear:"Welcher ist NEUER?",
+    higher:"⬆️ Mehr", lower:"⬇️ Weniger", newerBtn:"⬆️ Neuer", olderBtn:"⬇️ Älter", same:"Gleiches Jahr – alle bekommen den Punkt!", rank:"Platz {0} der Beliebtheit", year:"{0}", over:"Zurück zur Lobby", correct:"✓", wrong:"✕",
+    privacy:"Online-Räume speichern nur Namen, Antworten und den Spielstand bei Firebase (Google). „Verlassen“ in der Show-Ansicht löscht den Raum; offen gelassene Räume werden nach 6 Stunden gesperrt. Eingegebene Namen sehen alle im Raum.", connErr:"Verbindungsproblem – versuche es weiter …", kicked:"Der Raum wurde geschlossen.", hostLeft:"Gastgeber", reopen:"📺 Raum {0} wieder öffnen",
+    g_bingo:"🎯 Bingo", bgMode:"Modus", bgVs:"Gegeneinander", bgCoop:"Zusammen (Koop, Time Attack)", bgSize:"Board",
+    info_bingo_vs:"Alle sehen dasselbe Board am eigenen Gerät. Tippe einen Anime, der zu Zeile + Spalte passt – wer zuerst kommt, bekommt das Feld. 3×3/4×4: Wer zuerst eine ganze Zeile, Spalte oder Diagonale hat, gewinnt; ab 5×5: die meisten Felder, wenn das Board voll ist. Tippe vorher auf ein Feld, um es gezielt zu nehmen, sonst wird das beste freie Feld gewählt.",
+    info_bingo_coop:"Füllt zusammen das ganze Board so schnell wie möglich. Jede falsche Antwort kostet 10 Sekunden. Tippe vorher auf ein Feld, um es gezielt zu nehmen, sonst wird das beste freie Feld gewählt.",
+    playToo:"🎮 Selbst mitspielen (neuer Tab)", bgEnter:"Eintragen", bgPh:"Anime-Titel …", bgSent:"Gesendet …", bgOk:"✓ {0}", bgUsedM:"Schon auf dem Board.", bgTaken:"Feld schon belegt – zu langsam!",
+    bgNoFit:"{0} passt in kein freies Feld.", bgUnknown:"Den Anime kenne ich nicht.", bgWait:"⏳ Falsch – warte {0} s", bgPen:"+10 s", fields:"{0} Felder", bgWrong:"{0} falsch",
+    bgWin:"🏆 {0} gewinnt!", bgDraw:"🤝 Unentschieden!", bgDone:"🎉 Board voll in {0} ({1} falsch)!", bgEnd:"Spiel beenden", bgGenFail:"Kein Board gefunden – mehr Anime (Top N) oder ein kleineres Board nehmen.", bgEnded:"Spiel beendet: {0} von {1} Feldern.",
+    stale:"Es läuft ein Spiel, das diese Seite noch nicht kennt – dein Browser hat eine alte Version. Bitte neu laden (am PC: Strg+F5).", reload:"🔄 Neu laden"},
+  es: {"back":"← Animepelago", "intro":"Juegos de fiesta para streams: el anfitrión abre una sala y comparte esta ventana en Discord (vista de show). Todos (también el anfitrión) se unen desde el móvil o una segunda ventana con el código de la sala y responden allí en secreto.", "yourName":"Tu nombre", "roomCode":"Código de sala", "join":"Unirse", "host":"📺 Abrir una sala (vista de show)", "hostInfo":"Para la pantalla que compartes. Si quieres jugar tú también, únete además desde el móvil.", "netOnline":"Salas en línea (Firebase): funcionan por internet.", "netLocal":"Modo de prueba: las salas solo funcionan en este dispositivo (varias ventanas). Las salas en línea aún no están configuradas.", "leave":"Salir", "game":"Juego", "g_blind":"📊 Blind Ranking", "g_hol":"⬆️⬇️ Higher or Lower", "pool":"Anime de los N más populares", "rounds":"Rondas", "lang":"Títulos en", "startGame":"Empezar", "needPlayers":"Esperando jugadores …", "info_blind":"Se revela un anime tras otro. Cada uno lo coloca en un puesto libre del 1 al N sin saber qué viene después. Luego se revelan todas las elecciones a la vez. Al final: ¿quién se acerca más al orden de popularidad de AniList?", "info_hol":"¿El segundo anime es más popular / más reciente que el primero? Cada uno elige ⬆️ o ⬇️ en secreto y luego se revela. 1 punto por acierto.", "waiting":"Esperando al anfitrión …", "joined":"{0} se ha unido", "answered":"✓ respondido", "thinking":"… pensando", "round":"Ronda {0}/{1}", "reveal":"Revelar", "next":"Siguiente", "allIn":"¡Todos han respondido!", "yourPick":"Tu elección: {0}", "pickSlot":"Elige un puesto libre para:", "nameNeeded":"Escribe un nombre.", "codeNeeded":"Escribe el código de sala de 5 letras.", "noRoom":"No se encontró la sala {0} (o ha caducado).", "final":"🏁 Resultado", "closest":"Más cerca de AniList: {0}", "dist":"{0} de diferencia", "pts":"{0} pts", "more":"más popular", "newer":"más reciente", "qPop":"¿Cuál es MÁS POPULAR en AniList?", "qYear":"¿Cuál es MÁS RECIENTE?", "higher":"⬆️ Más", "lower":"⬇️ Menos", "newerBtn":"⬆️ Más reciente", "olderBtn":"⬇️ Más antiguo", "same":"Mismo año: ¡todos ganan el punto!", "rank":"n.º {0} en popularidad", "year":"{0}", "over":"Volver al lobby", "correct":"✓", "wrong":"✕", "privacy":"Las salas en línea solo guardan nombres, respuestas y el estado de la partida en Firebase (Google). «Salir» en la vista de show borra la sala; las salas que se dejan abiertas se bloquean a las 6 horas. Los nombres que escribas los ve todo el mundo en la sala.", "connErr":"Problema de conexión: reintentando …", "kicked":"La sala se ha cerrado.", "hostLeft":"Anfitrión", "reopen":"📺 Reabrir la sala {0}", "g_bingo":"🎯 Bingo", "bgMode":"Modo", "bgVs":"Unos contra otros", "bgCoop":"Juntos (cooperativo, contrarreloj)", "bgSize":"Tablero", "info_bingo_vs":"Todos ven el mismo tablero en su dispositivo. Escribe un anime que encaje con fila + columna: quien llegue primero se queda la casilla. 3×3/4×4: gana la primera fila, columna o diagonal completa; desde 5×5: gana quien tenga más casillas cuando el tablero esté lleno. Toca antes una casilla para ir a por ella; si no, se elige la mejor casilla libre.", "info_bingo_coop":"Rellenad juntos todo el tablero lo más rápido posible. Cada respuesta errónea cuesta 10 segundos. Toca antes una casilla para ir a por ella; si no, se elige la mejor casilla libre.", "playToo":"🎮 Jugar también (nueva pestaña)", "bgEnter":"Introducir", "bgPh":"Título del anime …", "bgSent":"Enviado …", "bgOk":"✓ {0}", "bgUsedM":"Ya está en el tablero.", "bgTaken":"Casilla ya ocupada: ¡demasiado lento!", "bgNoFit":"{0} no encaja en ninguna casilla libre.", "bgUnknown":"No conozco ese anime.", "bgWait":"⏳ Fallo: espera {0} s", "bgPen":"+10 s", "fields":"{0} casillas", "bgWrong":"{0} fallos", "bgWin":"🏆 ¡Gana {0}!", "bgDraw":"🤝 ¡Empate!", "bgDone":"🎉 ¡Tablero completo en {0} ({1} fallos)!", "bgEnd":"Terminar partida", "bgGenFail":"No se encontró tablero: elige más anime (los N más populares) o un tablero más pequeño.", "bgEnded":"Partida terminada: {0} de {1} casillas.", "stale":"Hay una partida en curso que esta página aún no conoce: tu navegador tiene una versión antigua. Recarga la página (en PC: Ctrl+F5).", "reload":"🔄 Recargar", "g_pick":"💘 Pick or Pass", "g_smash":"🔞 Smash or Pass", "info_pick":"Aparece un personaje: ¿lo meterías en tu equipo? Todos votan en secreto y luego se revela. Sin puntos, solo por diversión.", "info_pick18":"🔞 Smash or Pass: solo personajes confirmados como adultos en su obra. Todos votan en secreto y luego se revela.", "pk18":"🔞 Versión +18 (Smash or Pass)", "pkG":"Personajes", "pkAll":"Todos", "pkF":"Femenino", "pkM":"Masculino", "pkNB":"No binario", "pkPick":"✅ Pick", "pkSmash":"🔥 Smash", "pkPass":"❌ Pass", "pkLoad":"Buscando personajes con imagen…", "pkNone":"No hay suficientes personajes con imagen: inténtalo de nuevo o cambia el filtro.", "pkTop":"Los más elegidos", "pkCount":"{0} de {1}", "pkCredit":"Imágenes en directo de AniList · Personajes: Wikidata y wikis de Fandom (CC BY-SA)", "plJoinT":"📱 Jugar", "plJoinD":"Entra en una sala con el código del directo.", "plGames":"Elige un juego", "plOpts":"⚙️ Más opciones", "plBack":"Atrás", "tileParty":"Fiesta"},
+  fr: {"back":"← Animepelago", "intro":"Jeux de soirée pour les streams : l’hôte ouvre une salle et partage cette fenêtre sur Discord (vue show). Tout le monde (l’hôte aussi) rejoint avec le code de la salle sur son téléphone ou dans une deuxième fenêtre et y répond en secret.", "yourName":"Ton nom", "roomCode":"Code de la salle", "join":"Rejoindre", "host":"📺 Ouvrir une salle (vue show)", "hostInfo":"Pour l’écran que tu partages. Pour jouer toi aussi, rejoins en plus sur ton téléphone.", "netOnline":"Salles en ligne (Firebase) – fonctionnent via internet.", "netLocal":"Mode test : les salles ne fonctionnent que sur cet appareil (plusieurs fenêtres). Les salles en ligne ne sont pas encore configurées.", "leave":"Quitter", "game":"Jeu", "g_blind":"📊 Blind Ranking", "g_hol":"⬆️⬇️ Higher or Lower", "pool":"Anime parmi les N plus populaires", "rounds":"Manches", "lang":"Titres en", "startGame":"Démarrer", "needPlayers":"En attente des joueurs …", "info_blind":"Les anime sont dévoilés l’un après l’autre. Chacun le place sur une place libre de 1 à N sans savoir ce qui va suivre. Ensuite, tous les choix sont révélés en même temps. À la fin : qui est le plus proche du classement de popularité d’AniList ?", "info_hol":"Le deuxième anime est-il plus populaire / plus récent que le premier ? Chacun choisit ⬆️ ou ⬇️ en secret, puis on dévoile. 1 point par bonne réponse.", "waiting":"En attente de l’hôte …", "joined":"{0} a rejoint", "answered":"✓ a répondu", "thinking":"… réfléchit", "round":"Manche {0}/{1}", "reveal":"Dévoiler", "next":"Suivant", "allIn":"Tout le monde a répondu !", "yourPick":"Ton choix : {0}", "pickSlot":"Choisis une place libre pour :", "nameNeeded":"Entre un nom.", "codeNeeded":"Entre le code de salle à 5 lettres.", "noRoom":"Salle {0} introuvable (ou expirée).", "final":"🏁 Résultat", "closest":"Le plus proche d’AniList : {0}", "dist":"{0} d’écart", "pts":"{0} pts", "more":"plus populaire", "newer":"plus récent", "qPop":"Lequel est le PLUS POPULAIRE sur AniList ?", "qYear":"Lequel est le PLUS RÉCENT ?", "higher":"⬆️ Plus", "lower":"⬇️ Moins", "newerBtn":"⬆️ Plus récent", "olderBtn":"⬇️ Plus ancien", "same":"Même année – tout le monde gagne le point !", "rank":"n° {0} en popularité", "year":"{0}", "over":"Retour au lobby", "correct":"✓", "wrong":"✕", "privacy":"Les salles en ligne ne stockent que les noms, les réponses et l’état de la partie dans Firebase (Google). « Quitter » dans la vue show supprime la salle ; les salles laissées ouvertes sont verrouillées après 6 heures. Les noms saisis sont visibles par tout le monde dans la salle.", "connErr":"Problème de connexion – nouvelle tentative …", "kicked":"La salle a été fermée.", "hostLeft":"Hôte", "reopen":"📺 Rouvrir la salle {0}", "g_bingo":"🎯 Bingo", "bgMode":"Mode", "bgVs":"Les uns contre les autres", "bgCoop":"Ensemble (coop, contre-la-montre)", "bgSize":"Grille", "info_bingo_vs":"Tout le monde voit la même grille sur son appareil. Tape un anime qui correspond à la ligne + la colonne – le premier prend la case. 3×3/4×4 : la première ligne, colonne ou diagonale complète gagne ; à partir de 5×5 : le plus de cases quand la grille est pleine. Touche d’abord une case pour la viser, sinon la meilleure case libre est choisie.", "info_bingo_coop":"Remplissez ensemble toute la grille le plus vite possible. Chaque mauvaise réponse coûte 10 secondes. Touche d’abord une case pour la viser, sinon la meilleure case libre est choisie.", "playToo":"🎮 Jouer aussi (nouvel onglet)", "bgEnter":"Valider", "bgPh":"Titre de l’anime …", "bgSent":"Envoyé …", "bgOk":"✓ {0}", "bgUsedM":"Déjà dans la grille.", "bgTaken":"Case déjà prise – trop lent !", "bgNoFit":"{0} ne correspond à aucune case libre.", "bgUnknown":"Je ne connais pas cet anime.", "bgWait":"⏳ Faux – attends {0} s", "bgPen":"+10 s", "fields":"{0} cases", "bgWrong":"{0} erreurs", "bgWin":"🏆 {0} gagne !", "bgDraw":"🤝 Égalité !", "bgDone":"🎉 Grille complète en {0} ({1} erreurs) !", "bgEnd":"Terminer la partie", "bgGenFail":"Aucune grille trouvée – prends plus d’anime (les N plus populaires) ou une grille plus petite.", "bgEnded":"Partie terminée : {0} cases sur {1}.", "stale":"Une partie est en cours que cette page ne connaît pas encore – ton navigateur a une ancienne version. Recharge la page (sur PC : Ctrl+F5).", "reload":"🔄 Recharger", "g_pick":"💘 Pick or Pass", "g_smash":"🔞 Smash or Pass", "info_pick":"Un personnage apparaît : le prendrais-tu dans ton équipe ? Tout le monde vote en secret, puis c'est révélé. Sans points – juste pour le fun.", "info_pick18":"🔞 Smash or Pass : uniquement des personnages confirmés majeurs dans leur œuvre. Tout le monde vote en secret, puis c'est révélé.", "pk18":"🔞 Variante 18+ (Smash or Pass)", "pkG":"Personnages", "pkAll":"Tous", "pkF":"Féminin", "pkM":"Masculin", "pkNB":"Non binaire", "pkPick":"✅ Pick", "pkSmash":"🔥 Smash", "pkPass":"❌ Pass", "pkLoad":"Recherche de personnages avec image…", "pkNone":"Pas assez de personnages avec image – réessaie ou change le filtre.", "pkTop":"Les plus choisis", "pkCount":"{0} sur {1}", "pkCredit":"Images en direct d'AniList · Personnages : Wikidata et wikis Fandom (CC BY-SA)", "plJoinT":"📱 Jouer", "plJoinD":"Rejoins une salle avec le code du stream.", "plGames":"Choisis un jeu", "plOpts":"⚙️ Plus d'options", "plBack":"Retour", "tileParty":"Party"},
+  it: {"back":"← Animepelago", "intro":"Giochi di gruppo per gli stream: l’host apre una stanza e condivide questa finestra su Discord (vista show). Tutti (anche l’host) entrano con il codice della stanza dal telefono o da una seconda finestra e rispondono lì in segreto.", "yourName":"Il tuo nome", "roomCode":"Codice stanza", "join":"Entra", "host":"📺 Apri una stanza (vista show)", "hostInfo":"Per lo schermo che condividi. Per giocare anche tu, entra anche dal telefono.", "netOnline":"Stanze online (Firebase) – funzionano via internet.", "netLocal":"Modalità di prova: le stanze funzionano solo su questo dispositivo (più finestre). Le stanze online non sono ancora configurate.", "leave":"Esci", "game":"Gioco", "g_blind":"📊 Blind Ranking", "g_hol":"⬆️⬇️ Higher or Lower", "pool":"Anime tra i N più popolari", "rounds":"Round", "lang":"Titoli in", "startGame":"Inizia", "needPlayers":"In attesa dei giocatori …", "info_blind":"Viene svelato un anime dopo l’altro. Ognuno lo mette in un posto libero da 1 a N senza sapere cosa verrà dopo. Poi tutte le scelte vengono svelate insieme. Alla fine: chi è più vicino all’ordine di popolarità di AniList?", "info_hol":"Il secondo anime è più popolare / più recente del primo? Ognuno sceglie ⬆️ o ⬇️ in segreto, poi si svela. 1 punto per ogni risposta giusta.", "waiting":"In attesa dell’host …", "joined":"{0} è entrato", "answered":"✓ ha risposto", "thinking":"… sta pensando", "round":"Round {0}/{1}", "reveal":"Svela", "next":"Avanti", "allIn":"Hanno risposto tutti!", "yourPick":"La tua scelta: {0}", "pickSlot":"Scegli un posto libero per:", "nameNeeded":"Inserisci un nome.", "codeNeeded":"Inserisci il codice stanza di 5 lettere.", "noRoom":"Stanza {0} non trovata (o scaduta).", "final":"🏁 Risultato", "closest":"Più vicino ad AniList: {0}", "dist":"{0} di scarto", "pts":"{0} pt", "more":"più popolare", "newer":"più recente", "qPop":"Quale è PIÙ POPOLARE su AniList?", "qYear":"Quale è PIÙ RECENTE?", "higher":"⬆️ Di più", "lower":"⬇️ Di meno", "newerBtn":"⬆️ Più recente", "olderBtn":"⬇️ Più vecchio", "same":"Stesso anno – punto per tutti!", "rank":"n. {0} per popolarità", "year":"{0}", "over":"Torna alla lobby", "correct":"✓", "wrong":"✕", "privacy":"Le stanze online salvano su Firebase (Google) solo nomi, risposte e lo stato della partita. «Esci» nella vista show elimina la stanza; le stanze lasciate aperte vengono bloccate dopo 6 ore. I nomi inseriti sono visibili a tutti nella stanza.", "connErr":"Problema di connessione – riprovo …", "kicked":"La stanza è stata chiusa.", "hostLeft":"Host", "reopen":"📺 Riapri la stanza {0}", "g_bingo":"🎯 Bingo", "bgMode":"Modalità", "bgVs":"Uno contro l’altro", "bgCoop":"Insieme (cooperativa, a tempo)", "bgSize":"Griglia", "info_bingo_vs":"Tutti vedono la stessa griglia sul proprio dispositivo. Scrivi un anime che corrisponde a riga + colonna – chi arriva per primo prende la casella. 3×3/4×4: vince la prima riga, colonna o diagonale completa; da 5×5: vince chi ha più caselle a griglia piena. Tocca prima una casella per puntarla, altrimenti viene scelta la migliore casella libera.", "info_bingo_coop":"Riempite insieme tutta la griglia il più in fretta possibile. Ogni risposta sbagliata costa 10 secondi. Tocca prima una casella per puntarla, altrimenti viene scelta la migliore casella libera.", "playToo":"🎮 Gioca anche tu (nuova scheda)", "bgEnter":"Inserisci", "bgPh":"Titolo dell’anime …", "bgSent":"Inviato …", "bgOk":"✓ {0}", "bgUsedM":"È già nella griglia.", "bgTaken":"Casella già presa – troppo lento!", "bgNoFit":"{0} non corrisponde a nessuna casella libera.", "bgUnknown":"Non conosco questo anime.", "bgWait":"⏳ Sbagliato – aspetta {0} s", "bgPen":"+10 s", "fields":"{0} caselle", "bgWrong":"{0} errori", "bgWin":"🏆 Vince {0}!", "bgDraw":"🤝 Pareggio!", "bgDone":"🎉 Griglia completa in {0} ({1} errori)!", "bgEnd":"Termina partita", "bgGenFail":"Nessuna griglia trovata – prendi più anime (i N più popolari) o una griglia più piccola.", "bgEnded":"Partita terminata: {0} caselle su {1}.", "stale":"È in corso una partita che questa pagina non conosce ancora – il tuo browser ha una versione vecchia. Ricarica la pagina (su PC: Ctrl+F5).", "reload":"🔄 Ricarica", "g_pick":"💘 Pick or Pass", "g_smash":"🔞 Smash or Pass", "info_pick":"Appare un personaggio: lo prenderesti nella tua squadra? Tutti votano in segreto, poi si svela. Senza punti, solo per divertimento.", "info_pick18":"🔞 Smash or Pass: solo personaggi confermati maggiorenni nella loro opera. Tutti votano in segreto, poi si svela.", "pk18":"🔞 Variante 18+ (Smash or Pass)", "pkG":"Personaggi", "pkAll":"Tutti", "pkF":"Femmina", "pkM":"Maschio", "pkNB":"Non binario", "pkPick":"✅ Pick", "pkSmash":"🔥 Smash", "pkPass":"❌ Pass", "pkLoad":"Cerco personaggi con immagine…", "pkNone":"Non ci sono abbastanza personaggi con immagine: riprova o cambia il filtro.", "pkTop":"I più scelti", "pkCount":"{0} su {1}", "pkCredit":"Immagini in diretta da AniList · Personaggi: Wikidata e wiki di Fandom (CC BY-SA)", "plJoinT":"📱 Gioca", "plJoinD":"Entra in una stanza con il codice dello stream.", "plGames":"Scegli un gioco", "plOpts":"⚙️ Altre opzioni", "plBack":"Indietro", "tileParty":"Party"},
+  ja: {"back":"← Animepelago", "intro":"配信向けパーティーゲーム：ホストがルームを開き、このウィンドウをDiscordで共有します（ショー画面）。全員（ホストも）がスマホか別のウィンドウでルームコードを入れて参加し、そこでこっそり回答します。", "yourName":"名前", "roomCode":"ルームコード", "join":"参加", "host":"📺 ルームを開く（ショー画面）", "hostInfo":"共有する画面用です。自分も遊ぶなら、スマホからも参加してください。", "netOnline":"オンラインルーム（Firebase）– ネット越しに遊べます。", "netLocal":"テストモード：ルームはこの端末（複数ウィンドウ）でのみ動作します。オンラインルームはまだ設定されていません。", "leave":"退出", "game":"ゲーム", "g_blind":"📊 Blind Ranking", "g_hol":"⬆️⬇️ Higher or Lower", "pool":"人気上位N本から", "rounds":"ラウンド数", "lang":"タイトル表記", "startGame":"開始", "needPlayers":"プレイヤーを待っています …", "info_blind":"アニメが1本ずつ発表されます。次に何が来るか分からないまま、全員が1〜Nの空いている順位に置きます。その後、全員の選択が一斉に公開されます。最後に、AniListの人気順に一番近かったのは誰？", "info_hol":"2本目のアニメは1本目より人気？新しい？全員がこっそり⬆️か⬇️を選び、そのあと発表。正解ごとに1ポイント。", "waiting":"ホストを待っています …", "joined":"{0}が参加しました", "answered":"✓ 回答済み", "thinking":"… 考え中", "round":"ラウンド {0}/{1}", "reveal":"公開", "next":"次へ", "allIn":"全員が回答しました！", "yourPick":"あなたの選択：{0}", "pickSlot":"空いている順位を選んでください：", "nameNeeded":"名前を入力してください。", "codeNeeded":"5文字のルームコードを入力してください。", "noRoom":"ルーム{0}が見つかりません（または期限切れ）。", "final":"🏁 結果", "closest":"AniListに一番近い：{0}", "dist":"差 {0}", "pts":"{0}点", "more":"人気が高い", "newer":"新しい", "qPop":"AniListでより人気なのは？", "qYear":"より新しいのは？", "higher":"⬆️ 上", "lower":"⬇️ 下", "newerBtn":"⬆️ 新しい", "olderBtn":"⬇️ 古い", "same":"同じ年 – 全員にポイント！", "rank":"人気{0}位", "year":"{0}", "over":"ロビーに戻る", "correct":"✓", "wrong":"✕", "privacy":"オンラインルームがFirebase（Google）に保存するのは、名前・回答・ゲームの状態だけです。ショー画面の「退出」でルームは削除されます。開いたままのルームは6時間後にロックされます。入力した名前はルームの全員に見えます。", "connErr":"接続の問題 – 再試行中 …", "kicked":"ルームは閉じられました。", "hostLeft":"ホスト", "reopen":"📺 ルーム{0}を開き直す", "g_bingo":"🎯 Bingo", "bgMode":"モード", "bgVs":"対戦", "bgCoop":"協力（タイムアタック）", "bgSize":"ボード", "info_bingo_vs":"全員が自分の端末で同じボードを見ます。行と列の両方に合うアニメを入力 – 一番早かった人がそのマスを取ります。3×3/4×4：最初に縦・横・斜めのどれかがそろった人の勝ち。5×5以上：ボードが埋まった時点で一番多くマスを持つ人の勝ち。先にマスをタップするとそのマスを狙えます。タップしなければ、空いている中で最適なマスが選ばれます。", "info_bingo_coop":"みんなでボード全体をできるだけ早く埋めよう。間違えるたびに10秒加算されます。先にマスをタップするとそのマスを狙えます。タップしなければ、空いている中で最適なマスが選ばれます。", "playToo":"🎮 自分も参加（新しいタブ）", "bgEnter":"入力", "bgPh":"アニメのタイトル …", "bgSent":"送信しました …", "bgOk":"✓ {0}", "bgUsedM":"すでにボードにあります。", "bgTaken":"そのマスはもう取られています – 遅かった！", "bgNoFit":"{0}は空いているマスに合いません。", "bgUnknown":"そのアニメは知りません。", "bgWait":"⏳ 不正解 – {0}秒待ってください", "bgPen":"+10 s", "fields":"{0}マス", "bgWrong":"{0}回ミス", "bgWin":"🏆 {0}の勝ち！", "bgDraw":"🤝 引き分け！", "bgDone":"🎉 {0}でボード完成（ミス{1}回）！", "bgEnd":"ゲーム終了", "bgGenFail":"ボードが見つかりません – アニメを増やす（人気上位N本）か、小さいボードにしてください。", "bgEnded":"ゲーム終了：{1}マス中{0}マス。", "stale":"このページがまだ知らないゲームが進行中です – ブラウザに古いバージョンが残っています。ページを再読み込みしてください（PCではCtrl+F5）。", "reload":"🔄 再読み込み", "g_pick":"💘 Pick or Pass", "g_smash":"🔞 Smash or Pass", "info_pick":"キャラが登場：チームに入れる？全員がこっそり投票して、そのあと公開。ポイントなし、お楽しみ用。", "info_pick18":"🔞 Smash or Pass：作品内で成人と確認されたキャラだけ。全員がこっそり投票して、そのあと公開。", "pk18":"🔞 18歳以上向け（Smash or Pass）", "pkG":"キャラ", "pkAll":"すべて", "pkF":"女性", "pkM":"男性", "pkNB":"ノンバイナリー", "pkPick":"✅ Pick", "pkSmash":"🔥 Smash", "pkPass":"❌ Pass", "pkLoad":"画像付きのキャラを探しています…", "pkNone":"画像付きのキャラが足りません。もう一度試すか、フィルターを変えてください。", "pkTop":"いちばん選ばれた", "pkCount":"{0} / {1}", "pkCredit":"画像はAniListからライブ表示 · キャラ：WikidataとFandom wiki（CC BY-SA）", "plJoinT":"📱 参加する", "plJoinD":"配信に表示されたコードでルームに参加。", "plGames":"ゲームを選ぶ", "plOpts":"⚙️ その他のオプション", "plBack":"戻る", "tileParty":"パーティー"},
+};
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const LANGS = ["de", "en", "es", "fr", "it", "ja"];
+let lang = LANGS.includes(store.get("ap_uilang")) ? store.get("ap_uilang") : LANGS.find(l => (navigator.language || "").startsWith(l)) || "en";
+const t = (k, ...a) => (TXT[lang][k] ?? TXT.en[k] ?? k).replace(/\{(\d)\}/g, (_, i) => a[i]);
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num = (v, lo, hi, d = lo) => Number.isFinite(+v) ? Math.min(hi, Math.max(lo, Math.floor(+v))) : d;
+function applyLang(){ document.documentElement.lang = lang; $("uilang").value = lang;
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll("[data-t-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.tAria)));
+  $("netInfo").textContent = t(FIREBASE_DB ? "netOnline" : "netLocal"); if (APP.role) APP.draw(); }
+
+// ---------- Spieldatei entpacken (wie in index.html) ----------
+const SALT = "animepelago1:";
+function unhide(data, id){
+  const key = new TextEncoder().encode(SALT + id), raw = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+  return new TextDecoder().decode(raw.map((b, i) => b ^ key[i % key.length]));
+}
+const DB = window.ANIMEPELAGO_DB;
+for (const a of DB.anime) {
+  a.titles = Object.fromEntries(Object.entries(a.t).map(([l, v]) => [l, unhide(v, a.id)]));
+  a.logo = typeof a.l === "string" && /^\/[A-Za-z0-9_-]+\.(png|svg|jpg|webp)$/.test(a.l) ? "https://image.tmdb.org/t/p/w300" + a.l : null;
+  a.year = /^\d{4}$/.test((a.c || [])[0]) ? +a.c[0] : null;
+  a.title = a.titles.english || a.titles.romaji || a.titles.native;
+  a.keys = new Set(a.k || []); a.c = a.c || []; a.genres = a.g || []; a.demographics = a.d || [];
+}
+const ALL_KEYS = new Set(DB.anime.flatMap(a => a.k || []));
+const BY_ID = new Map(DB.anime.map(a => [a.id, a]));
+const RANK = new Map(DB.anime.map((a, i) => [a.id, i + 1]));  // Beliebtheit: Spieldatei ist danach sortiert
+const titleOf = (a, l) => { const T = a.titles, en = T.english || T.romaji || T.native; return l === "romaji" ? (T.romaji || en) : (T[l] || en); };
+
+
+// ---------- Anime erkennen (Kopie aus index.html: Namen stehen nur als Pruefsumme in der Spieldatei) ----------
+const norm = s => String(s).toLowerCase().normalize("NFKD").replace(/\p{M}/gu,"").replace(/[^\p{L}\p{N}]+/gu,"");
+function cyrb53(str, seed=0){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0);}
+const nameHash = s => { const k = norm(s); return k ? cyrb53(SALT + k).toString(36) : null; };
+function typoKeys(text){
+  const q = norm(text), out = new Set();
+  if (q.length < 5 || q.length > 60) return out;
+  const AB = "abcdefghijklmnopqrstuvwxyz0123456789", add = v => out.add(cyrb53(SALT + v).toString(36));
+  for (let i = 0; i <= q.length; i++) {
+    if (i < q.length) add(q.slice(0, i) + q.slice(i + 1));
+    if (i < q.length - 1) add(q.slice(0, i) + q[i + 1] + q[i] + q.slice(i + 2));
+    for (const c of AB) { add(q.slice(0, i) + c + q.slice(i)); if (i < q.length) add(q.slice(0, i) + c + q.slice(i + 1)); }
+  }
+  return out;
+}
+// Anime finden, deren Namen zur Eingabe passen: erst genau, sonst mit einem Tippfehler (nur wenn eindeutig)
+function findAnime(text, list, prefer){
+  const q = nameHash(text); if (!q) return {hits: [], fuzzy: false, known: false};
+  let hits = list.filter(a => a.keys.has(q));
+  if (hits.length) return {hits, fuzzy: false, known: true};
+  const v = typoKeys(text);
+  hits = list.filter(a => [...a.keys].some(k => v.has(k)));
+  if (hits.length === 1) return {hits, fuzzy: true, known: true};
+  // Mehrdeutiger Tippfehler: wenn genau einer davon passt (z. B. zum Bingo-Feld), zaehlt der
+  if (prefer && hits.filter(prefer).length === 1) return {hits: hits.filter(prefer), fuzzy: true, known: true};
+  return {hits: [], fuzzy: false, known: ALL_KEYS.has(q) || DB.anime.some(a => [...a.keys].some(k => v.has(k)))};
+}
+
+// ---------- Bingo-Kategorien (Kopie aus index.html, BG) ----------
+const GENRES = ["Action","Adventure","Comedy","Drama","Ecchi","Fantasy","Horror","Mahou Shoujo","Mecha",
+  "Music","Mystery","Psychological","Romance","Sci-Fi","Slice of Life","Sports","Supernatural","Thriller",
+  "Shounen","Shoujo","Seinen","Josei","Kids"];
+const DEMOGRAPHICS = GENRES.slice(18);
+const EMOJI = {Action:"💥", Adventure:"🧭", Comedy:"😂", Drama:"🎭", Ecchi:"😳", Fantasy:"🧙", Horror:"👻", "Mahou Shoujo":"🪄",
+  Mecha:"🤖", Music:"🎵", Mystery:"🔍", Psychological:"🧠", Romance:"💕", "Sci-Fi":"🚀", "Slice of Life":"🍵", Sports:"⚽",
+  Supernatural:"✨", Thriller:"🔪", Shounen:"👦", Shoujo:"👧", Seinen:"🧔", Josei:"👩", Kids:"🧸",
+  Winter:"❄️", Spring:"🌸", Summer:"☀️", Fall:"🍂", Manga:"📚", "Light Novel":"📘", Novel:"📖", Original:"💡",
+  "Visual Novel":"🖼️", "Video Game":"🎮", Other:"📦"};
+const em = v => EMOJI[v] ? EMOJI[v] + " " : "";
+const decade = y => !y ? null : y === "Before 2000" ? "<2000" : y.startsWith("200") ? "2000s" : +y < 2020 ? "2010s" : "2020s";
+function themes(pool, lang){
+  const out = [], add = (key, label, test) => out.push({key, label, test});
+  for (const g of GENRES.slice(0, 18)) add("g:" + g, em(g) + g, a => a.genres.includes(g));
+  for (const d of DEMOGRAPHICS) add("d:" + d, em(d) + d, a => a.demographics.includes(d));
+  const studios = {}; pool.forEach(a => (a.s || []).forEach(x => studios[x] = (studios[x] || 0) + 1));
+  for (const x of Object.keys(studios)) add("s:" + x, "🎬 " + x, a => (a.s || []).includes(x));
+  for (const x of ["Manga", "Light Novel", "Novel", "Original", "Visual Novel", "Video Game"]) add("src:" + x, em(x) + x, a => a.c?.[1] === x);
+  for (const x of ["<2000", "2000s", "2010s", "2020s"]) add("dec:" + x, "📅 " + x, a => decade(a.c?.[0]) === x);
+  // Einzelne Jahre (in den Daten ab 2010 einzeln, davor nur Zeitraeume)
+  const years = [...new Set(pool.map(a => a.c?.[0]).filter(y => /^\d{4}$/.test(y || "")))].sort();
+  for (const y of years) add("y:" + y, "🗓️ " + y, a => a.c?.[0] === y);
+  for (const x of ["Winter", "Spring", "Summer", "Fall"]) add("sea:" + x, em(x) + x, a => a.c?.[2] === x);
+  // Buchstaben: haeufige einzeln; seltene nur als Paar mit einem passenden Partner ("J / K"),
+  // so dass beide zusammen 60-160 Anime haben. Welches Paar ein Board bekommt, waehlt generate() zufaellig.
+  const lc = {}; for (const a of pool) { const L = firstLetterOf(a, lang); lc[L] = (lc[L] || 0) + 1; }
+  // Grenzen relativ zur Anime-Auswahl (bei allen 1919 Anime: selten = unter 50, Paar = 60-160 zusammen)
+  const P = pool.length, RARE = P * 0.026, LO = P * 0.031, HI = P * 0.083;
+  const AZ = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], rare = AZ.filter(L => (lc[L] || 0) < RARE), common = AZ.filter(L => (lc[L] || 0) >= RARE);
+  for (const l of common) add("l:" + l, "🔤 " + l, a => firstLetterOf(a, lang) === l);
+  for (const r of rare) for (const c of common) { const n = (lc[r] || 0) + (lc[c] || 0);
+    if ((lc[r] || 0) >= 2 && n >= LO && n <= HI) { const [x, y] = [r, c].sort(); add(`l2:${x}${y}`, `🔤 ${x} / ${y}`, a => { const L = firstLetterOf(a, lang); return L === x || L === y; }); out.at(-1).rareL = r; } }
+  return out;
+}
+function firstLetterOf(a, lang){
+  const T = a.titles, en = T.english || T.romaji || a.title;
+  const tt = lang === "romaji" || lang === "japanese" ? (T.romaji || en) : (T[lang] || en);
+  for (const ch of tt.replace(/^\s*the\s+/i, "").normalize("NFKD")) { if (/\p{M}/u.test(ch)) continue; const c = ch.toUpperCase(); return c >= "A" && c <= "Z" ? c : "#"; }
+  return "#";
+}
+const safe = cand => {
+  const sets = cand.flat().map(l => new Set(l.map(a => a.id)));
+  return sets.every((mine, i) => {
+    if (mine.size < 2) return false;
+    const others = sets.map((o, j) => j === i ? [] : [...o].filter(id => mine.has(id))).filter(l => l.length);
+    if (others.length < mine.size) return true;  // zu wenige andere Felder, um alles wegzunehmen
+    const takenBy = new Map();  // Anime -> welches andere Feld ihn belegt
+    const grab = (k, seen) => {
+      for (const id of others[k]) {
+        if (seen.has(id)) continue; seen.add(id);
+        if (!takenBy.has(id) || grab(takenBy.get(id), seen)) { takenBy.set(id, k); return true; }
+      }
+      return false;
+    };
+    let taken = 0;
+    for (let k = 0; k < others.length && taken < mine.size; k++) if (grab(k, new Set())) taken++;
+    return taken < mine.size;
+  });
+};
+// Jahr und Jahrzehnt duerfen sich nicht kreuzen (sonst "2010s x 2013"): beide nur bei den Zeilen oder beide nur bei den Spalten
+// Ebenso Buchstabe und Buchstaben-Paar (sonst "J / K x K"). Familien: Zeit (Jahr, Jahrzehnt) und Buchstaben (einzeln, Paar)
+const famOf = k => { const ty = (typeof k === "string" ? k : k?.key || "").split(":")[0]; return ty === "y" || ty === "dec" ? "time" : ty === "l" || ty === "l2" ? "let" : null; };
+const isTime = k => famOf(k) === "time";
+const timeClash = (rows, cols) => { const f = new Set(rows.map(famOf).filter(Boolean)); return cols.some(c => f.has(famOf(c))); };
+// Je seltenem Buchstaben nur ein zufaelliges Paar behalten, und etwa so viele Paare wie Einzelbuchstaben:
+// so ist es zufaellig, ob ein Buchstabe oder zwei kommen
+function pickPairs(list){
+  const seen = new Set(), keep = new Set();
+  const pairs = list.filter(x => x.key.startsWith("l2:")).sort(() => Math.random() - .5), singles = list.filter(x => x.key.startsWith("l:")).length;
+  for (const th of pairs) if (!seen.has(th.rareL)) { seen.add(th.rareL); keep.add(th); }   // erst jeder seltene Buchstabe einmal
+  for (const th of pairs) if (keep.size < singles) keep.add(th);                         // dann auffuellen: etwa gleich viele Paare wie Einzelbuchstaben
+  return list.filter(th => !th.key.startsWith("l2:") || keep.has(th));
+}
+// R Zeilen und C Spalten (z. B. 3x3 oder 6x7)
+function generate(R, C, pool, lang, types){
+  const n = Math.max(R, C);
+  const typeOf = th => { const ty = th.key.split(":")[0]; return ty === "l2" ? "l" : ty; };
+  const count = (x, y) => pool.filter(a => x.test(a) && y.test(a)).length;
+  // Bei nur einer Themen-Art duerfen alle Zeilen und Spalten von dieser Art sein
+  const maxPerType = types.length >= 2 ? Math.max(3, n) : 2 * n;
+  const typesOk = list => { const c = {}; for (const t of list) c[typeOf(t)] = (c[typeOf(t)] || 0) + 1; return Object.values(c).every(v => v <= maxPerType); };
+  const shuffled = l => [...l].sort(() => Math.random() - .5);
+  const themesAll = pickPairs(themes(pool, lang).filter(th => types.includes(typeOf(th))));
+  // Zwei Durchgaenge: erst streng (jedes Feld mind. n*n Anime, wie bisher: sicher und schnell gefunden),
+  // dann locker (nur so viele, wie die "nie festfahren"-Regel wirklich braucht, z. B. bei Buchstabe x Jahreszeit)
+  for (const minPair of [R * C, 2]) {
+    const all = themesAll.filter(th => pool.filter(th.test).length >= Math.max(n, minPair));
+    // Grosse Themen (viele Anime) etwas oefter ziehen: dann passen leichter genug Spalten zu allen Zeilen
+    const size = new Map(all.map(th => [th, pool.filter(th.test).length]));
+    const weighted = l => l.map(x => [x, Math.random() ** (1 / Math.sqrt(size.get(x)))]).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+    for (let attempt = 0; attempt < 300; attempt++) {
+      // Zeilen zufaellig, dann nur Spalten, die mit ALLEN Zeilen genug Anime haben
+      const rows = (R * C > 25 ? weighted(all) : shuffled(all)).slice(0, R);
+      if (rows.length < R || !typesOk(rows)) continue;
+      const okCols = shuffled(all.filter(c => !rows.includes(c) && !timeClash(rows, [c]) && rows.every(r => count(r, c) >= minPair)));
+      const cols = [];
+      for (const c of okCols) { if (cols.length === C) break; if (typesOk([...rows, ...cols, c])) cols.push(c); }
+      if (cols.length < C) continue;
+      const cand = rows.map(r => cols.map(c => pool.filter(a => r.test(a) && c.test(a))));
+      if (!safe(cand)) continue;
+      return {rows, cols, cand};
+    }
+  }
+  return null;
+}
+// Eine Kategorie aus ihrem Schluessel wieder bauen ("g:Action", "l2:JK", "y:2013" ...): so reicht es, im Raum nur die Schluessel zu speichern
+const BG_TYPES = ["g", "d", "s", "src", "dec", "sea", "y", "l"];
+function themeOf(key, lang){
+  if (typeof key !== "string" || key.length > 60) return null;
+  const i = key.indexOf(":"), ty = key.slice(0, i), v = key.slice(i + 1); if (i < 1 || !v) return null;
+  const T = (label, test) => ({key, label, test});
+  if (ty === "g" && GENRES.slice(0, 18).includes(v)) return T(em(v) + v, a => a.genres.includes(v));
+  if (ty === "d" && DEMOGRAPHICS.includes(v)) return T(em(v) + v, a => a.demographics.includes(v));
+  if (ty === "s") return T("🎬 " + v, a => (a.s || []).includes(v));
+  if (ty === "src" && ["Manga", "Light Novel", "Novel", "Original", "Visual Novel", "Video Game"].includes(v)) return T(em(v) + v, a => a.c?.[1] === v);
+  if (ty === "dec" && ["<2000", "2000s", "2010s", "2020s"].includes(v)) return T("📅 " + v, a => decade(a.c?.[0]) === v);
+  if (ty === "y" && /^\d{4}$/.test(v)) return T("🗓️ " + v, a => a.c?.[0] === v);
+  if (ty === "sea" && ["Winter", "Spring", "Summer", "Fall"].includes(v)) return T(em(v) + v, a => a.c?.[2] === v);
+  if (ty === "l" && /^[A-Z]$/.test(v)) return T("🔤 " + v, a => firstLetterOf(a, lang) === v);
+  if (ty === "l2" && /^[A-Z]{2}$/.test(v)) return T(`🔤 ${v[0]} / ${v[1]}`, a => { const L = firstLetterOf(a, lang); return L === v[0] || L === v[1]; });
+  return null;
+}
+
+// ---------- Verbindung: ein Raum = ein kleiner Datenbaum ----------
+// Raum: {created, v:1, host, game: "<JSON-Text>", players: {pid: {name, color, ans: "<JSON-Text>"}}}
+// Zwei Wege mit derselben Bedienung:
+//  - FirebaseNet: Firebase Realtime Database ueber REST (Schreiben per fetch, Lesen live per EventSource)
+//  - LocalNet: nur dieses Geraet (BroadcastChannel + localStorage), zum Testen mit mehreren Fenstern
+const CODE_ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const codeOk = c => new RegExp(`^[${CODE_ABC}]{5}$`).test(c);
+const newCode = () => Array.from(crypto.getRandomValues(new Uint8Array(5)), b => CODE_ABC[b % CODE_ABC.length]).join("");
+const newPid = () => "p" + Array.from(crypto.getRandomValues(new Uint8Array(8)), b => (b % 36).toString(36)).join("");
+function setPath(tree, path, value){
+  const keys = path.split("/").filter(Boolean); if (!keys.length) return value;
+  const root = tree && typeof tree === "object" ? tree : {}; let o = root;
+  for (const k of keys.slice(0, -1)) { if (!o[k] || typeof o[k] !== "object") o[k] = {}; o = o[k]; }
+  if (value == null) delete o[keys.at(-1)]; else o[keys.at(-1)] = value;
+  return root;
+}
+// Der ganze Raum wird mit jeder Aenderung an alle Fenster geschickt (localStorage gleicht zwischen Tabs nur verzoegert ab)
+class LocalNet {
+  constructor(code){ this.code = code; this.key = "ap_party_room_" + code; this.ch = new BroadcastChannel("ap_party_" + code); this.cb = null; this.tree = this.read();
+    this.ch.onmessage = ev => { this.tree = ev.data; this.cb && this.cb(this.tree); }; }
+  read(){ try { return JSON.parse(localStorage.getItem(this.key) || "null"); } catch(e) { return null; } }
+  async put(path, value){ const tree = setPath(structuredClone(this.tree ?? this.read()), path, value);
+    if (path === "" && value != null) tree.created = Date.now();
+    this.tree = tree; try { localStorage.setItem(this.key, JSON.stringify(tree)); } catch(e) {}
+    this.ch.postMessage(tree); this.cb && this.cb(tree); return true; }
+  async exists(){ const r = this.read(); return !!(r && r.created > Date.now() - 6 * 3600e3); }
+  listen(cb){ this.cb = cb; cb(this.tree); }
+  close(){ this.ch.close(); this.cb = null; }
+}
+class FirebaseNet {
+  constructor(code){ this.code = code; this.base = FIREBASE_DB.replace(/\/+$/, "") + "/rooms/" + code; this.tree = null; this.es = null; this.cb = null; }
+  url(path){ return this.base + (path ? "/" + path : "") + ".json"; }
+  async put(path, value){
+    if (path === "" && value != null) value = {...value, created: {".sv": "timestamp"}};
+    for (let i = 0; i < 3; i++) {
+      try { const r = await fetch(this.url(path), {method: "PUT", body: JSON.stringify(value)}); if (r.ok) return true; if (r.status < 500) return false; } catch(e) {}
+      await new Promise(res => setTimeout(res, 800 * (i + 1)));
+    }
+    return false;
+  }
+  async exists(){ try { const r = await fetch(this.url("created")); return r.ok && (await r.json()) > Date.now() - 6 * 3600e3; } catch(e) { return false; } }
+  listen(cb){
+    this.cb = cb; this.es = new EventSource(this.url(""));
+    const apply = (ev, merge) => { let m; try { m = JSON.parse(ev.data); } catch(e) { return; }
+      if (!m || typeof m.path !== "string") return;
+      if (merge && m.data && typeof m.data === "object") for (const [k, v] of Object.entries(m.data)) this.tree = setPath(this.tree, m.path + "/" + k, v);
+      else this.tree = m.path === "/" ? m.data : setPath(this.tree, m.path, m.data);
+      this.cb && this.cb(this.tree); };
+    this.es.addEventListener("put", ev => apply(ev, false));
+    this.es.addEventListener("patch", ev => apply(ev, true));
+    this.es.addEventListener("cancel", () => APP.netError());
+    this.es.onerror = () => APP.netError();
+  }
+  close(){ if (this.es) this.es.close(); this.es = null; this.cb = null; }
+}
+const Net = FIREBASE_DB ? FirebaseNet : LocalNet;
+
+// ---------- Spiel-Logik (der Gastgeber rechnet, alle anderen zeigen nur an) ----------
+const parse = s => { try { const v = JSON.parse(s); return v && typeof v === "object" ? v : null; } catch(e) { return null; } };
+const shuffle = l => { for (let i = l.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [l[i], l[j]] = [l[j], l[i]]; } return l; };
+const cleanName = s => String(s ?? "").replace(/[\u0000-\u001f\u007f-\u009f]/g, "").replace(/\s+/g, " ").trim().slice(0, 20);
+// Antworten: Runde (0-29) -> Platz 1-30 oder "up"/"down"
+const cleanAns = a => { const out = {}; if (!a || typeof a !== "object") return out;
+  for (const [r, v] of Object.entries(a).slice(0, 31)) { const k = num(r, 0, 29, -1); if (k < 0) continue;
+    if (v === "up" || v === "down") out[k] = v; else if (Number.isInteger(v) && v >= 1 && v <= 30) out[k] = v; }
+  if (Array.isArray(a.b)) out.b = a.b.slice(-20).filter(e => Array.isArray(e) && Number.isInteger(e[0]) && e[0] >= 1 && e[0] <= 1e6
+    && (e[1] === 0 || BY_ID.has(e[1])) && Number.isInteger(e[2]) && e[2] >= -1 && e[2] < 36).map(e => [e[0], e[1], e[2]]);
+  return out; };
+const PID_RE = /^p[a-z0-9]{8}$/;
+// ---------- Figuren (2.0): characters.js nur bei Bedarf laden, Bilder live von AniList ----------
+const CHARS = (() => {
+  let data = null, last = 0; const cache = new Map();
+  function load(){
+    if (data) return Promise.resolve(data);
+    return new Promise((ok, fail) => {
+      const done = () => { const raw = window.ANIMEPELAGO_CHARS; if (!raw || !raw.a) return fail(); data = new Map();
+        for (const [aid, rows] of Object.entries(raw.a)) if (BY_ID.has(+aid)) data.set(+aid, rows.map(r => ({aid: +aid, h: r[0], g: r[2] || "", w: +r[3] || 1, adult: !!r[4], img: r[5] === 0 ? 0 : (typeof r[5] === "string" ? r[5] : "")})));
+        ok(data); };
+      if (window.ANIMEPELAGO_CHARS) return done();
+      const sc = document.createElement("script"); sc.src = "characters.js"; sc.onload = done; sc.onerror = () => fail(); document.head.appendChild(sc);
+    });
+  }
+  const URL_OK = u => typeof u === "string" && u.length < 300 && !/default\.(jpg|png)$/.test(u)
+    && (/^https:\/\/[a-z0-9.-]*anilist\.co\/[\w\/.\-]+$/.test(u) || /^https:\/\/[a-z0-9-]{2,60}\.fandom\.com\/wiki\/Special:FilePath\/[\w.%\-]+$/.test(u));
+  const fandomUrl = c => { if (typeof c.img !== "string" || !c.img) return null; const [w, f] = c.img.split("|");
+    return /^[a-z0-9-]{2,60}$/.test(w || "") && f && f.length < 200 ? `https://${w}.fandom.com/wiki/Special:FilePath/${encodeURIComponent(f.replace(/ /g, "_")).replace(/[()'!*]/g, x => "%" + x.charCodeAt(0).toString(16).toUpperCase())}` : null; };
+  async function picture(c){
+    const k = c.aid + ":" + c.h; if (cache.has(k)) return cache.get(k);
+    if (c.img === 0) return null;
+    const wait = Math.max(0, last + 700 - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); last = Date.now();
+    let name; try { name = unhide(c.h, c.aid); } catch(e) { return null; }
+    const q = `query($s:String){Page(perPage:6){characters(search:$s){image{large} media(perPage:50,type:ANIME){nodes{id}}}}}`;
+    const res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
+      body: JSON.stringify({query: q, variables: {s: name}})});
+    if (!res.ok) throw new Error("anilist " + res.status);
+    const parts = new Set(BY_ID.get(c.aid).p.map(x => x[0]));
+    const hit = ((await res.json())?.data?.Page?.characters || []).find(x => (x.media?.nodes || []).some(m => parts.has(m.id)));
+    let url = hit && URL_OK(hit.image?.large) ? hit.image.large : null;
+    if (!url) { const f = fandomUrl(c); url = f && URL_OK(f) ? f : null; }
+    cache.set(k, url); return url;
+  }
+  const weighted = l => { const sum = l.reduce((s, c) => s + c.w, 0); let x = Math.random() * sum; for (const c of l) { x -= c.w; if (x <= 0) return c; } return l[l.length - 1]; };
+  return {load, picture, weighted, URL_OK};
+})();
+
+const GAMES = {
+  // Blind Ranking: N Anime nacheinander, jeder legt sie auf freie Plaetze 1..N
+  blind: {
+    setup(o){ const n = o.rounds, pool = DB.anime.slice(0, Math.max(n * 3, o.pool));
+      return {type: "blind", n, items: shuffle(pool.map(a => a.id)).slice(0, n), round: 0, phase: "pick", lang: o.lang}; },
+    // Antwort eines Spielers fuer die aktuelle Runde: Platz 1..N, noch frei
+    valid(g, ans, v){ const used = Object.entries(ans || {}).filter(([r]) => +r !== g.round).map(([, p]) => p); return Number.isInteger(v) && v >= 1 && v <= g.n && !used.includes(v); },
+    // Am Ende: Abstand zur AniList-Beliebtheit (Summe |Platz - richtiger Platz|), kleiner = besser
+    score(g, ans){ const order = [...g.items].sort((a, b) => RANK.get(a) - RANK.get(b));
+      return g.items.reduce((s, id, r) => s + (ans && ans[r] ? Math.abs(ans[r] - (order.indexOf(id) + 1)) : g.n), 0); },
+  },
+  // Higher or Lower: Paare; Frage: beliebter oder neuer?
+  hol: {
+    setup(o){ const pool = shuffle(DB.anime.slice(0, Math.max(o.rounds * 3, o.pool)).filter(a => a.year).map(a => a.id)).slice(0, o.rounds + 1);
+      return {type: "hol", n: o.rounds, items: pool, q: pool.slice(1).map(() => Math.random() < .5 ? "pop" : "year"), round: 0, phase: "pick", lang: o.lang}; },
+    valid(g, ans, v){ return v === "up" || v === "down"; },
+    truth(g, r){ const a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]);
+      if (g.q[r] === "pop") return RANK.get(b.id) < RANK.get(a.id) ? "up" : "down";
+      return b.year === a.year ? "both" : b.year > a.year ? "up" : "down"; },
+    score(g, ans){ let s = 0; for (let r = 0; r <= Math.min(g.round, g.n - 1); r++) { if (g.phase === "pick" && r === g.round) break;
+      const tr = this.truth(g, r); if (ans && (tr === "both" || ans[r] === tr)) s++; } return s; },
+  },
+};
+
+// Pick or Pass (alle Figuren) / Smash or Pass (nur sicher volljaehrige Figuren): jeder stimmt geheim ab, ohne Punkte
+GAMES.pick = {
+  async setup(o){
+    let data; try { data = await CHARS.load(); } catch(e) { return null; }
+    const pool = DB.anime.slice(0, Math.max(50, o.pool)).filter(a => data.has(a.id));
+    const cand = pool.map(a => data.get(a.id).filter(c => (!o.pkG || c.g === o.pkG) && (!o.adult || c.adult))).filter(l => l.length);
+    const items = [], used = new Set();
+    for (let tries = 0; items.length < o.rounds && tries < o.rounds * 4 && cand.length; tries++) {
+      const c = CHARS.weighted(cand[Math.floor(Math.random() * cand.length)]); const k = c.aid + ":" + c.h; if (used.has(k)) continue; used.add(k);
+      let url = null; try { url = await CHARS.picture(c); } catch(e) { break; }
+      if (url) items.push([c.aid, c.h, url]);
+      $("lobbyMsg").textContent = t("pkLoad") + ` ${items.length}/${o.rounds}`;
+    }
+    if (items.length < Math.min(3, o.rounds)) return null;
+    return {type: "pick", n: items.length, items, adult: !!o.adult, round: 0, phase: "pick", lang: o.lang};
+  },
+  valid(g, ans, v){ return v === "up" || v === "down"; },
+  score(g, ans){ return 0; },
+  // Wie viele haben Figur r gepickt / abgestimmt
+  tally(g, ps, r){ const v = ps.map(p => p.ans[r]).filter(x => x === "up" || x === "down"); return {up: v.filter(x => x === "up").length, all: v.length}; },
+};
+
+// Bingo: ein gemeinsames Board. Spieler schicken "Anime X in Feld Y", der Gastgeber prueft und traegt ein.
+// Spielstand: rows/cols = Kategorie-Schluessel, cells = je Feld 0 oder [AnimeId, SpielerId]
+GAMES.bingo = {
+  setup(o){
+    // Klappt es mit der gewaehlten Auswahl nicht (grosse Boards), mit mehr Anime nochmal versuchen
+    const R = o.size; let b = null;
+    for (const n of [o.pool, o.pool * 2, o.pool * 4, DB.anime.length]) { b = generate(R, R, DB.anime.slice(0, Math.max(R * R * 4, n)), o.lang, BG_TYPES); if (b || n >= DB.anime.length) break; }
+    if (!b) return null;
+    return {type: "bingo", id: Math.random().toString(36).slice(2, 8), n: R, mode: o.mode, lang: o.lang,
+      rows: b.rows.map(x => x.key), cols: b.cols.map(x => x.key), cells: Array(R * R).fill(0), done: {}, wrong: {}, res: {}, log: [],
+      phase: "play", t0: Date.now(), tEnd: 0, win: null};
+  },
+  // Sicherheit: alles pruefen, was aus der Datenbank kommt
+  clean(g){
+    const n = num(g.n, 3, 6, 0); if (!n) return null;
+    const lang = ["english", "romaji", "german"].includes(g.lang) ? g.lang : "english";
+    const rows = (Array.isArray(g.rows) ? g.rows : []).slice(0, n).map(k => themeOf(k, lang)), cols = (Array.isArray(g.cols) ? g.cols : []).slice(0, n).map(k => themeOf(k, lang));
+    if (rows.length < n || cols.length < n || rows.concat(cols).some(x => !x)) return null;
+    const cells = Array.from({length: n * n}, (_, i) => { const c = Array.isArray(g.cells) ? g.cells[i] : 0;
+      return Array.isArray(c) && BY_ID.has(c[0]) && PID_RE.test(c[1]) ? [c[0], c[1]] : 0; });
+    const pmap = (o, f) => Object.fromEntries(Object.entries(o && typeof o === "object" ? o : {}).filter(([k]) => PID_RE.test(k)).slice(0, 12).map(([k, v]) => [k, f(v)]));
+    const CODES = ["ok", "used", "taken", "nofit", "bad"];
+    return {type: "bingo", id: String(g.id || "").replace(/[^a-z0-9]/g, "").slice(0, 8), n, mode: g.mode === "coop" ? "coop" : "vs", lang, rows, cols, cells,
+      done: pmap(g.done, v => num(v, 0, 1e6)), wrong: pmap(g.wrong, v => num(v, 0, 1e4)),
+      res: pmap(g.res, v => Array.isArray(v) ? [num(v[0], 0, 1e6), CODES.includes(v[1]) ? v[1] : "bad", num(v[2], -1, 35, -1), BY_ID.has(v[3]) ? v[3] : 0] : [0, "bad", -1, 0]),
+      log: (Array.isArray(g.log) ? g.log : []).slice(-8).filter(e => Array.isArray(e) && PID_RE.test(e[0]) && BY_ID.has(e[1])).map(e => [e[0], e[1], num(e[2], 0, 35)]),
+      phase: g.phase === "end" ? "end" : "play", t0: num(g.t0, 0, 1e13), tEnd: num(g.tEnd, 0, 1e13),
+      win: g.win && typeof g.win === "object" ? {pid: PID_RE.test(g.win.pid) ? g.win.pid : "", line: (Array.isArray(g.win.line) ? g.win.line : []).slice(0, 6).map(x => num(x, 0, 35))} : null};
+  },
+  // Fuer den Spielstand im Datenbank-Format: Kategorien wieder als Schluessel
+  pack(g){ return {...g, rows: g.rows.map(x => x.key), cols: g.cols.map(x => x.key)}; },
+  fits(g, a, i){ return g.rows[Math.floor(i / g.n)].test(a) && g.cols[i % g.n].test(a); },
+  score(g, ans, pid){ return g.cells.filter(c => c && c[1] === pid).length; },
+  // Ganze Zeile, Spalte oder Diagonale eines Spielers
+  line(g, pid){ const n = g.n, L = [];
+    for (let i = 0; i < n; i++) { L.push([...Array(n)].map((_, j) => i * n + j)); L.push([...Array(n)].map((_, j) => j * n + i)); }
+    L.push([...Array(n)].map((_, j) => j * n + j)); L.push([...Array(n)].map((_, j) => j * n + n - 1 - j));
+    return L.find(l => l.every(i => g.cells[i] && g.cells[i][1] === pid)) || null; },
+  elapsed(g){ const w = Object.values(g.wrong).reduce((s, x) => s + x, 0);
+    return (g.phase === "end" && g.tEnd ? g.tEnd : Date.now()) - g.t0 + (g.mode === "coop" ? w * 10000 : 0); },
+  // Gastgeber: neue Eintraege der Spieler abarbeiten. Gibt true zurueck, wenn sich etwas geaendert hat.
+  apply(g, players){
+    if (g.phase !== "play") return false;
+    let changed = false;
+    for (const p of players) for (const [nr, id, cell] of (p.ans.b || []).filter(e => e[0] > (g.done[p.id] || 0)).sort((x, y) => x[0] - y[0])) {
+      if (g.phase !== "play") break;
+      g.done[p.id] = nr; changed = true;
+      const bad = code => { g.wrong[p.id] = (g.wrong[p.id] || 0) + 1; g.res[p.id] = [nr, code, cell, id || 0]; };
+      if (!id) { bad("bad"); continue; }
+      const a = BY_ID.get(id);
+      if (g.cells.some(c => c && c[0] === id)) { bad("used"); continue; }
+      const free = g.cells.map((c, i) => i).filter(i => !g.cells[i] && (cell < 0 || i === cell) && this.fits(g, a, i));
+      if (!free.length) { const fitsTaken = cell >= 0 ? this.fits(g, a, cell) : g.cells.some((c, i) => this.fits(g, a, i));
+        if (fitsTaken) g.res[p.id] = [nr, "taken", cell, id]; else bad("nofit"); continue; }
+      // Mehrere passende Felder: das mit den wenigsten noch moeglichen Anime (wie Time Attack in index.html)
+      const used = new Set(g.cells.filter(Boolean).map(c => c[0]));
+      const left = i => DB.anime.filter(x => !used.has(x.id) && this.fits(g, x, i)).length;
+      const i = free.length === 1 ? free[0] : free.map(i => [i, left(i)]).sort((x, y) => x[1] - y[1])[0][0];
+      g.cells[i] = [id, p.id]; g.res[p.id] = [nr, "ok", i, id]; g.log = [...g.log, [p.id, id, i]].slice(-8);
+      if (g.mode === "vs" && g.n <= 4) { const l = this.line(g, p.id); if (l) { g.phase = "end"; g.tEnd = Date.now(); g.win = {pid: p.id, line: l}; break; } }
+      if (g.cells.every(Boolean)) { g.phase = "end"; g.tEnd = Date.now();
+        if (g.mode === "vs") { const sc = players.map(q => [q.id, this.score(g, null, q.id)]).sort((x, y) => y[1] - x[1]);
+          g.win = {pid: sc.length && (sc.length === 1 || sc[0][1] > sc[1][1]) ? sc[0][0] : "", line: []}; } }
+    }
+    return changed;
+  },
+};
+const fmtTime = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+
+// ---------- App ----------
+const APP = {
+  role: null, code: null, pid: null, name: "", net: null, room: null, lastErr: 0,
+  // Sicherheit: Spielstand aus der Datenbank pruefen (jemand mit dem Raum-Code koennte Unsinn hineinschreiben)
+  game(){ const g = parse(this.room?.game); if (!g || !GAMES[g.type]) return null;
+    if (g.type === "bingo") return GAMES.bingo.clean(g);
+    if (g.type === "pick") { const items = (Array.isArray(g.items) ? g.items : []).filter(x => Array.isArray(x) && BY_ID.has(x[0]) && typeof x[1] === "string"
+        && /^[A-Za-z0-9+\/=]{1,200}$/.test(x[1]) && CHARS.URL_OK(x[2])).slice(0, 30).map(x => [x[0], x[1], x[2]]);
+      const n = Math.min(num(g.n, 1, 30, 0), items.length); if (!n) return null;
+      return {type: "pick", n, items, adult: g.adult === true, round: num(g.round, 0, n - 1, 0), phase: ["pick", "reveal", "end"].includes(g.phase) ? g.phase : "pick",
+              lang: ["english", "romaji", "german"].includes(g.lang) ? g.lang : "english"}; }
+    const n = num(g.n, 1, 30, 0), items = Array.isArray(g.items) ? g.items.filter(id => BY_ID.has(id)).slice(0, 31) : [];
+    if (!n || items.length < (g.type === "hol" ? n + 1 : n)) return null;
+    const q = g.type === "hol" ? (Array.isArray(g.q) ? g.q : []).slice(0, n).map(x => x === "pop" ? "pop" : "year") : undefined;
+    if (q && q.length < n) return null;
+    return {type: g.type, n, items, q, round: num(g.round, 0, n - 1, 0), phase: ["pick", "reveal", "end"].includes(g.phase) ? g.phase : "pick",
+            lang: ["english", "romaji", "german"].includes(g.lang) ? g.lang : "english"}; },
+  players(){ const p = this.room?.players; if (!p || typeof p !== "object") return [];
+    return Object.entries(p).filter(([id, v]) => /^p[a-z0-9]{8}$/.test(id) && v && typeof v === "object").slice(0, 12)
+      .map(([id, v]) => ({id, name: cleanName(v.name) || "?", color: num(v.color, 0, 7), ans: cleanAns(parse(v.ans)), joined: num(v.joined, 0, 1e13)}))
+      .sort((a, b) => a.joined - b.joined); },
+  async open(role, code){
+    this.role = role; this.code = code; this.net = new Net(code);
+    $("start").classList.add("hide"); $(role === "show" ? "show" : "ctrl").classList.remove("hide");
+    this.net.listen(r => { this.room = r; if (r === null && this.role === "ctrl" && this.seen) { this.leave(t("kicked")); return; } if (r) this.seen = true;
+      if (this.role === "show") this.bingoTick(); this.draw(); });
+  },
+  async host(){
+    let code = newCode(); for (let i = 0; i < 5 && await new Net(code).exists(); i++) code = newCode();
+    const net = new Net(code);
+    const ok = await net.put("", {v: 1, host: "show", game: "", players: {}});
+    if (!ok) { $("startMsg").textContent = t("connErr"); $("startMsg").className = "bad"; return; }
+    store.set("ap_party_show", code); this.open("show", code);
+  },
+  async join(){
+    const name = cleanName($("name").value), code = $("code").value.trim().toUpperCase();
+    if (!name) return this.msg(t("nameNeeded")); if (!codeOk(code)) return this.msg(t("codeNeeded"));
+    if (!await new Net(code).exists()) return this.msg(t("noRoom", code));
+    store.set("ap_party_name", name);
+    // Spieler-ID je Fenster (sessionStorage): so kann man mit mehreren Fenstern testen und nach Neuladen weiterspielen
+    let pid; try { pid = sessionStorage.getItem("ap_party_pid_" + code); } catch(e) {}
+    if (!/^p[a-z0-9]{8}$/.test(pid || "")) { pid = newPid(); try { sessionStorage.setItem("ap_party_pid_" + code, pid); } catch(e) {} }
+    this.pid = pid; this.name = name;
+    // Einmal den Raum lesen: freie Farbe suchen; war dieses Fenster schon drin (Neuladen), bleiben die Antworten erhalten
+    const net = new Net(code), snap = await new Promise(r => net.listen(r)); net.close();
+    const players = (snap && snap.players) || {};
+    if (players[pid]) await new Net(code).put(`players/${pid}/name`, name);
+    else {
+      const taken = new Set(Object.values(players).map(p => num(p?.color, 0, 7)));
+      let color = 0; while (taken.has(color) && color < 7) color++;
+      await new Net(code).put(`players/${pid}`, {name, color, joined: Date.now(), ans: "{}"});
+    }
+    this.open("ctrl", code);
+  },
+  msg(s){ $("startMsg").textContent = s; $("startMsg").className = "bad"; },
+  leave(why){ if (this.net) this.net.close(); this.net = null; this.role = null; this.room = null; this.seen = false;
+    ["show", "ctrl"].forEach(id => $(id).classList.add("hide")); $("start").classList.remove("hide"); $("startMsg").textContent = why || ""; },
+  netError(){ const now = Date.now(); if (now - this.lastErr > 5000) { this.lastErr = now; console.warn("Netz"); } },
+  // ---- Gastgeber-Aktionen ----
+  setGame(g){ return this.net.put("game", JSON.stringify(g)); },
+  // Bingo: Der Gastgeber haelt den Spielstand im Speicher (hg), damit nichts doppelt eingetragen wird,
+  // waehrend die eigene Aenderung noch unterwegs ist
+  hg: null,
+  bingoTick(){
+    const g = this.game(); if (!g || g.type !== "bingo") { this.hg = null; return; }
+    if (!this.hg || this.hg.id !== g.id) this.hg = g;
+    if (GAMES.bingo.apply(this.hg, this.players())) this.setGame(GAMES.bingo.pack(this.hg));
+  },
+  async endBingo(){ const g = this.hg; if (!g || g.phase !== "play") return; g.phase = "end"; g.tEnd = Date.now(); g.win = null; await this.setGame(GAMES.bingo.pack(g)); this.draw(); },
+  async startGame(){
+    if (!this.players().length) { $("lobbyMsg").textContent = t("needPlayers"); return; }
+    $("lobbyMsg").textContent = "";
+    const o = {rounds: num($("rounds").value, 3, 30, 10), pool: num($("pool").value, 20, DB.anime.length, 300), lang: $("tlang").value,
+      size: num($("bgSize").value, 3, 6, 5), mode: $("bgMode").value === "coop" ? "coop" : "vs"};
+    o.pkG = $("pkG").value; o.adult = $("pk18").checked;
+    $("startGame").disabled = true;
+    const g = await GAMES[$("gameSel").value].setup(o);
+    $("startGame").disabled = false;
+    if (!g) { $("lobbyMsg").textContent = t($("gameSel").value === "pick" ? "pkNone" : "bgGenFail"); return; }
+    $("lobbyMsg").textContent = "";
+    this.hg = null;
+    // Antworten aller Spieler zuruecksetzen
+    for (const p of this.players()) await this.net.put(`players/${p.id}/ans`, "{}");
+    await this.setGame(g);
+  },
+  async reveal(){ const g = this.game(); if (!g || g.phase !== "pick") return; g.phase = "reveal"; await this.setGame(g); },
+  async next(){ const g = this.game(); if (!g) return;
+    if (g.round + 1 >= g.n) g.phase = "end"; else { g.round++; g.phase = "pick"; }
+    await this.setGame(g); },
+  async lobby(){ this.hg = null; await this.net.put("game", ""); },
+  // ---- Spieler-Aktion ----
+  async answer(v){ const g = this.game(), me = this.players().find(p => p.id === this.pid); if (!g || g.phase !== "pick" || !me) return;
+    if (!GAMES[g.type].valid(g, me.ans, v)) return;
+    const ans = {...me.ans, [g.round]: v}; await this.net.put(`players/${this.pid}/ans`, JSON.stringify(ans)); },
+  // ---- Anzeige ----
+  draw(){ if (this.role === "show") this.drawShow(); else if (this.role === "ctrl") this.drawCtrl(); },
+  drawBar(g){
+    const ps = this.players();
+    $("bar").innerHTML = ps.map(p => {
+      if (g && g.type === "bingo") { const won = g.win && g.win.pid === p.id;
+        return `<div class="pl" style="border-color:var(--c${p.color})"><div class="nm" style="color:var(--c${p.color})">${won ? "🏆 " : ""}${esc(p.name)}</div>`
+          + `<div class="pts">${esc(t("fields", GAMES.bingo.score(g, null, p.id)))}</div><div class="st">${g.wrong[p.id] ? esc(t("bgWrong", g.wrong[p.id])) : ""}</div></div>`; }
+      const done = g && g.phase === "pick" && p.ans[g.round] != null;
+      const st = !g ? "" : g.phase === "pick" ? (done ? t("answered") : t("thinking")) : "";
+      const sc = g ? GAMES[g.type].score(g, p.ans) : null;
+      return `<div class="pl" style="border-color:var(--c${p.color})"><div class="nm" style="color:var(--c${p.color})">${esc(p.name)}</div>`
+        + (g && g.type !== "pick" ? `<div class="pts">${esc(g.type === "blind" ? (g.phase === "end" ? t("dist", sc) : "") : t("pts", sc))}</div>` : "")
+        + `<div class="st">${esc(st || "")}</div></div>`;
+    }).join("") || `<p class="mute">${esc(t("needPlayers"))}</p>`;
+  },
+  drawShow(){
+    const g = this.game(), ps = this.players();
+    $("showCode").textContent = this.code;
+    $("lobby").classList.toggle("hide", !!g); $("stage").classList.toggle("hide", !g);
+    const isBg = $("gameSel").value === "bingo";
+    document.querySelectorAll("#gTiles .gt").forEach(b => { const on = b.dataset.g === $("gameSel").value; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+    $("gameInfo").textContent = t(isBg ? "info_bingo_" + $("bgMode").value : "info_" + $("gameSel").value);
+    document.querySelectorAll(".bgOpt").forEach(x => x.classList.toggle("hide", !isBg));
+    document.querySelectorAll(".notBg").forEach(x => x.classList.toggle("hide", isBg));
+    const isPk = $("gameSel").value === "pick"; document.querySelectorAll(".pkOpt").forEach(x => x.classList.toggle("hide", !isPk));
+    if (isPk) $("gameInfo").textContent = t($("pk18").checked ? "info_pick18" : "info_pick");
+    $("playToo").href = "party.html#" + this.code;
+    this.drawBar(g);
+    if (!g) { $("showHead").innerHTML = ""; return; }
+    if (g.type === "bingo") return this.drawBingoShow(g, ps);
+    const L = g.lang, allIn = ps.length && ps.every(p => p.ans[g.round] != null);
+    $("showHead").innerHTML = `<b>${esc(t(g.type === "pick" && g.adult ? "g_smash" : "g_" + g.type))}</b>${g.type === "pick" && g.adult ? '<span class="pk18tag">18+</span>' : ""} · ${esc(g.phase === "end" ? t("final") : t("round", g.round + 1, g.n))}`;
+    let h = "";
+    const pic = a => a.logo ? `<img src="${esc(a.logo)}" alt="">` : "";
+    if (g.type === "pick") {
+      const yes = t(g.adult ? "pkSmash" : "pkPick");
+      if (g.phase !== "end") { const [aid, hh, url] = g.items[g.round], a = BY_ID.get(aid); let nm = "?"; try { nm = unhide(hh, aid); } catch(e) {}
+        h += `<div class="pkc"><img src="${esc(url)}" alt="" referrerpolicy="no-referrer"><div class="nm">${esc(nm)}</div><div class="an">${esc(titleOf(a, L))}</div></div>`;
+        if (g.phase === "reveal") { const tl = GAMES.pick.tally(g, ps, g.round);
+          h += `<p style="text-align:center;font-size:20px;font-weight:800">${esc(yes)} ${esc(t("pkCount", tl.up, tl.all))}</p><div class="pkbar"><i style="width:${tl.all ? Math.round(100 * tl.up / tl.all) : 0}%"></i></div>`
+            + `<div class="cols">` + ps.map(p => { const v = p.ans[g.round];
+              return `<div class="col" style="border-color:var(--c${p.color});text-align:center"><b style="color:var(--c${p.color})">${esc(p.name)}</b><div class="pick">${v === "up" ? esc(yes) : v === "down" ? esc(t("pkPass")) : "–"}</div></div>`; }).join("") + `</div>`; }
+      } else {
+        const rows = g.items.map((x, r) => ({x, ...GAMES.pick.tally(g, ps, r)})).sort((a, b) => b.up - a.up).slice(0, 5);
+        h += `<h3>${esc(t("pkTop"))}</h3><div class="cols">` + rows.map(({x, up, all}) => { let nm = "?"; try { nm = unhide(x[1], x[0]); } catch(e) {}
+          return `<div class="col pkc"><img src="${esc(x[2])}" alt="" referrerpolicy="no-referrer" style="width:120px"><b>${esc(nm)}</b><span class="mute">${esc(yes)} ${esc(t("pkCount", up, all))}</span></div>`; }).join("") + `</div>`;
+      }
+      h += `<p class="mute" style="font-size:12px;text-align:center">${esc(t("pkCredit"))}</p>`;
+    } else if (g.type === "blind") {
+      const cur = BY_ID.get(g.items[g.round]);
+      if (g.phase !== "end") h += `<div class="anime">${pic(cur)}${esc(titleOf(cur, L))}</div>`;
+      // Spalten je Spieler: Plaetze 1..N; in der Pick-Phase ist die aktuelle Runde verdeckt
+      h += `<div class="cols">` + ps.map(p => {
+        const slot = Array(g.n).fill(null);
+        g.items.forEach((id, r) => { const v = p.ans[r]; if (v && (r < g.round || g.phase !== "pick")) slot[v - 1] = {id, r}; });
+        return `<div class="col" style="border-color:var(--c${p.color})"><b style="color:var(--c${p.color})">${esc(p.name)}</b><ol>`
+          + slot.map(s => `<li class="${s && s.r === g.round && g.phase === "reveal" ? "new" : ""}">${s ? esc(titleOf(BY_ID.get(s.id), L)) : "<span class='mute'>–</span>"}</li>`).join("") + `</ol></div>`;
+      }).join("") + `</div>`;
+      if (g.phase === "end") {
+        const order = [...g.items].sort((a, b) => RANK.get(a) - RANK.get(b));
+        const best = ps.map(p => [p, GAMES.blind.score(g, p.ans)]).sort((a, b) => a[1] - b[1]);
+        h += `<h3>${esc(t("closest", best.length ? best[0][0].name : "–"))}</h3><div class="col"><b>AniList</b><ol>${order.map(id => `<li>${esc(titleOf(BY_ID.get(id), L))}</li>`).join("")}</ol></div>`;
+      }
+    } else {
+      const r = Math.min(g.round, g.n - 1), a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]), q = g.q[r];
+      const val = x => q === "pop" ? t("rank", RANK.get(x.id)) : t("year", x.year);
+      const shown = g.phase !== "pick";
+      h += `<p style="text-align:center;font-size:20px;font-weight:700">${esc(t(q === "pop" ? "qPop" : "qYear"))}</p>
+        <div class="vs"><div class="card">${pic(a)}<div>${esc(titleOf(a, L))}</div><div class="val">${esc(val(a))}</div></div><div class="pick">VS</div>
+        <div class="card">${pic(b)}<div>${esc(titleOf(b, L))}</div><div class="val">${shown ? esc(val(b)) : "?"}</div></div></div>`;
+      if (shown) { const tr = GAMES.hol.truth(g, r);
+        h += `<p style="text-align:center;font-size:18px">${tr === "both" ? esc(t("same")) : ""}</p><div class="cols">` + ps.map(p => { const v = p.ans[r], ok = tr === "both" || v === tr;
+          return `<div class="col" style="border-color:var(--c${p.color});text-align:center"><b style="color:var(--c${p.color})">${esc(p.name)}</b><div class="pick">${v === "up" ? "⬆️" : v === "down" ? "⬇️" : "–"} ${ok ? "✅" : "❌"}</div></div>`; }).join("") + `</div>`; }
+      if (g.phase === "end") { const best = ps.map(p => [p, GAMES.hol.score(g, p.ans)]).sort((x, y) => y[1] - x[1]);
+        h += `<h3>${esc(t("final"))}: ${best.map(([p, s]) => esc(p.name) + " " + s).join(" · ")}</h3>`; }
+    }
+    // Knoepfe des Gastgebers
+    h += `<div class="row" style="margin-top:12px">`
+      + (g.phase === "pick" ? `<button type="button" class="${allIn ? "main" : ""}" id="bReveal" style="flex:0 0 auto">${esc(t("reveal"))}</button>${allIn ? `<span class="good">${esc(t("allIn"))}</span>` : ""}` : "")
+      + (g.phase === "reveal" ? `<button type="button" class="main" id="bNext" style="flex:0 0 auto">${esc(t("next"))}</button>` : "")
+      + (g.phase === "end" ? `<button type="button" class="main" id="bLobby" style="flex:0 0 auto">${esc(t("over"))}</button>` : "") + `</div>`;
+    $("stage").innerHTML = h;
+    if ($("bReveal")) $("bReveal").onclick = () => this.reveal();
+    if ($("bNext")) $("bNext").onclick = () => this.next();
+    if ($("bLobby")) $("bLobby").onclick = () => this.lobby();
+  },
+  // ---- Bingo-Anzeige ----
+  bingoTable(g, ps, sel){
+    // Logo (TMDB) wie im Offline-Bingo, Titel als Tooltip; ohne Logo der Titel als Text
+    const cellPic = (a, L) => { const nm = esc(titleOf(a, L)); return a.logo ? `<img class="blogo" src="${esc(a.logo)}" alt="${nm}" title="${nm}">` : nm; };
+    const col = pid => (ps.find(p => p.id === pid) || {color: 7}).color, n = g.n, line = new Set(g.win ? g.win.line : []);
+    let h = `<div class="bgw"><table class="bgt" style="--n:${n}"><colgroup><col class="rh">${"<col>".repeat(n)}</colgroup><tr><th></th>${g.cols.map(c => `<th>${esc(c.label)}</th>`).join("")}</tr>`;
+    for (let r = 0; r < n; r++) {
+      h += `<tr><th>${esc(g.rows[r].label)}</th>`;
+      for (let c = 0; c < n; c++) { const i = r * n + c, x = g.cells[i];
+        h += x ? `<td class="${line.has(i) ? "won" : ""}" style="border-color:var(--c${col(x[1])});background:color-mix(in srgb,var(--c${col(x[1])}) 18%,transparent)"><div class="cc">${cellPic(BY_ID.get(x[0]), g.lang)}</div></td>`
+          : `<td class="free${sel === i ? " sel" : ""}" data-i="${i}"><div class="cc">${sel === i ? "🎯" : ""}</div></td>`; }
+      h += `</tr>`;
+    }
+    return h + `</table></div>`;
+  },
+  bingoResult(g, ps){
+    if (g.phase !== "end") return "";
+    const name = pid => (ps.find(p => p.id === pid) || {}).name || "?", full = g.cells.every(Boolean);
+    if (g.mode === "coop") return full ? t("bgDone", fmtTime(GAMES.bingo.elapsed(g)), Object.values(g.wrong).reduce((s, x) => s + x, 0)) : t("bgEnded", g.cells.filter(Boolean).length, g.n * g.n);
+    if (g.win && g.win.pid) return t("bgWin", name(g.win.pid));
+    return full ? t("bgDraw") : t("bgEnded", g.cells.filter(Boolean).length, g.n * g.n);
+  },
+  drawBingoShow(g, ps){
+    $("showHead").innerHTML = `<b>${esc(t("g_bingo"))}</b> · ${esc(t(g.mode === "coop" ? "bgCoop" : "bgVs"))} · ${g.n}×${g.n}`;
+    const name = pid => (ps.find(p => p.id === pid) || {}).name || "?", colr = pid => (ps.find(p => p.id === pid) || {color: 7}).color;
+    let h = g.mode === "coop" ? `<div style="text-align:center;margin-bottom:8px"><span class="clock" id="bgClock">${fmtTime(GAMES.bingo.elapsed(g))}</span></div>` : "";
+    h += this.bingoTable(g, ps, -1);
+    const res = this.bingoResult(g, ps);
+    if (res) h += `<h3 style="text-align:center">${esc(res)}</h3>`;
+    if (g.log.length) h += `<ol class="bglog" reversed>${g.log.slice().reverse().map(([pid, id]) => `<li><b style="color:var(--c${colr(pid)})">${esc(name(pid))}</b>: ${esc(titleOf(BY_ID.get(id), g.lang))}</li>`).join("")}</ol>`;
+    h += `<div class="row" style="margin-top:12px">` + (g.phase === "play" ? `<button type="button" id="bEnd" style="flex:0 0 auto">${esc(t("bgEnd"))}</button>`
+      : `<button type="button" class="main" id="bLobby" style="flex:0 0 auto">${esc(t("over"))}</button>`) + `</div>`;
+    $("stage").innerHTML = h;
+    if ($("bEnd")) $("bEnd").onclick = () => this.endBingo();
+    if ($("bLobby")) $("bLobby").onclick = () => this.lobby();
+  },
+  // Spieler: das Eingabefeld wird nur einmal gebaut (sonst ginge beim Aktualisieren der getippte Text verloren)
+  bs: {nr: 0, sel: -1, wait: 0, msg: "", cls: "", sent: 0},
+  drawBingoCtrl(g, me){
+    const pad = $("pad"), bs = this.bs, ps = this.players();
+    if (pad.dataset.bg !== g.id) {
+      pad.dataset.bg = g.id; bs.sel = -1; bs.msg = ""; bs.wait = 0; bs.sent = 0;
+      bs.nr = Math.max(0, ...(me.ans.b || []).map(e => e[0]), g.done[me.id] || 0);
+      pad.innerHTML = `<div class="mute" id="bgHead"></div><div id="bgBoardC"></div>
+        <div class="bgin"><input id="bgIn" autocomplete="off" maxlength="120"><button type="button" class="main" id="bgGo"></button></div>
+        <div id="bgMsg"></div>`;
+      $("bgIn").placeholder = t("bgPh"); $("bgGo").textContent = t("bgEnter");
+      $("bgGo").onclick = () => this.bingoEnter(); $("bgIn").addEventListener("keydown", e => { if (e.key === "Enter") this.bingoEnter(); });
+    }
+    // Ergebnis meines letzten Eintrags (vom Gastgeber)
+    const r = g.res[me.id];
+    if (r && r[0] === bs.nr && bs.sent === bs.nr) { bs.sent = 0; const a = BY_ID.get(r[3]), nm = a ? titleOf(a, g.lang) : "";
+      if (r[1] === "ok") { bs.msg = t("bgOk", nm); bs.cls = "good"; }
+      else { bs.msg = r[1] === "used" ? t("bgUsedM") : r[1] === "taken" ? t("bgTaken") : t("bgNoFit", nm); bs.cls = r[1] === "taken" ? "warn" : "bad";
+        if (r[1] !== "taken") this.bingoWrong(g); } }
+    if (bs.sel >= 0 && g.cells[bs.sel]) bs.sel = -1;
+    $("bgHead").textContent = `${t(g.mode === "coop" ? "bgCoop" : "bgVs")} · ${t("fields", GAMES.bingo.score(g, null, me.id))}`
+      + (g.mode === "coop" ? ` · ${fmtTime(GAMES.bingo.elapsed(g))}` : "");
+    $("bgBoardC").innerHTML = this.bingoTable(g, ps, bs.sel);
+    $("bgBoardC").querySelectorAll("td[data-i]").forEach(td => td.onclick = () => { const i = +td.dataset.i; bs.sel = bs.sel === i ? -1 : i; this.draw(); $("bgIn").focus(); });
+    const over = g.phase === "end", res = this.bingoResult(g, ps);
+    $("bgIn").disabled = $("bgGo").disabled = over || bs.wait > Date.now();
+    $("bgMsg").innerHTML = over ? `<h3>${esc(res)}</h3>` : `<span class="${bs.cls}">${esc(bs.msg)}</span>` + (bs.wait > Date.now() ? ` <b class="warn">${esc(t("bgWait", Math.ceil((bs.wait - Date.now()) / 1000)))}</b>` : "");
+  },
+  // Falsche Antwort: gegeneinander 3 Sekunden Pause, zusammen +10 Sekunden (zaehlt der Gastgeber)
+  bingoWrong(g){
+    if (g.mode !== "vs") return;
+    this.bs.wait = Date.now() + 3000; this.draw();
+    setTimeout(() => { if (this.role === "ctrl") { this.draw(); if ($("bgIn")) $("bgIn").focus(); } }, 3050);
+  },
+  async bingoEnter(){
+    const g = this.game(), me = this.players().find(p => p.id === this.pid), bs = this.bs;
+    if (!g || g.type !== "bingo" || g.phase !== "play" || !me || bs.wait > Date.now()) return;
+    const text = $("bgIn").value; if (!norm(text)) return;
+    $("bgIn").value = "";
+    // Vorab hier pruefen (spart Wege): kennt das Spiel den Anime, passt er in ein freies (oder das gewaehlte) Feld?
+    const freeIdx = g.cells.map((c, i) => i).filter(i => !g.cells[i] && (bs.sel < 0 || i === bs.sel));
+    const fitsAny = a => freeIdx.some(i => GAMES.bingo.fits(g, a, i));
+    const {hits} = findAnime(text, DB.anime, fitsAny), ok = hits.find(fitsAny);
+    let entry;
+    if (ok) { entry = [++bs.nr, ok.id, bs.sel]; bs.msg = t("bgSent"); bs.cls = "mute"; bs.sent = bs.nr; }
+    else { entry = [++bs.nr, 0, -1]; bs.msg = hits.length ? t("bgNoFit", titleOf(hits[0], g.lang)) + (g.mode === "coop" ? " " + t("bgPen") : "") : t("bgUnknown") + (g.mode === "coop" ? " " + t("bgPen") : ""); bs.cls = "bad"; }
+    bs.sel = -1;
+    const b = [...(me.ans.b || []), entry].slice(-20);
+    await this.net.put(`players/${this.pid}/ans`, JSON.stringify({b}));
+    if (!ok) this.bingoWrong(g); else this.draw();
+  },
+  drawCtrl(){
+    const g = this.game(), me = this.players().find(p => p.id === this.pid);
+    $("meName").textContent = me ? me.name : this.name; $("meName").style.color = me ? `var(--c${me.color})` : "";
+    $("meRoom").textContent = "· " + t("roomCode") + " " + this.code;
+    const pad = $("pad");
+    // Laeuft ein Spiel, das diese Seite nicht kennt (alte Version im Browser-Cache)? Dann zum Neuladen auffordern
+    const stale = !g && typeof this.room?.game === "string" && this.room.game !== "";
+    if (!g || !me) { pad.dataset.bg = ""; pad.innerHTML = stale ? `<p class="warn">${esc(t("stale"))}</p><button type="button" class="main" id="bReload">${esc(t("reload"))}</button>` : `<p class="mute">${esc(t("waiting"))}</p>`;
+      if ($("bReload")) $("bReload").onclick = () => location.reload(); return; }
+    if (g.type === "bingo") return this.drawBingoCtrl(g, me);
+    pad.dataset.bg = "";
+    const L = g.lang, mine = me.ans[g.round];
+    if (g.phase === "end" && g.type === "pick") { pad.innerHTML = `<h3>${esc(t("final"))}</h3>`; return; }
+    if (g.phase === "end") { pad.innerHTML = `<h3>${esc(t("final"))}</h3><p>${esc(g.type === "blind" ? t("dist", GAMES.blind.score(g, me.ans)) : t("pts", GAMES.hol.score(g, me.ans)))}</p>`; return; }
+    if (g.phase === "reveal") { pad.innerHTML = `<p class="mute">${esc(t("waiting"))}</p>`; return; }
+    let h = `<div class="mute">${esc(t("round", g.round + 1, g.n))}</div>`;
+    if (g.type === "pick") {
+      const [aid, hh, url] = g.items[g.round]; let nm = "?"; try { nm = unhide(hh, aid); } catch(e) {}
+      h += `<div class="pkc"><img src="${esc(url)}" alt="" referrerpolicy="no-referrer" style="width:min(200px,50vw)"><div class="nm" style="font-size:18px">${esc(nm)}</div><div class="an">${esc(titleOf(BY_ID.get(aid), L))}</div></div>
+        <div class="row hol"><button type="button" data-v="up" class="${mine === "up" ? "main" : ""}">${esc(t(g.adult ? "pkSmash" : "pkPick"))}</button>
+        <button type="button" data-v="down" class="${mine === "down" ? "main" : ""}">${esc(t("pkPass"))}</button></div>`;
+    } else if (g.type === "blind") {
+      const cur = BY_ID.get(g.items[g.round]);
+      h += `<p>${esc(t("pickSlot"))}</p><div class="anime" style="font-size:22px;font-weight:800">${esc(titleOf(cur, L))}</div><div class="slots">`;
+      for (let s = 1; s <= g.n; s++) {
+        const r = Object.entries(me.ans).find(([rr, v]) => v === s && +rr !== g.round);
+        h += `<button type="button" data-s="${s}" ${r ? "disabled" : ""} class="${mine === s ? "main" : ""}"><b>${s}</b>${r ? esc(titleOf(BY_ID.get(g.items[+r[0]]), L)) : ""}</button>`;
+      }
+      h += `</div>`;
+    } else {
+      const r = g.round, a = BY_ID.get(g.items[r]), b = BY_ID.get(g.items[r + 1]), q = g.q[r];
+      const lg = x => x.logo ? `<img class="hlogo" src="${esc(x.logo)}" alt="">` : "";
+      h += `<p><b>${esc(t(q === "pop" ? "qPop" : "qYear"))}</b></p>
+        <div class="hvs"><div>${lg(a)}<div>${esc(titleOf(a, L))}</div><div class="mute">${esc(q === "pop" ? t("rank", RANK.get(a.id)) : a.year)}</div></div>
+        <b>vs.</b><div>${lg(b)}<div><b>${esc(titleOf(b, L))}</b></div><div class="mute">?</div></div></div>
+        <div class="row hol"><button type="button" data-v="up" class="${mine === "up" ? "main" : ""}">${esc(t(q === "pop" ? "higher" : "newerBtn"))}</button>
+        <button type="button" data-v="down" class="${mine === "down" ? "main" : ""}">${esc(t(q === "pop" ? "lower" : "olderBtn"))}</button></div>`;
+    }
+    if (mine != null) h += `<p class="good">${esc(t("answered"))}</p>`;
+    pad.innerHTML = h;
+    pad.querySelectorAll("[data-s]").forEach(x => x.onclick = () => this.answer(+x.dataset.s));
+    pad.querySelectorAll("[data-v]").forEach(x => x.onclick = () => this.answer(x.dataset.v));
+  },
+};
+$("host").onclick = () => APP.host();
+$("join").onclick = () => APP.join();
+$("code").addEventListener("keydown", e => { if (e.key === "Enter") APP.join(); });
+$("startGame").onclick = () => APP.startGame();
+$("gameSel").onchange = () => APP.draw();
+// Spiel-Kacheln setzen das (versteckte) Auswahlfeld
+document.querySelectorAll("#gTiles .gt").forEach(b => b.onclick = () => { $("gameSel").value = b.dataset.g; APP.draw(); });
+$("bgMode").onchange = () => APP.draw();
+$("pk18").onchange = () => APP.draw();
+// Logo laedt nicht (offline, gesperrt)? Dann den Titel als Text zeigen
+document.addEventListener("error", e => { const im = e.target; if (im && im.classList && im.classList.contains("blogo")) im.replaceWith(document.createTextNode(im.alt));
+  else if (im && im.classList && im.classList.contains("hlogo")) im.remove(); }, true);
+// Uhr im Koop-Bingo laufen lassen
+setInterval(() => { const g = APP.role ? APP.game() : null;
+  if (g && g.type === "bingo" && APP.role === "ctrl" && APP.bs.wait > Date.now() - 1500 && $("bgHead")) APP.draw();
+  if (!g || g.type !== "bingo" || g.mode !== "coop" || g.phase !== "play") return;
+  if ($("bgClock")) $("bgClock").textContent = fmtTime(GAMES.bingo.elapsed(g));
+  if (APP.role === "ctrl" && $("bgHead")) APP.draw(); }, 1000);
+$("leaveShow").onclick = async () => { if (APP.net) await APP.net.put("", null); APP.leave(); };
+$("leaveCtrl").onclick = async () => { if (APP.net && APP.pid) await APP.net.put(`players/${APP.pid}`, null); APP.leave(); };
+$("uilang").onchange = e => { lang = e.target.value; store.set("ap_uilang", lang); applyLang(); };
+$("name").value = store.get("ap_party_name") || "";
+// Code aus der Adresse (party.html#ABCDE) vorausfuellen
+if (codeOk(location.hash.slice(1).toUpperCase())) $("code").value = location.hash.slice(1).toUpperCase();
+applyLang();
+// Show-Ansicht nach Neuladen (z. B. in OBS) wieder oeffnen, solange der Raum noch lebt
+(async () => { const c = store.get("ap_party_show"); if (!codeOk(c || "") || !await new Net(c).exists()) return;
+  $("reopen").textContent = t("reopen", c); $("reopenRow").classList.remove("hide"); $("reopen").onclick = () => APP.open("show", c); })();
+</script>
+</body>
+</html>
