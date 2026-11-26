@@ -3215,7 +3215,7 @@ const WHO = (() => {
   const imgCache = new Map(); let lastAsk = 0;
   async function picture(c){
     const k = c.aid + ":" + c.h; if (imgCache.has(k)) return imgCache.get(k);
-    const wait = Math.max(0, lastAsk + 900 - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
+    const wait = Math.max(0, lastAsk + 700 - Date.now()); if (wait) await new Promise(r => setTimeout(r, wait)); lastAsk = Date.now();
     const q = `query($s:String){Page(perPage:6){characters(search:$s){name{full} image{large} media(perPage:50,type:ANIME){nodes{id}}}}}`;
     const res = await fetch("https://graphql.anilist.co", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
       body: JSON.stringify({query: q, variables: {s: nameOf(c)}})});
@@ -3266,20 +3266,30 @@ const WHO = (() => {
     $("whoMsg").textContent = t("whoLoading"); $("whoMsg").className = "mute"; $("whoHints").innerHTML = ""; $("whoGuess").value = "";
     ["whoNext", "whoShare"].forEach(id => $(id).classList.add("hide")); ["whoSend", "whoHint", "whoSkip"].forEach(id => $(id).classList.remove("hide"));
     $("whoSkip").classList.toggle("hide", st.daily); $("whoGuess").disabled = true; clearCanvas(); clock(); draw();
-    const list = candidates();
-    if (!list.length) { $("whoMsg").textContent = t("whoNone"); $("whoMsg").className = "warn"; return; }
+    // Schon vorgeladen? Dann sofort weiter, sonst jetzt suchen
+    let got = st.next ? await st.next : null; st.next = null;
+    if (st !== my) return;
+    if (!got && !st.nopool) got = await find(my);
+    if (st !== my) return;
+    if (st.nopool) { $("whoMsg").textContent = t("whoNone"); $("whoMsg").className = "warn"; return; }
+    if (got) { st.c = got.c; st.img = got.img; st.seen.add(got.c.aid + ":" + got.c.h); }
+    if (!st.c) { $("whoMsg").textContent = t("whoNoImg"); $("whoMsg").className = "warn"; $("whoNext").textContent = t("hmNext"); $("whoNext").classList.remove("hide"); return; }
+    $("whoMsg").textContent = ""; $("whoGuess").disabled = false; draw(); $("whoGuess").focus();
+    if (!st.daily) st.next = find(my);    // naechste Figur schon im Hintergrund laden
+  }
+  // Passende Figur mit Bild suchen (AniList), das Bild vorladen
+  async function find(my){
+    const list = candidates(); if (!list.length) { st.nopool = true; return null; }
     for (const c of list) {
-      let url = null; try { url = await picture(c); } catch(e) { break; }
-      if (st !== my) return;
+      if (st !== my) return null;
+      if (st.seen.has(c.aid + ":" + c.h) || (st.c && st.c === c)) continue;
+      let url = null; try { url = await picture(c); } catch(e) { return null; }
       if (!url) continue;
       const img = new Image(); img.referrerPolicy = "no-referrer";
       const okImg = await new Promise(r => { img.onload = () => r(true); img.onerror = () => r(false); img.src = url; });
-      if (st !== my) return;
-      if (!okImg) continue;
-      st.c = c; st.img = img; st.seen.add(c.aid + ":" + c.h); break;
+      if (okImg) return {c, img};
     }
-    if (!st.c) { $("whoMsg").textContent = t("whoNoImg"); $("whoMsg").className = "warn"; $("whoNext").textContent = t("hmNext"); $("whoNext").classList.remove("hide"); return; }
-    $("whoMsg").textContent = ""; $("whoGuess").disabled = false; draw(); $("whoGuess").focus();
+    return null;
   }
   function clearCanvas(){ const cv = $("whoCv"), x = cv.getContext("2d"); x.clearRect(0, 0, cv.width, cv.height); }
   function paint(){
