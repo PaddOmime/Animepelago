@@ -82,10 +82,12 @@ Animepelago:
     #   Dragon Ball, ONE PIECE, Naruto and Bleach are always in your world. A hero opens after you guessed his anime
     #   and have one "Characters: <Genre>" of it and all 3 Progressive Rarity. Turns on Waifupelago (all characters).
     #   With Character Gender = female it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue instead.
+    # characters: guess the number of characters set in Character Goal (Waifupelago). Turns on Waifupelago if it is off.
     anime: 50
     exodia: 0
     genre_master: 0
     big3_daddy: 0
+    characters: 0
 
   genre_master_genres:
     # Only with Goal: genre_master. In how many different genres you must master anime.
@@ -360,7 +362,19 @@ Animepelago:
 
   character_gender:
     # Waifupelago: which characters can be guessed. Characters without a known gender only come with all three.
-    ['male', 'nonbinary', 'female']
+    ['female', 'nonbinary', 'male']
+
+  character_goal:
+    # Goal "characters": how many characters you have to guess. Lowered if your world has fewer character checks.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 1
+    # Maximum value is 2000
+    50: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-1-2000: 0 # random value between 1 and 2000
 
   ###########################
   # Item & Location Options #

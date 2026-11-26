@@ -258,6 +258,10 @@ class AnimepelagoWorld(World):
         self.char_genders = self._genders_from(self.options.character_gender.value)
         if self.big3:   # Ziel "Big 3 + Daddy": alle Figuren-Stufen (3x Progressive Rarity)
             self.char_rarity = 3
+        self.char_goal = self.options.character_goal.value
+        if self.options.goal.value == self.options.goal.option_characters and not self.char_rarity:
+            logging.warning(f"Animepelago ({self.player_name}): Ziel 'characters' braucht Figuren. Character Rarity wird auf 'all' gesetzt.")
+            self.char_rarity = 3
         self.char_fixed = None
         self._finish_setup()
 
@@ -298,6 +302,15 @@ class AnimepelagoWorld(World):
                                 "Waifupelago ist in dieser Welt aus.")
         if not self.char_slots and not getattr(self, "big3", False):
             self.char_tiers = []
+        if self.char_fixed is None and getattr(self, "char_goal", 0):
+            total = sum(sum(v) for v in self.char_slots.values())
+            if self.options.goal.value == self.options.goal.option_characters:
+                if not total:
+                    raise OptionError(f"Animepelago ({self.player_name}): Ziel 'characters', aber keine Figuren in dieser Welt.")
+                if self.char_goal > total:
+                    logging.warning(f"Animepelago ({self.player_name}): Character Goal {self.char_goal} ist mehr als die "
+                                    f"{total} Figuren-Checks. Wird auf {total} gesenkt.")
+                    self.char_goal = total
         boss_ids = {b[0] for b in self.bosses()}
         self.char_genres = sorted({g for a in self.selected if a["id"] in self.char_slots or a["id"] in boss_ids
                                    for g in self.char_genres_of(a)}, key=BASE_GENRES.index)
@@ -394,7 +407,7 @@ class AnimepelagoWorld(World):
         self.goal_count = int(sd.get("anime_goal", len(self.selected)))
         goal = self.options.goal
         goal.value = {"anime": goal.option_anime, "exodia": goal.option_exodia, "genre_master": goal.option_genre_master,
-                      "big3_daddy": goal.option_big3_daddy}.get(sd.get("goal"), goal.option_anime)
+                      "big3_daddy": goal.option_big3_daddy, "characters": goal.option_characters}.get(sd.get("goal"), goal.option_anime)
         self.gm_genres = sd.get("genre_master_genres", 0)
         self.gm_anime = sd.get("genre_master_anime", 0)
         self.options.anime_count.value = len(self.selected)
@@ -404,6 +417,7 @@ class AnimepelagoWorld(World):
         self.char_fixed = chars.get("slots", {})
         self.char_genders = {g for g in chars.get("genders", ["f", "m", "nb"]) if g in ("f", "m", "nb")} or {"f", "m", "nb"}
         self.big3 = sd.get("goal") == "big3_daddy"
+        self.char_goal = int(sd.get("character_goal", 0) or 0)
         self._finish_setup()
 
     def letter_of(self, anime: dict) -> str:
@@ -637,6 +651,8 @@ class AnimepelagoWorld(World):
 
         if self.big3:
             set_rule(self.get_location("Goal"), lambda state: all(br(state) for br in boss_rules))
+        elif self.options.goal.value == self.options.goal.option_characters:
+            set_rule(self.get_location("Goal"), lambda state: self._fast_chars(state) >= self.char_goal)
         elif self.options.goal.value == self.options.goal.option_exodia:
             set_rule(self.get_location("Goal"), lambda state: state.has_all(EXODIA_PIECES, player))
         elif self.options.goal.value == self.options.goal.option_genre_master:
@@ -661,23 +677,29 @@ class AnimepelagoWorld(World):
                 need = self.genres_needed(a)
             else:
                 need = len(genres)
-            self._table.append((singles, groups, genres, need, tuple(a["genres"])))
-            names |= singles
+            # Waifupelago: Figuren-Checks je Anzahl Progressive Rarity (0, 1, 2, 3) und die passenden Figuren-Genres
+            counts = self.char_slots.get(a["id"], [])
+            cum = tuple(sum(counts[:k]) for k in range(len(self.char_tiers) + 1))
+            cg = frozenset(character_item(g) for g in self.char_genres_of(a)) if counts else frozenset()
+            self._table.append((singles, groups, genres, need, tuple(a["genres"]), cum, cg))
+            names |= singles | cg
             for g in groups:
                 names |= g
             names.update(genres)
         self._unlock_names = tuple(sorted(names))
-        self._cache: dict[frozenset, tuple[int, bool]] = {}
+        self._cache: dict = {}
 
-    def _fast_evaluate(self, state) -> tuple[int, bool]:
-        """Zaehlt offene Anime und prueft das Genre-Meister-Ziel fuer einen Logik-Zustand (mit Zwischenspeicher)."""
+    def _fast_evaluate(self, state) -> tuple[int, bool, int]:
+        """Zaehlt offene Anime und erreichbare Figuren-Checks und prueft das Genre-Meister-Ziel (mit Zwischenspeicher)."""
         owned = frozenset(n for n in self._unlock_names if state.has(n, self.player))
-        hit = self._cache.get(owned)
+        rarity = min(state.count(PROGRESSIVE_RARITY, self.player), len(self.char_tiers))
+        key = (owned, rarity)
+        hit = self._cache.get(key)
         if hit is not None:
             return hit
-        count = 0
+        count = chars = 0
         per_genre: dict[str, int] = {}
-        for singles, groups, genres, need, raw_genres in self._table:
+        for singles, groups, genres, need, raw_genres, cum, cg in self._table:
             if singles and not singles <= owned:
                 continue
             if groups and not all(g & owned for g in groups):  # z. B. eines der Studios
@@ -687,17 +709,22 @@ class AnimepelagoWorld(World):
             count += 1
             for g in raw_genres:
                 per_genre[g] = per_genre.get(g, 0) + 1
+            if cum[-1] and (cg & owned or not cg):
+                chars += cum[rarity]
         gm = sum(v >= self.gm_anime for v in per_genre.values()) >= self.gm_genres
         if len(self._cache) > 50000:  # Speicher begrenzen
             self._cache.clear()
-        self._cache[owned] = (count, gm)
-        return count, gm
+        self._cache[key] = (count, gm, chars)
+        return count, gm, chars
 
     def _fast_count(self, state) -> int:
         return self._fast_evaluate(state)[0]
 
     def _fast_genre_master(self, state) -> bool:
         return self._fast_evaluate(state)[1]
+
+    def _fast_chars(self, state) -> int:
+        return self._fast_evaluate(state)[2]
 
     # ---------- Daten fuer den Client ----------
 
@@ -707,7 +734,8 @@ class AnimepelagoWorld(World):
             "anime": sorted(a["id"] for a in self.selected),
             "location_offset": LOCATION_ID_OFFSET,
             "milestones": self.milestones,
-            "goal": ["anime", "exodia", "genre_master", "big3_daddy"][self.options.goal.value],
+            "goal": ["anime", "exodia", "genre_master", "big3_daddy", "characters"][self.options.goal.value],
+            "character_goal": getattr(self, "char_goal", 0),
             "genre_master_genres": self.gm_genres,
             "genre_master_anime": self.gm_anime,
             "trap_link": bool(self.options.trap_link.value),

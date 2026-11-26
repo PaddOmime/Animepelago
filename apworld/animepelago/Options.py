@@ -13,12 +13,14 @@ class Goal(Choice):
     big3_daddy: guess Goku, Luffy, Naruto and Ichigo (the Big 3 and their "Daddy" Dragon Ball).
       Dragon Ball, ONE PIECE, Naruto and Bleach are always in your world. A hero opens after you guessed his anime
       and have one "Characters: <Genre>" of it and all 3 Progressive Rarity. Turns on Waifupelago (all characters).
-      With Character Gender = female it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue instead."""
+      With Character Gender = female it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue instead.
+    characters: guess the number of characters set in Character Goal (Waifupelago). Turns on Waifupelago if it is off."""
     display_name = "Goal"
     option_anime = 0
     option_exodia = 1
     option_genre_master = 2
     option_big3_daddy = 3
+    option_characters = 4
     default = 0
 
 
@@ -247,6 +249,14 @@ class CharacterRarity(Choice):
     default = 0
 
 
+class CharacterGoal(Range):
+    """Goal "characters": how many characters you have to guess. Lowered if your world has fewer character checks."""
+    display_name = "Character Goal"
+    range_start = 1
+    range_end = 2000
+    default = 50
+
+
 class CharacterGender(OptionSet):
     """Waifupelago: which characters can be guessed. Characters without a known gender only come with all three."""
     display_name = "Character Gender"
@@ -290,10 +300,11 @@ class AnimepelagoOptions(PerGameCommonOptions):
     character_rarity: CharacterRarity
     character_max: CharacterMax
     character_gender: CharacterGender
+    character_goal: CharacterGoal
 
 
 option_groups = [
     OptionGroup("Game", [Goal, GenreMasterGenres, GenreMasterAnime, AnimeCount, AnimeGoal, OnlyGenres, OnlyGenresStartAnime, UnlockMode, UnlockByYear, UnlockBySource, UnlockBySeason, UnlockByStudio, TitleLanguage, GenreRule, GenreStep, IncludeDemographics, StartingGenre]),
     OptionGroup("Items", [PerkItems, GeassItems, StandArrowItems, TrapItems, TrapLink]),
-    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax, CharacterGender]),
+    OptionGroup("Waifupelago", [CharacterRarity, CharacterMax, CharacterGender, CharacterGoal]),
 ]

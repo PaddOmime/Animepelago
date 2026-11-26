@@ -66,6 +66,7 @@ Je nach `goal`:
 - **big3_daddy**: Errate Goku, Ruffy, Naruto und Ichigo – die Big 3 und ihren „Daddy“ Dragon Ball. Jeder Held öffnet sich,
   wenn sein Anime erraten ist und du ein „Characters: <Genre>“ davon und alle 3 Progressive Rarity hast. Mit
   `character_gender: [female]` sind es Chi-Chi, Boa Hancock, Hinata Hyuga und Orihime Inoue.
+- **characters**: Errate `character_goal` Figuren (Waifupelago; wird automatisch eingeschaltet).
 
 ## Waifupelago (Figuren)
 

@@ -64,6 +64,7 @@ Depending on `goal`:
 - **big3_daddy**: guess Goku, Luffy, Naruto and Ichigo – the Big 3 and their "Daddy" Dragon Ball. Each hero opens after you
   guessed his anime and have a "Characters: <Genre>" of it and all 3 Progressive Rarity. With `character_gender: [female]`
   it is Chi-Chi, Boa Hancock, Hinata Hyuga and Orihime Inoue.
+- **characters**: guess `character_goal` characters (Waifupelago; turned on automatically).
 
 ## Waifupelago (characters)
 
