@@ -2360,7 +2360,7 @@ const PROF = (() => {
   }
   function remove(){
     const p = cur(); if (!p) return;
-    for (const base of Object.values(SCOPED)) try { localStorage.removeItem(keyFor(base, p.id)); } catch(e) {}
+    for (const base of [...Object.values(SCOPED), "ap_color"]) try { localStorage.removeItem(keyFor(base, p.id)); } catch(e) {}
     delete all.list[p.id]; all.active = null; save();
   }
   const use = id => { all.active = idOk(id) && all.list[id] ? id : null; save(); };
@@ -2437,7 +2437,8 @@ const PROF = (() => {
   // ---------- Anzeige ----------
   // Lieblingsfarbe: ersetzt die Akzentfarbe (Knoepfe, Kacheln, Fortschritt); Schrift darauf hell oder dunkel nach Helligkeit
   const FAV = ["#ff9ec4", "#9fd8ff", "#c9b6ff", "#ffd38a", "#9ff0c8", "#ff8a7a", "#f4f07a", "#5fe0d2"];
-  const favOf = () => { const p = cur(), c = p ? p.color : store.get("ap_color"); return /^#[0-9a-f]{6}$/i.test(c || "") ? c.toLowerCase() : null; };
+  // Farbe steht im Profil und zur Sicherheit noch einmal eigen gespeichert (die 1.0-Seite kannte das Feld nicht und hat es beim Speichern verworfen)
+  const favOf = () => { const p = cur(), c = p ? (p.color || store.get("ap_color@" + p.id)) : store.get("ap_color"); return /^#[0-9a-f]{6}$/i.test(c || "") ? c.toLowerCase() : null; };
   function applyFav(c){
     const r = document.documentElement.style;
     try { localStorage.setItem("ap_fav_now", c || ""); } catch(e) {}   // fuer die Party-Seite
@@ -2448,7 +2449,7 @@ const PROF = (() => {
   }
   function setFav(c, keep){
     const p = cur(); c = c && /^#[0-9a-f]{6}$/i.test(c) ? c.toLowerCase() : null;
-    if (p) { p.color = c; save(); } else { try { c ? localStorage.setItem("ap_color", c) : localStorage.removeItem("ap_color"); } catch(e) {} }
+    if (p) { p.color = c; save(); try { c ? localStorage.setItem("ap_color@" + p.id, c) : localStorage.removeItem("ap_color@" + p.id); } catch(e) {} } else { try { c ? localStorage.setItem("ap_color", c) : localStorage.removeItem("ap_color"); } catch(e) {} }
     applyFav(c); if (!keep) draw();
   }
   function favHtml(){
